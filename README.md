@@ -1,3 +1,3 @@
 # 240 chess
 
-BYU Rocks
+BYU Rocks, and I have a penchant for Computer Science.
