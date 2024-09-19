@@ -9,13 +9,13 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private static PieceType type = null;
-    private static ChessGame.TeamColor pieceColor = null;
+    private final PieceType type;
+    private final ChessGame.TeamColor pieceColor;
 
 
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
-        ChessPiece.pieceColor = pieceColor;
-        ChessPiece.type = type;
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
 
     /**
