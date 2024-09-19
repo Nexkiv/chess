@@ -8,11 +8,9 @@ import java.util.Collection;
 
 public abstract class BaseMovementRule implements MovementRule {
 
-    protected void calculateMoves(ChessBoard board, ChessPosition pos, int rowInc, int colInc,
+    protected void calculateMoves(ChessBoard board, ChessPosition pos, int rankInc, int fileInc,
                                   Collection<ChessMove> moves, boolean allowDistance) {
-
-        // Generic code for calculating most piece rules
-        // ...
+        moves.add(new ChessMove(new ChessPosition(1,1),new ChessPosition(2,2),null));
     }
 
     public abstract Collection<ChessMove> moves(ChessBoard board, ChessPosition position);
