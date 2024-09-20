@@ -16,7 +16,7 @@ public class ChessRules {
         rules.put(PieceType.KNIGHT, new KnightMovementRule());
         rules.put(PieceType.BISHOP, new BishopMovementRule());
         rules.put(PieceType.ROOK, new RookMovementRule());
-//      rules.put(PAWN, new PawnMovementRule());
+        rules.put(PieceType.PAWN, new PawnMovementRule());
     }
 
     /**
