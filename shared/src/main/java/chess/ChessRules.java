@@ -1,8 +1,6 @@
 package chess;
 
-
-import chess.movementRule.BishopMovementRule;
-import chess.movementRule.MovementRule;
+import chess.movementRule.*;
 import chess.ChessPiece.PieceType;
 import java.util.HashMap;
 
@@ -13,7 +11,7 @@ public class ChessRules {
     static private final HashMap<PieceType, MovementRule> rules = new HashMap<>();
 
     static {
-//      rules.put(KING, new KingMovementRule());
+        rules.put(PieceType.KING, new KingMovementRule());
 //      rules.put(QUEEN, new QueenMovementRule());
 //      rules.put(KNIGHT, new KnightMovementRule());
         rules.put(PieceType.BISHOP, new BishopMovementRule());
