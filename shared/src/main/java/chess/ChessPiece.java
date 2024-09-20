@@ -54,4 +54,46 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         return ChessRules.getMovementRule(getPieceType()).moves(board, myPosition);
     }
+
+    private String getPieceSymbol() {
+        String pieceSymbol = switch (pieceColor) {
+            case WHITE -> switch (type) {
+                case KING -> "♔";
+                case QUEEN -> "♕";
+                case BISHOP -> "♗";
+                case KNIGHT -> "♘";
+                case ROOK -> "♖";
+                case PAWN -> "♙";
+            };
+            case BLACK -> switch (type) {
+                case KING -> "♚";
+                case QUEEN -> "♛";
+                case BISHOP -> "♝";
+                case KNIGHT -> "♞";
+                case ROOK -> "♜";
+                case PAWN -> "♟";
+            };
+            default -> "";
+        };
+        return pieceSymbol;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 31 * type.ordinal() + pieceColor.ordinal();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return getPieceSymbol();
+    }
 }
