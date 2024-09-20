@@ -16,6 +16,11 @@ public class ChessPosition {
         this.file = file;
     }
 
+    public ChessPosition(ChessPosition other) {
+        this.rank = other.rank;
+        this.file = other.file;
+    }
+
     /**
      * @return which row this position is in
      * 1 codes for the bottom row

@@ -7,8 +7,8 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-
-    private ChessPiece[][] squares = new ChessPiece[8][8];
+    private final short dimension = 8;
+    private final ChessPiece[][] squares = new ChessPiece[dimension][dimension];
 
     public ChessBoard() {
         
@@ -21,7 +21,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[position.getRank()][position.getFile()] = piece;
+        squares[position.getRank() - 1][position.getFile() - 1] = piece;
     }
 
     /**
@@ -32,7 +32,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        ChessPiece piece = squares[position.getRank()][position.getFile()];
+        ChessPiece piece = squares[position.getRank() - 1][position.getFile() - 1];
         return piece;
     }
 
@@ -42,5 +42,13 @@ public class ChessBoard {
      */
     public void resetBoard() {
         throw new RuntimeException("Not implemented");
+    }
+
+    /**
+     * Gets the dimensions of the board
+     * @return the value of the dimension variable
+     */
+    public short getDimension() {
+        return dimension;
     }
 }
