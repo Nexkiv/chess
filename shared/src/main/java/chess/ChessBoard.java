@@ -89,7 +89,10 @@ public class ChessBoard {
         if (dimension != chessBoard.dimension) return false;
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
-                if (squares[i][j] != chessBoard.squares[i][j]) {
+                if (squares[i][j] == null && chessBoard.squares[i][j] == null) {
+                    continue;
+                }
+                if (!squares[i][j].equals(chessBoard.squares[i][j])) {
                     return false;
                 }
             }

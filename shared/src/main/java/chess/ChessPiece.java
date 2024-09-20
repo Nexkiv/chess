@@ -73,7 +73,6 @@ public class ChessPiece {
                 case ROOK -> "♜";
                 case PAWN -> "♟";
             };
-            default -> "";
         };
         return pieceSymbol;
     }
