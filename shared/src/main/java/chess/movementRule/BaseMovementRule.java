@@ -20,7 +20,7 @@ public abstract class BaseMovementRule implements MovementRule {
                 boolean isEmptyPosition = board.getPiece(newPos) == null;
                 if (isEmptyPosition) {
                     moves.add(new ChessMove(pos, newPos,null));
-                    currentPos = newPos;
+                    currentPos = new ChessPosition(newPos);
                 } else {
                     boolean canTake = board.getPiece(newPos).getTeamColor() != board.getPiece(pos).getTeamColor();
                     if (canTake) {

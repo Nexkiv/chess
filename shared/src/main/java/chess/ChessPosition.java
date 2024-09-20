@@ -38,6 +38,21 @@ public class ChessPosition {
     }
 
     @Override
+    public boolean equals(Object otherObj) {
+        if (this == otherObj) return true;
+        if (otherObj == null || getClass() != otherObj.getClass()) return false;
+        ChessPosition that = (ChessPosition) otherObj;
+        return rank == that.rank && file == that.file;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = rank;
+        result = 31 * result + file;
+        return result;
+    }
+
+    @Override
     public String toString() {
         char fileName = switch (this.file) {
             case 1 -> 'a';
