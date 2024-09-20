@@ -12,7 +12,7 @@ public class ChessRules {
 
     static {
         rules.put(PieceType.KING, new KingMovementRule());
-//      rules.put(QUEEN, new QueenMovementRule());
+        rules.put(PieceType.QUEEN, new QueenMovementRule());
         rules.put(PieceType.KNIGHT, new KnightMovementRule());
         rules.put(PieceType.BISHOP, new BishopMovementRule());
 //      rules.put(ROOK, new RookMovementRule());
