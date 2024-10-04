@@ -42,8 +42,22 @@ public class ChessMove {
         return promotionPiece;
     }
 
-    public String getMoveName() {
-        throw new RuntimeException("Not implemented");
+    public String getMoveName(ChessBoard board) {
+        ChessPiece movingPiece = board.getPiece(startPosition);
+
+        StringBuilder moveName = new StringBuilder();
+        moveName.append(movingPiece.capitalLetter());
+
+        if (board.getPiece(endPosition) != null) {
+            if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                moveName.append(startPosition.getFileAlgNotation());
+            }
+            moveName.append('x');
+        }
+
+        moveName.append(endPosition.getAlgNotation());
+
+        return moveName.toString();
     }
 
     @Override
