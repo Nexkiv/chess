@@ -9,10 +9,10 @@ package chess;
 public class ChessMove {
     private final ChessPosition startPosition;
     private final ChessPosition endPosition;
-    private final ChessPiece promotionPiece;
+    private final ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
-                     ChessPiece promotionPiece) {
+                     ChessPiece.PieceType promotionPiece) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.promotionPiece = promotionPiece;
@@ -39,14 +39,14 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        return promotionPiece.getPieceType();
+        return promotionPiece;
     }
 
     public String getMoveName(ChessBoard board) {
         ChessPiece movingPiece = board.getPiece(startPosition);
 
         StringBuilder moveName = new StringBuilder();
-        moveName.append(movingPiece.getCapitalLetter());
+        moveName.append(movingPiece.getPieceType().toString());
 
         if (board.getPiece(endPosition) != null) {
             if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
@@ -59,7 +59,7 @@ public class ChessMove {
 
         if (promotionPiece != null) {
             moveName.append('=');
-            moveName.append(promotionPiece.getCapitalLetter());
+            moveName.append(promotionPiece.toString());
         }
 
         return moveName.toString();
@@ -77,7 +77,7 @@ public class ChessMove {
     @Override
     public int hashCode() {
         var promotionCode = (promotionPiece == null ?
-                9 : promotionPiece.getPieceType().ordinal());
+                9 : promotionPiece.ordinal());
         return (71 * startPosition.hashCode()) + endPosition.hashCode() + promotionCode;
     }
 
