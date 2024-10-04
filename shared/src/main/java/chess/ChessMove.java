@@ -42,6 +42,10 @@ public class ChessMove {
         return promotionPiece;
     }
 
+    public String getMoveName() {
+        throw new RuntimeException("Not implemented");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
