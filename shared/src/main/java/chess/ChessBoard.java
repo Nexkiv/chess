@@ -14,6 +14,15 @@ public class ChessBoard {
         
     }
 
+    public ChessBoard(ChessBoard that) {
+        // this.dimension = that.getDimension();
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                this.squares[i][j] = new ChessPiece(that.squares[i][j]);
+            }
+        }
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
