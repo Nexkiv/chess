@@ -82,6 +82,19 @@ public class ChessPiece {
         return pieceSymbol;
     }
 
+    public char getCapitalLetter () {
+        char capitalLetter = switch (type) {
+            case KING -> 'K';
+            case QUEEN -> 'Q';
+            case BISHOP -> 'B';
+            case KNIGHT -> 'N';
+            case ROOK -> 'R';
+            case PAWN -> '\0';
+        };
+
+        return capitalLetter;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
