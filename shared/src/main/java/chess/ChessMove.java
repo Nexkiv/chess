@@ -71,7 +71,7 @@ public class ChessMove {
         if (o == null || getClass() != o.getClass()) return false;
         ChessMove move = (ChessMove) o;
         return (startPosition.equals(move.startPosition) && endPosition.equals(move.endPosition)
-                && promotionPiece.equals(move.promotionPiece));
+                && promotionPiece == move.promotionPiece);
     }
 
     @Override
