@@ -18,6 +18,9 @@ public class ChessBoard {
         // this.dimension = that.getDimension();
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
+                if (that.squares[i][j] == null) {
+                    continue;
+                }
                 this.squares[i][j] = new ChessPiece(that.squares[i][j]);
             }
         }
