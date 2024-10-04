@@ -10,7 +10,8 @@ import java.util.Collection;
  */
 public class ChessGame {
     // TODO: Add move log variable
-    ChessBoard currentBoard;
+    ChessBoard gameBoard;
+    TeamColor currentTurn = TeamColor.WHITE;
 
     public ChessGame() {
 
@@ -20,7 +21,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return currentTurn;
     }
 
     /**
@@ -58,7 +59,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+
     }
 
     /**
@@ -98,7 +99,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        currentBoard = new ChessBoard(board);
+        gameBoard = new ChessBoard(board);
     }
 
     /**
@@ -107,6 +108,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return new ChessBoard(gameBoard);
     }
 }
