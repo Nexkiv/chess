@@ -46,7 +46,7 @@ public class ChessMove {
         ChessPiece movingPiece = board.getPiece(startPosition);
 
         StringBuilder moveName = new StringBuilder();
-        moveName.append(movingPiece.capitalLetter());
+        moveName.append(movingPiece.getCapitalLetter());
 
         if (board.getPiece(endPosition) != null) {
             if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
@@ -55,7 +55,7 @@ public class ChessMove {
             moveName.append('x');
         }
 
-        moveName.append(endPosition.getAlgNotation());
+        moveName.append(endPosition.toString());
 
         return moveName.toString();
     }
