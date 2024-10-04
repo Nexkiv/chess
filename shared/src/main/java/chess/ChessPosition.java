@@ -37,6 +37,23 @@ public class ChessPosition {
         return this.file;
     }
 
+    public char getFileAlgNotation() {
+        char fileName = switch (this.file) {
+            case 1 -> 'a';
+            case 2 -> 'b';
+            case 3 -> 'c';
+            case 4 -> 'd';
+            case 5 -> 'e';
+            case 6 -> 'f';
+            case 7 -> 'g';
+            case 8 -> 'h';
+            // TODO: Add default switch case
+            default -> ' ';
+        };
+
+        return fileName;
+    }
+
     @Override
     public boolean equals(Object otherObj) {
         if (this == otherObj) return true;
@@ -54,18 +71,7 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        char fileName = switch (this.file) {
-            case 1 -> 'a';
-            case 2 -> 'b';
-            case 3 -> 'c';
-            case 4 -> 'd';
-            case 5 -> 'e';
-            case 6 -> 'f';
-            case 7 -> 'g';
-            case 8 -> 'h';
-            // TODO: Add default switch case
-            default -> ' ';
-        };
+        char fileName = getFileAlgNotation();
 
         return String.valueOf(fileName) + this.rank;
     }
