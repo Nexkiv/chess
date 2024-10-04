@@ -1,6 +1,8 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Stack;
+import java.util.StringJoiner;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -9,7 +11,7 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-    // TODO: Add move log variable
+    Stack<ChessMove> completedMoves = new Stack<>();
     ChessBoard gameBoard;
     TeamColor currentTurn = TeamColor.WHITE;
 
@@ -63,12 +65,12 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         if (gameBoard.getPiece(move.getStartPosition()) == null) {
             throw new InvalidMoveException("No piece in the starting position.");
-        }
-
-        if (!validMoves(move.getStartPosition()).contains(move)) {
+        } else if (!validMoves(move.getStartPosition()).contains(move)) {
             String errorMessage = move.getMoveName(gameBoard) + "is an invalid move.";
             throw new InvalidMoveException(errorMessage);
         }
+
+        completedMoves.push(move);
     }
 
     /**
