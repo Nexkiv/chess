@@ -64,7 +64,7 @@ public class ChessGame {
         }
 
         if (!validMoves(move.getStartPosition()).contains(move)) {
-            String errorMessage = move.getMoveName() + "is an invalid move.";
+            String errorMessage = move.getMoveName(gameBoard) + "is an invalid move.";
             throw new InvalidMoveException(errorMessage);
         }
     }
