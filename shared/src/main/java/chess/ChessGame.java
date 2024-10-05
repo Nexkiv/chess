@@ -58,12 +58,6 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> possibleMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
 
-        if (gameBoard.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.KING) {
-            generateDangerMap(gameBoard.getPiece(startPosition).getTeamColor());
-
-            possibleMoves.removeIf(move -> dangerMap[move.getEndPosition().getFile() - 1][move.getEndPosition().getRank() - 1] == Safety.DANGER);
-        }
-
         possibleMoves.removeIf(this::moveIntoCheckCheck);
 
         return possibleMoves;
@@ -110,7 +104,19 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        generateDangerMap(teamColor);
+
+        for (int i = 1; i <= dimension; i++) {
+            for (int j = 1; j <= dimension; j++) {
+                ChessPiece pieceOfInterest = gameBoard.getPiece(new ChessPosition(i, j));
+                if (pieceOfInterest != null && pieceOfInterest.getPieceType() == ChessPiece.PieceType.KING && pieceOfInterest.getTeamColor() == teamColor) {
+                    ChessPosition kingLocation = new ChessPosition(i, j);
+                    return dangerMap[i - 1][j - 1] == Safety.DANGER;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -172,7 +178,7 @@ public class ChessGame {
 
         for (var move : opponentMoves) {
             ChessPosition dangerLocation = move.getEndPosition();
-            dangerMap[dangerLocation.getFile() - 1][dangerLocation.getRank() - 1] = Safety.DANGER;
+            dangerMap[dangerLocation.getRank() - 1][dangerLocation.getFile() - 1] = Safety.DANGER;
         }
     }
 }
