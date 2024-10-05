@@ -169,8 +169,12 @@ public class ChessGame {
         if (isInCheck(teamColor)) {
             return false;
         } else {
-            // TODO: clarify checkmate
-            return true;
+            Collection<ChessMove> validMoves = allValidMoves(teamColor);
+            if (validMoves.isEmpty()) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -192,27 +196,51 @@ public class ChessGame {
         return new ChessBoard(gameBoard);
     }
 
-    private void generateDangerMap(TeamColor color) {
+    private void generateDangerMap(TeamColor teamColor) {
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
                 dangerMap[i][j] = Safety.SAFE;
             }
         }
 
-        HashSet<ChessMove> opponentMoves = new HashSet<>();
-        for (int i = 1; i <= dimension; i++) {
-            for (int j = 1; j <= dimension; j++) {
-                ChessPosition currentPosition = new ChessPosition(i,j);
-                ChessPiece pieceOfInterest = gameBoard.getPiece(currentPosition);
-                if (pieceOfInterest != null && pieceOfInterest.getTeamColor() != color) {
-                    opponentMoves.addAll(pieceOfInterest.captureMoves(gameBoard, currentPosition));
-                }
-            }
-        }
+        TeamColor opposingColor = teamColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
+        Collection<ChessMove> opponentMoves = allPossibleMoves(opposingColor);
 
         for (var move : opponentMoves) {
             ChessPosition dangerLocation = move.getEndPosition();
             dangerMap[dangerLocation.getRank() - 1][dangerLocation.getFile() - 1] = Safety.DANGER;
         }
+    }
+
+    private Collection<ChessMove> allPossibleMoves (TeamColor teamColor) {
+        HashSet<ChessMove> allMoves = new HashSet<>();
+
+        for (int i = 1; i <= dimension; i++) {
+            for (int j = 1; j <= dimension; j++) {
+                ChessPosition currentPosition = new ChessPosition(i,j);
+                ChessPiece pieceOfInterest = gameBoard.getPiece(currentPosition);
+                if (pieceOfInterest != null && pieceOfInterest.getTeamColor() == teamColor) {
+                    allMoves.addAll(pieceOfInterest.captureMoves(gameBoard, currentPosition));
+                }
+            }
+        }
+
+        return allMoves;
+    }
+
+    private Collection<ChessMove> allValidMoves (TeamColor teamColor) {
+        HashSet<ChessMove> validMoves = new HashSet<>();
+
+        for (int i = 1; i <= dimension; i++) {
+            for (int j = 1; j <= dimension; j++) {
+                ChessPosition currentPosition = new ChessPosition(i,j);
+                ChessPiece pieceOfInterest = gameBoard.getPiece(currentPosition);
+                if (pieceOfInterest != null && pieceOfInterest.getTeamColor() == teamColor) {
+                    validMoves.addAll(validMoves(currentPosition));
+                }
+            }
+        }
+
+        return validMoves;
     }
 }
