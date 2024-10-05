@@ -141,7 +141,7 @@ public class ChessGame {
                 ChessPosition currentPosition = new ChessPosition(i,j);
                 ChessPiece pieceOfInterest = gameBoard.getPiece(currentPosition);
                 if (pieceOfInterest != null && pieceOfInterest.getTeamColor() != color) {
-                    opponentMoves.addAll(pieceOfInterest.pieceMoves(gameBoard, currentPosition));
+                    opponentMoves.addAll(pieceOfInterest.captureMoves(gameBoard, currentPosition));
                 }
             }
         }
