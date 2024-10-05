@@ -124,6 +124,7 @@ public class ChessGame {
                 ChessPiece pieceOfInterest = gameBoard.getPiece(new ChessPosition(i, j));
                 if (pieceOfInterest != null && pieceOfInterest.getPieceType() == ChessPiece.PieceType.KING && pieceOfInterest.getTeamColor() == teamColor) {
                     kingLocation = new ChessPosition(i, j);
+                    return kingLocation;
                 }
             }
         }
