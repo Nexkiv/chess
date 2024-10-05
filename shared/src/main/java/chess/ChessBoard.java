@@ -145,12 +145,14 @@ public class ChessBoard {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < dimension; i++) {
+            sb.append('|');
             for (int j = 0; j < dimension; j++) {
                 if (squares[i][j] != null) {
                     sb.append(squares[i][j].toString());
                 } else {
                     sb.append(" ");
                 }
+                sb.append('|');
             }
             sb.append("\n");
         }
