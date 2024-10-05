@@ -85,27 +85,49 @@ public class ChessGame {
             if (!isInCheck(activePiece.getTeamColor())) {
                 int homeRank = (activePiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : 8;
 
-                if (startPosition.equals(new ChessPosition(homeRank, 5))) {
+                ChessPosition kingStartingPosition = new ChessPosition(homeRank, 5);
+                ChessPosition queenSideRookPos = new ChessPosition(homeRank, 1);
+                ChessPosition kingSideRookPos = new ChessPosition(homeRank, 8);
+                boolean canCastle = true;
+                boolean canQueenSideCastle = true;
+                boolean canKingSideCastle = true;
+
+                for (var move : completedMoves) {
+                    if (move.getEndPosition().equals(kingStartingPosition)) {
+                        canCastle = false;
+                    } else if (move.getEndPosition().equals(queenSideRookPos)) {
+                        canQueenSideCastle = false;
+                    } else if (move.getEndPosition().equals(kingSideRookPos)) {
+                        canKingSideCastle = false;
+                    }
+                }
+
+                if (startPosition.equals(kingStartingPosition) && canCastle) {
+
 
                     // Queen Side Castle
                     ChessPosition queenSideCastleAdj = new ChessPosition(homeRank, 4);
                     ChessPosition queenSideCastleEnd = new ChessPosition(homeRank, 3);
+                    ChessMove queenSideCastle = new ChessMove(startPosition, queenSideCastleEnd, null);
                     if (possibleMoves.contains(new ChessMove(startPosition, queenSideCastleAdj, null)) &&
                             gameBoard.getPiece(queenSideCastleAdj) == null &&
-                            gameBoard.getPiece(queenSideCastleEnd) == null) {
-                        if (gameBoard.getPiece(new ChessPosition(homeRank, 1)).getPieceType() == ChessPiece.PieceType.ROOK) {
-                            possibleMoves.add(new ChessMove(startPosition, queenSideCastleEnd, null));
+                            gameBoard.getPiece(queenSideCastleEnd) == null &&
+                            canQueenSideCastle) {
+                        if (gameBoard.getPiece(queenSideRookPos).getPieceType() == ChessPiece.PieceType.ROOK) {
+                            possibleMoves.add(queenSideCastle);
                         }
                     }
 
                     // King Side Castle
                     ChessPosition kingSideCastleAdj = new ChessPosition(homeRank, 6);
                     ChessPosition kingSideCastleEnd = new ChessPosition(homeRank, 7);
+                    ChessMove kingSideCastle = new ChessMove(startPosition, kingSideCastleEnd, null);
                     if (possibleMoves.contains(new ChessMove(startPosition, kingSideCastleAdj, null)) &&
                             gameBoard.getPiece(kingSideCastleAdj) == null &&
-                            gameBoard.getPiece(kingSideCastleEnd) == null) {
-                        if (gameBoard.getPiece(new ChessPosition(homeRank, 8)).getPieceType() == ChessPiece.PieceType.ROOK) {
-                            possibleMoves.add(new ChessMove(startPosition, kingSideCastleEnd, null));
+                            gameBoard.getPiece(kingSideCastleEnd) == null &&
+                            canKingSideCastle) {
+                        if (gameBoard.getPiece(kingSideRookPos).getPieceType() == ChessPiece.PieceType.ROOK) {
+                            possibleMoves.add(kingSideCastle);
                         }
                     }
                 }
