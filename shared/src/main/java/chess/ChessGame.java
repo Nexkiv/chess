@@ -14,6 +14,7 @@ public class ChessGame {
     private TeamColor currentTurn = TeamColor.WHITE;
     private final short dimension = 8;
     private final Safety[][] dangerMap = new Safety[dimension][dimension];
+    private boolean enPassantFlag = false;
 
     private enum Safety {
         SAFE,
@@ -56,7 +57,26 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        ChessPosition enPassantPieceLocation = null;
+
         Collection<ChessMove> possibleMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
+
+        if (!completedMoves.isEmpty()) {
+            if (gameBoard.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.PAWN) {
+                ChessMove previousMove = completedMoves.peek();
+                ChessPosition previousMoveEnd = previousMove.getEndPosition();
+                ChessPosition previousMoveStart = previousMove.getStartPosition();
+
+                if (gameBoard.getPiece(previousMoveEnd).getPieceType() == ChessPiece.PieceType.PAWN) {
+                    if ((previousMoveEnd.getRank() - previousMoveStart.getRank()) == 2 ||
+                            (previousMoveEnd.getRank() - previousMoveStart.getRank()) == -2) {
+                        enPassantFlag = true;
+                        enPassantPieceLocation = new ChessPosition((previousMoveStart.getRank() + previousMoveEnd.getRank()) / 2, previousMoveEnd.getFile());
+                        possibleMoves.add(new ChessMove(startPosition, enPassantPieceLocation, null));
+                    }
+                }
+            }
+        }
 
         possibleMoves.removeIf(this::moveIntoCheckCheck);
 
