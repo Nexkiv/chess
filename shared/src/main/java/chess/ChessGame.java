@@ -1,8 +1,6 @@
 package chess;
 
-import java.util.Collection;
-import java.util.Stack;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -11,9 +9,16 @@ import java.util.StringJoiner;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private Stack<ChessMove> completedMoves = new Stack<>();
+    private final Stack<ChessMove> completedMoves = new Stack<>();
     private ChessBoard gameBoard;
     private TeamColor currentTurn = TeamColor.WHITE;
+    private final short dimension = 8;
+    private final Safety[][] dangerMap = new Safety[dimension][dimension];
+
+    private enum Safety {
+        SAFE,
+        DANGER
+    }
 
     public ChessGame() {
 
@@ -52,6 +57,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> possibleMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
+        generateDangerMap(gameBoard.getPiece(startPosition).getTeamColor());
 
         return possibleMoves;
     }
@@ -120,5 +126,29 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return new ChessBoard(gameBoard);
+    }
+
+    private void generateDangerMap(TeamColor color) {
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                dangerMap[i][j] = Safety.SAFE;
+            }
+        }
+
+        HashSet<ChessMove> opponentMoves = new HashSet<>();
+        for (int i = 1; i <= dimension; i++) {
+            for (int j = 1; j <= dimension; j++) {
+                ChessPosition currentPosition = new ChessPosition(i,j);
+                ChessPiece pieceOfInterest = gameBoard.getPiece(currentPosition);
+                if (pieceOfInterest != null && pieceOfInterest.getTeamColor() != color) {
+                    opponentMoves.addAll(pieceOfInterest.pieceMoves(gameBoard, currentPosition));
+                }
+            }
+        }
+
+        for (var move : opponentMoves) {
+            ChessPosition dangerLocation = move.getEndPosition();
+            dangerMap[dangerLocation.getFile() - 1][dangerLocation.getRank() - 1] = Safety.DANGER;
+        }
     }
 }
