@@ -27,4 +27,8 @@ public class ChessRules {
     static public MovementRule getMovementRule(ChessPiece.PieceType type) {
         return rules.get(type);
     }
+
+    static public MovementRule getPawnCaptureMovementRule() {
+        return new PawnCaptureMovementRule();
+    }
 }
