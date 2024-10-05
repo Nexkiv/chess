@@ -141,7 +141,12 @@ public class ChessGame {
         if (!isInCheck(teamColor)) {
             return false;
         } else {
-            return true;
+            Collection<ChessMove> possibleMoves = validMoves(findKing(teamColor));
+            if (!possibleMoves.isEmpty()) {
+                return false;
+            } else {
+                return true;
+            }
         }
     }
 
