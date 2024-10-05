@@ -61,23 +61,6 @@ public class ChessGame {
 
         Collection<ChessMove> possibleMoves = activePiece.pieceMoves(gameBoard, startPosition);
 
-        // Castling Rules
-        if (activePiece.getPieceType() == ChessPiece.PieceType.KING) {
-            if (!isInCheck(activePiece.getTeamColor())) {
-                int homeRank = (activePiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : 8;
-
-                if (startPosition.equals(new ChessPosition(homeRank, 5))) {
-                    if (gameBoard.getPiece(new ChessPosition(homeRank, 1)).getPieceType() == ChessPiece.PieceType.ROOK) {
-                        possibleMoves.add(new ChessMove(startPosition, new ChessPosition(homeRank, 3), null));
-                    }
-
-                    if (gameBoard.getPiece(new ChessPosition(homeRank, 8)).getPieceType() == ChessPiece.PieceType.ROOK) {
-                        possibleMoves.add(new ChessMove(startPosition, new ChessPosition(homeRank, 7), null));
-                    }
-                }
-            }
-        }
-
         // En Passant Rules
         if (activePiece.getPieceType() == ChessPiece.PieceType.PAWN) {
             if (!completedMoves.isEmpty()) {
@@ -90,6 +73,40 @@ public class ChessGame {
                             (previousMoveEnd.getRank() - previousMoveStart.getRank()) == -2) {
                         enPassantPieceLocation = new ChessPosition((previousMoveStart.getRank() + previousMoveEnd.getRank()) / 2, previousMoveEnd.getFile());
                         possibleMoves.add(new ChessMove(startPosition, enPassantPieceLocation, null));
+                    }
+                }
+            }
+        }
+
+        possibleMoves.removeIf(this::moveIntoCheckCheck);
+
+        // Castling Rules
+        if (activePiece.getPieceType() == ChessPiece.PieceType.KING) {
+            if (!isInCheck(activePiece.getTeamColor())) {
+                int homeRank = (activePiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : 8;
+
+                if (startPosition.equals(new ChessPosition(homeRank, 5))) {
+
+                    // Queen Side Castle
+                    ChessPosition queenSideCastleAdj = new ChessPosition(homeRank, 4);
+                    ChessPosition queenSideCastleEnd = new ChessPosition(homeRank, 3);
+                    if (possibleMoves.contains(new ChessMove(startPosition, queenSideCastleAdj, null)) &&
+                            gameBoard.getPiece(queenSideCastleAdj) == null &&
+                            gameBoard.getPiece(queenSideCastleEnd) == null) {
+                        if (gameBoard.getPiece(new ChessPosition(homeRank, 1)).getPieceType() == ChessPiece.PieceType.ROOK) {
+                            possibleMoves.add(new ChessMove(startPosition, queenSideCastleEnd, null));
+                        }
+                    }
+
+                    // King Side Castle
+                    ChessPosition kingSideCastleAdj = new ChessPosition(homeRank, 6);
+                    ChessPosition kingSideCastleEnd = new ChessPosition(homeRank, 7);
+                    if (possibleMoves.contains(new ChessMove(startPosition, kingSideCastleAdj, null)) &&
+                            gameBoard.getPiece(kingSideCastleAdj) == null &&
+                            gameBoard.getPiece(kingSideCastleEnd) == null) {
+                        if (gameBoard.getPiece(new ChessPosition(homeRank, 8)).getPieceType() == ChessPiece.PieceType.ROOK) {
+                            possibleMoves.add(new ChessMove(startPosition, kingSideCastleEnd, null));
+                        }
                     }
                 }
             }
