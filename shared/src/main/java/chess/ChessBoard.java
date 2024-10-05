@@ -40,7 +40,7 @@ public class ChessBoard {
         squares[position.getRank() - 1][position.getFile() - 1] = null;
     }
 
-    private void movePiece(ChessMove move) {
+    public void movePiece(ChessMove move) {
         ChessPiece activePiece = getPiece(move.getStartPosition());
 
         removePiece(move.getStartPosition());
