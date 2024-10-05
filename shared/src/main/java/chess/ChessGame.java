@@ -11,9 +11,9 @@ import java.util.StringJoiner;
  * signature of the existing methods.
  */
 public class ChessGame {
-    Stack<ChessMove> completedMoves = new Stack<>();
-    ChessBoard gameBoard;
-    TeamColor currentTurn = TeamColor.WHITE;
+    private Stack<ChessMove> completedMoves = new Stack<>();
+    private ChessBoard gameBoard;
+    private TeamColor currentTurn = TeamColor.WHITE;
 
     public ChessGame() {
 
