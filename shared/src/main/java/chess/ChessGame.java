@@ -57,7 +57,12 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> possibleMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
-        generateDangerMap(gameBoard.getPiece(startPosition).getTeamColor());
+
+        if (gameBoard.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.KING) {
+            generateDangerMap(gameBoard.getPiece(startPosition).getTeamColor());
+
+            possibleMoves.removeIf(move -> dangerMap[move.getEndPosition().getFile() - 1][move.getEndPosition().getRank() - 1] == Safety.DANGER);
+        }
 
         return possibleMoves;
     }
@@ -72,7 +77,7 @@ public class ChessGame {
         if (gameBoard.getPiece(move.getStartPosition()) == null) {
             throw new InvalidMoveException("No piece in the starting position.");
         } else if (!validMoves(move.getStartPosition()).contains(move)) {
-            String errorMessage = move.getMoveName(gameBoard) + "is an invalid move.";
+            String errorMessage = move.getMoveName(gameBoard) + " is an invalid move.";
             throw new InvalidMoveException(errorMessage);
         }
 
