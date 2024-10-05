@@ -36,6 +36,17 @@ public class ChessBoard {
         squares[position.getRank() - 1][position.getFile() - 1] = piece;
     }
 
+    private void removePiece(ChessPosition position) {
+        squares[position.getRank() - 1][position.getFile() - 1] = null;
+    }
+
+    private void movePiece(ChessMove move) {
+        ChessPiece activePiece = getPiece(move.getStartPosition());
+
+        removePiece(move.getStartPosition());
+        addPiece(move.getEndPosition(), activePiece);
+    }
+
     /**
      * Gets a chess piece on the chessboard
      *
