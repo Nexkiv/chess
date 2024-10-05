@@ -36,7 +36,7 @@ public class ChessBoard {
         squares[position.getRank() - 1][position.getFile() - 1] = piece;
     }
 
-    private void removePiece(ChessPosition position) {
+    public void removePiece(ChessPosition position) {
         squares[position.getRank() - 1][position.getFile() - 1] = null;
     }
 
