@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class ChessGame {
     private final Stack<ChessMove> completedMoves = new Stack<>();
-    private ChessBoard gameBoard;
+    private ChessBoard gameBoard = new ChessBoard();
     private TeamColor currentTurn = TeamColor.WHITE;
     private final short dimension = 8;
     private final Safety[][] dangerMap = new Safety[dimension][dimension];
@@ -21,7 +21,7 @@ public class ChessGame {
     }
 
     public ChessGame() {
-
+        this.gameBoard.resetBoard();
     }
 
     /**
