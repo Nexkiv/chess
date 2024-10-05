@@ -43,6 +43,10 @@ public class ChessBoard {
     public void movePiece(ChessMove move) {
         ChessPiece activePiece = getPiece(move.getStartPosition());
 
+        if (move.getPromotionPiece() != null) {
+            activePiece = new ChessPiece(activePiece.getTeamColor(), move.getPromotionPiece());
+        }
+
         removePiece(move.getStartPosition());
         addPiece(move.getEndPosition(), activePiece);
     }
