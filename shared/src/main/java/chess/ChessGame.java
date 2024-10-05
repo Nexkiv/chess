@@ -108,17 +108,27 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         generateDangerMap(teamColor);
 
+        ChessPosition kingLocation = findKing(teamColor);
+        if (kingLocation != null && dangerMap[kingLocation.getRank() - 1][kingLocation.getFile() - 1] == Safety.DANGER) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private ChessPosition findKing(TeamColor teamColor) {
+        ChessPosition kingLocation = null;
+
         for (int i = 1; i <= dimension; i++) {
             for (int j = 1; j <= dimension; j++) {
                 ChessPiece pieceOfInterest = gameBoard.getPiece(new ChessPosition(i, j));
                 if (pieceOfInterest != null && pieceOfInterest.getPieceType() == ChessPiece.PieceType.KING && pieceOfInterest.getTeamColor() == teamColor) {
-                    ChessPosition kingLocation = new ChessPosition(i, j);
-                    return dangerMap[kingLocation.getRank() - 1][kingLocation.getFile() - 1] == Safety.DANGER;
+                    kingLocation = new ChessPosition(i, j);
                 }
             }
         }
 
-        return false;
+        return kingLocation;
     }
 
     /**
