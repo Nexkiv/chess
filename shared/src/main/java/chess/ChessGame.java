@@ -64,7 +64,24 @@ public class ChessGame {
             possibleMoves.removeIf(move -> dangerMap[move.getEndPosition().getFile() - 1][move.getEndPosition().getRank() - 1] == Safety.DANGER);
         }
 
+        possibleMoves.removeIf(this::moveIntoCheckCheck);
+
         return possibleMoves;
+    }
+
+    private boolean moveIntoCheckCheck(ChessMove move) {
+        boolean moveIntoCheck = false;
+        TeamColor teamColor = gameBoard.getPiece(move.getStartPosition()).getTeamColor();
+        ChessBoard originalBoard = new ChessBoard(gameBoard);
+
+        gameBoard.movePiece(move);
+        if (isInCheck(teamColor)) {
+            moveIntoCheck = true;
+        }
+
+        gameBoard = originalBoard;
+
+        return moveIntoCheck;
     }
 
     /**
@@ -80,6 +97,8 @@ public class ChessGame {
             String errorMessage = move.getMoveName(gameBoard) + " is an invalid move.";
             throw new InvalidMoveException(errorMessage);
         }
+
+        gameBoard.movePiece(move);
 
         completedMoves.push(move);
     }
