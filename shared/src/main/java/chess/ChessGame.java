@@ -148,12 +148,11 @@ public class ChessGame {
         if (!isInCheck(teamColor)) {
             return false;
         } else {
-            Collection<ChessMove> possibleMoves = validMoves(findKing(teamColor));
-            if (!possibleMoves.isEmpty()) {
-                return false;
-            } else {
-                // TODO: clarify checkmate
+            Collection<ChessMove> validMoves = allValidMoves(teamColor);
+            if (validMoves.isEmpty()) {
                 return true;
+            } else {
+                return false;
             }
         }
     }
