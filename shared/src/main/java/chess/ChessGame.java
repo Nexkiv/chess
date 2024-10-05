@@ -63,6 +63,17 @@ public class ChessGame {
 
         // Castling Rules
         if (activePiece.getPieceType() == ChessPiece.PieceType.KING) {
+            if (!isInCheck(activePiece.getTeamColor())) {
+                int homeRank = (activePiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : 8;
+
+                if (startPosition.equals(new ChessPosition(homeRank, 5))) {
+                    if (gameBoard.getPiece(new ChessPosition(homeRank, 1)).getPieceType() == ChessPiece.PieceType.ROOK) {
+                        possibleMoves.add(new ChessMove(startPosition, new ChessPosition(homeRank, 3), null));
+                    } else if (gameBoard.getPiece(new ChessPosition(homeRank, 8)).getPieceType() == ChessPiece.PieceType.ROOK) {
+                        possibleMoves.add(new ChessMove(startPosition, new ChessPosition(homeRank, 7), null));
+                    }
+                }
+            }
         }
 
         // En Passant Rules
