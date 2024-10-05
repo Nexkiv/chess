@@ -14,7 +14,7 @@ public class ChessGame {
     private TeamColor currentTurn = TeamColor.WHITE;
     private final short dimension = 8;
     private final Safety[][] dangerMap = new Safety[dimension][dimension];
-    private boolean enPassantFlag = false;
+    private ChessPosition enPassantPieceLocation = null;
 
     private enum Safety {
         SAFE,
@@ -57,7 +57,6 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessPosition enPassantPieceLocation = null;
 
         Collection<ChessMove> possibleMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
 
@@ -70,7 +69,6 @@ public class ChessGame {
                 if (gameBoard.getPiece(previousMoveEnd).getPieceType() == ChessPiece.PieceType.PAWN) {
                     if ((previousMoveEnd.getRank() - previousMoveStart.getRank()) == 2 ||
                             (previousMoveEnd.getRank() - previousMoveStart.getRank()) == -2) {
-                        enPassantFlag = true;
                         enPassantPieceLocation = new ChessPosition((previousMoveStart.getRank() + previousMoveEnd.getRank()) / 2, previousMoveEnd.getFile());
                         possibleMoves.add(new ChessMove(startPosition, enPassantPieceLocation, null));
                     }
@@ -89,6 +87,7 @@ public class ChessGame {
         ChessBoard originalBoard = new ChessBoard(gameBoard);
 
         gameBoard.movePiece(move);
+
         if (isInCheck(teamColor)) {
             moveIntoCheck = true;
         }
@@ -115,6 +114,10 @@ public class ChessGame {
         }
 
         gameBoard.movePiece(move);
+        if (move.getEndPosition().equals(enPassantPieceLocation)) {
+            gameBoard.removePiece(completedMoves.peek().getEndPosition());
+            enPassantPieceLocation = null;
+        }
 
         if (currentTurn == TeamColor.WHITE) {
             currentTurn = TeamColor.BLACK;
