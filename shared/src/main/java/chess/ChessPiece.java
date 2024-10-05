@@ -75,6 +75,17 @@ public class ChessPiece {
         return ChessRules.getMovementRule(getPieceType()).moves(board, myPosition);
     }
 
+    public Collection<ChessMove> captureMoves(ChessBoard board, ChessPosition myPosition) {
+        ChessPiece activePiece = board.getPiece(myPosition);
+        if (activePiece == null) {
+            throw new RuntimeException("Impossible move query.");
+        } else if (activePiece.getPieceType() != PieceType.PAWN) {
+            return pieceMoves(board, myPosition);
+        } else {
+            return ChessRules.getPawnCaptureMovementRule().moves(board, myPosition);
+        }
+    }
+
     private String getPieceSymbol() {
         String pieceSymbol = switch (pieceColor) {
             case WHITE -> switch (type) {
