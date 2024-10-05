@@ -69,7 +69,9 @@ public class ChessGame {
                 if (startPosition.equals(new ChessPosition(homeRank, 5))) {
                     if (gameBoard.getPiece(new ChessPosition(homeRank, 1)).getPieceType() == ChessPiece.PieceType.ROOK) {
                         possibleMoves.add(new ChessMove(startPosition, new ChessPosition(homeRank, 3), null));
-                    } else if (gameBoard.getPiece(new ChessPosition(homeRank, 8)).getPieceType() == ChessPiece.PieceType.ROOK) {
+                    }
+
+                    if (gameBoard.getPiece(new ChessPosition(homeRank, 8)).getPieceType() == ChessPiece.PieceType.ROOK) {
                         possibleMoves.add(new ChessMove(startPosition, new ChessPosition(homeRank, 7), null));
                     }
                 }
@@ -121,16 +123,31 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (gameBoard.getPiece(move.getStartPosition()) == null) {
+        ChessPiece activePiece = gameBoard.getPiece(move.getStartPosition());
+
+        if (activePiece == null) {
             throw new InvalidMoveException("No piece in the starting position.");
-        } else if (gameBoard.getPiece(move.getStartPosition()).getTeamColor() != currentTurn) {
+        } else if (activePiece.getTeamColor() != currentTurn) {
             throw new InvalidMoveException("It is not your turn.");
         } else if (!validMoves(move.getStartPosition()).contains(move)) {
             String errorMessage = move.getMoveName(gameBoard) + " is an invalid move.";
             throw new InvalidMoveException(errorMessage);
         }
 
+
         gameBoard.movePiece(move);
+
+        // Castling Rules
+        if (activePiece.getPieceType() == ChessPiece.PieceType.KING) {
+            int homeRank = (activePiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : 8;
+            if ((move.getStartPosition().getFile() - move.getEndPosition().getFile()) == 2) {
+                gameBoard.movePiece(new ChessMove(new ChessPosition(homeRank, 1), new ChessPosition(homeRank, 4), null));
+            } else if ((move.getStartPosition().getFile() - move.getEndPosition().getFile()) == -2) {
+                gameBoard.movePiece(new ChessMove(new ChessPosition(homeRank, 8), new ChessPosition(homeRank, 6), null));
+            }
+        }
+
+        // En Passant Rules
         if (move.getEndPosition().equals(enPassantPieceLocation)) {
             gameBoard.removePiece(completedMoves.peek().getEndPosition());
             enPassantPieceLocation = null;
