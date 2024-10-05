@@ -57,11 +57,17 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        ChessPiece activePiece = gameBoard.getPiece(startPosition);
 
-        Collection<ChessMove> possibleMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
+        Collection<ChessMove> possibleMoves = activePiece.pieceMoves(gameBoard, startPosition);
 
-        if (!completedMoves.isEmpty()) {
-            if (gameBoard.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.PAWN) {
+        // Castling Rules
+        if (activePiece.getPieceType() == ChessPiece.PieceType.KING) {
+        }
+
+        // En Passant Rules
+        if (activePiece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (!completedMoves.isEmpty()) {
                 ChessMove previousMove = completedMoves.peek();
                 ChessPosition previousMoveEnd = previousMove.getEndPosition();
                 ChessPosition previousMoveStart = previousMove.getStartPosition();
