@@ -113,7 +113,7 @@ public class ChessGame {
                 ChessPiece pieceOfInterest = gameBoard.getPiece(new ChessPosition(i, j));
                 if (pieceOfInterest != null && pieceOfInterest.getPieceType() == ChessPiece.PieceType.KING && pieceOfInterest.getTeamColor() == teamColor) {
                     ChessPosition kingLocation = new ChessPosition(i, j);
-                    return dangerMap[i - 1][j - 1] == Safety.DANGER;
+                    return dangerMap[kingLocation.getRank() - 1][kingLocation.getFile() - 1] == Safety.DANGER;
                 }
             }
         }
@@ -128,7 +128,11 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
