@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.Gson;
 import dataaccess.MemoryDataAccess;
 import spark.*;
 import service.Service;
@@ -18,7 +19,8 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.delete("/db", this::clearDatabase);
+        Spark.delete("/db", this::clearData);
+        Spark.post("/user", this::registerUser);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -27,9 +29,18 @@ public class Server {
         return Spark.port();
     }
 
-    private Object clearDatabase(Request request, Response response) {
+    private Object clearData(Request request, Response response) {
         service.clear();
         response.status(200);
+        return "";
+    }
+
+    private Object registerUser(Request request, Response response) {
+
+//        var user = new Gson().fromJson(request.body(), User.class);
+//        user = service.registerUser(user);
+//        return new Gson().toJson(user);
+
         return "";
     }
 
