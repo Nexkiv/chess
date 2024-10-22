@@ -22,6 +22,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clearData);
         Spark.post("/user", this::registerUser);
+        Spark.post("/session", this::login);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -37,12 +38,20 @@ public class Server {
     }
 
     private Object registerUser(Request request, Response response) {
-
         var user = new Gson().fromJson(request.body(), UserData.class);
         var auth = service.register(user);
+        response.status(200);
         return new Gson().toJson(auth);
-
     }
+
+    private Object login(Request request, Response response) {
+        var user = new Gson().fromJson(request.body(), UserData.class);
+        var auth = service.login(user);
+        response.status(200);
+        return new Gson().toJson(auth);
+    }
+
+
 
     public void stop() {
         Spark.stop();
