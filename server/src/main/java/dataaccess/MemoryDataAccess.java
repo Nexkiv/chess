@@ -3,16 +3,18 @@ package dataaccess;
 import model.AuthData;
 import model.UserData;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryDataAccess implements DataAccess{
 
-    private Map<String, UserData> userDataMap;
-    private Map<String, AuthData> authTokensMap;
+    private final Map<String, UserData> userDataMap = new HashMap<>();
+    private final Map<String, AuthData> authTokensMap = new HashMap<>();
 
     @Override
     public void clear() {
         userDataMap.clear();
+        authTokensMap.clear();
     }
 
     @Override
