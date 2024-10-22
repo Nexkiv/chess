@@ -1,27 +1,37 @@
 package dataaccess;
 
+import model.AuthData;
 import model.UserData;
 
-import java.util.UUID;
-import java.util.Vector;
+import java.util.Map;
 
 public class MemoryDataAccess implements DataAccess{
 
-    private Vector<UserData> userData;
-    private Vector<UUID> authTokens;
+    private Map<String, UserData> userDataMap;
+    private Map<String, AuthData> authTokensMap;
 
     @Override
     public void clear() {
-
+        userDataMap.clear();
     }
 
     @Override
     public UserData getUser(String username) {
-        return null;
+        return userDataMap.get(username);
     }
 
     @Override
-    public UserData createUser(UserData userData) {
-        return null;
+    public void createUser(UserData userData) {
+        userDataMap.put(userData.username(), userData);
+    }
+
+    @Override
+    public AuthData getAuthData(String authToken) {
+        return authTokensMap.get(authToken);
+    }
+
+    @Override
+    public void createAuthData(AuthData authData) {
+        authTokensMap.put(authData.username(), authData);
     }
 }
