@@ -39,8 +39,8 @@ public class Server {
     private Object registerUser(Request request, Response response) {
 
         var user = new Gson().fromJson(request.body(), UserData.class);
-        user = service.register(user);
-        return new Gson().toJson(user);
+        var auth = service.register(user);
+        return new Gson().toJson(auth);
 
     }
 

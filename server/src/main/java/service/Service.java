@@ -1,7 +1,10 @@
 package service;
 
 import dataaccess.DataAccess;
+import model.AuthData;
 import model.UserData;
+
+import java.util.UUID;
 
 public class Service {
     private DataAccess dataAccess;
@@ -14,10 +17,24 @@ public class Service {
         dataAccess.clear();
     }
 
-    public UserData register(UserData userData) {
-        // return dataAccess.register(User user);
+    public AuthData register(UserData userData) {
+        UserData emptyUserData = dataAccess.getUser(userData.username());
 
-        return userData;
+        if (emptyUserData != null) {
+            dataAccess.createUser(userData);
+
+            AuthData userAuthData = new AuthData(userData.username(), generateToken());
+
+            dataAccess.createAuthData(userAuthData);
+
+            return userAuthData;
+        } else {
+            return null;
+        }
+    }
+
+    private String generateToken() {
+        return UUID.randomUUID().toString();
     }
 
 }
