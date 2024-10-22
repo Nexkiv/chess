@@ -20,7 +20,7 @@ public class Service {
     public AuthData register(UserData userData) {
         UserData emptyUserData = dataAccess.getUser(userData.username());
 
-        if (emptyUserData != null) {
+        if (emptyUserData == null) {
             dataAccess.createUser(userData);
 
             AuthData userAuthData = new AuthData(userData.username(), generateToken());
