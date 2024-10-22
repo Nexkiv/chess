@@ -1,13 +1,13 @@
 package dataaccess;
 
-import model.User;
+import model.UserData;
 
 import java.util.UUID;
 import java.util.Vector;
 
 public class MemoryDataAccess implements DataAccess{
 
-    private Vector<User> users;
+    private Vector<UserData> userData;
     private Vector<UUID> authTokens;
 
     @Override
@@ -16,12 +16,12 @@ public class MemoryDataAccess implements DataAccess{
     }
 
     @Override
-    public User getUser(String username) {
+    public UserData getUser(String username) {
         return null;
     }
 
     @Override
-    public User createUser(User user) {
+    public UserData createUser(UserData userData) {
         return null;
     }
 }

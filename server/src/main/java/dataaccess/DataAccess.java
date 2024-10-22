@@ -1,11 +1,9 @@
 package dataaccess;
 
-import model.User;
-
-import java.util.UUID;
+import model.UserData;
 
 public interface DataAccess {
     void clear();
-    User getUser(String username);
-    User createUser(User user);
+    UserData getUser(String username);
+    UserData createUser(UserData userData);
 }
