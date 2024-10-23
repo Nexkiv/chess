@@ -117,7 +117,6 @@ public class Service {
         }
     }
 
-    @NotNull
     private AuthData createAuthData(String username) {
         AuthData userAuthData = new AuthData(username, generateToken());
         try {
