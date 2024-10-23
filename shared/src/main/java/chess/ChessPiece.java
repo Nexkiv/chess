@@ -82,7 +82,7 @@ public class ChessPiece {
         } else if (activePiece.getPieceType() != PieceType.PAWN) {
             return pieceMoves(board, myPosition);
         } else {
-            return ChessRules.getPawnCaptureMovementRule().moves(board, myPosition);
+            return ChessRules.getPawnMovementRule().captureMoves(board, myPosition);
         }
     }
 

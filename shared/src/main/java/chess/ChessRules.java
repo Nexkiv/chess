@@ -28,7 +28,7 @@ public class ChessRules {
         return RULES.get(type);
     }
 
-    static public MovementRule getPawnCaptureMovementRule() {
-        return new PawnCaptureMovementRule();
+    static public PawnMovementRule getPawnMovementRule() {
+        return new PawnMovementRule();
     }
 }
