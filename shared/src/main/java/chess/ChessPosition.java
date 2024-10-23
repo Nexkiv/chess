@@ -56,8 +56,12 @@ public class ChessPosition {
 
     @Override
     public boolean equals(Object otherObj) {
-        if (this == otherObj) return true;
-        if (otherObj == null || getClass() != otherObj.getClass()) return false;
+        if (this == otherObj) {
+            return true;
+        }
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
         ChessPosition that = (ChessPosition) otherObj;
         return rank == that.rank && file == that.file;
     }

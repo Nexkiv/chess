@@ -110,10 +110,16 @@ public class ChessBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessBoard chessBoard = (ChessBoard) o;
-        if (dimension != chessBoard.dimension) return false;
+        if (dimension != chessBoard.dimension) {
+            return false;
+        }
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
                 if (squares[i][j] == null && chessBoard.squares[i][j] == null) {
