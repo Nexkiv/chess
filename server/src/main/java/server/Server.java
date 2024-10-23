@@ -114,13 +114,16 @@ public class Server {
         int gameID = jsonObject.get("gameID").getAsInt();
         int statusCode = service.join(authToken, playerColor, gameID);
 
-        switch (statusCode) {
-            case 200: response.status(200); return "";
-            case 400: return error400(response);
-            case 401: return error401(response);
-            case 403: return error403(response);
-            default: throw new ResponseException(500, "something went wrong in joinGame()");
-        }
+        return switch (statusCode) {
+            case 200 -> {
+                response.status(200);
+                yield "";
+            }
+            case 400 -> error400(response);
+            case 401 -> error401(response);
+            case 403 -> error403(response);
+            default -> throw new ResponseException(500, "something went wrong in joinGame()");
+        };
     }
 
     private Object listGames(Request request, Response response) throws ResponseException {
