@@ -46,8 +46,9 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private void exceptionHandler(ResponseException exception, Request request, Response response) {
+    private Object exceptionHandler(ResponseException exception, Request request, Response response) {
         response.status(exception.StatusCode());
+        return "{\"message\": " + exception.getMessage() + "}";
     }
 
     private Object clearData(Request request, Response response) throws ResponseException {
@@ -65,9 +66,18 @@ public class Server {
 
     private Object login(Request request, Response response) throws ResponseException {
         var user = new Gson().fromJson(request.body(), UserData.class);
+        if (user.username() == null || user.password() == null) {
+            response.status(400);
+            return "{\"message\": \"Error: bad request\"}";
+        }
         var auth = service.login(user);
-        response.status(200);
-        return auth.toJson();
+        if (auth == null) {
+            response.status(401);
+            return "{\"message\": \"Error: unauthorized\"}";
+        } else {
+            response.status(200);
+            return auth.toJson();
+        }
     }
 
     private Object logout(Request request, Response response) throws ResponseException {

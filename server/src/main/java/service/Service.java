@@ -43,10 +43,10 @@ public class Service {
     public AuthData login(UserData userData) throws ResponseException {
         UserData validUserData = dataAccess.getUser(userData.username());
 
-        if (validUserData.loginEquals(userData)) {
-            return createAuthData(userData.username());
-        } else {
+        if (validUserData == null || !validUserData.equals(userData)) {
             return null;
+        } else {
+            return createAuthData(userData.username());
         }
     }
 
