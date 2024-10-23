@@ -4,9 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataaccess.MemoryDataAccess;
 import exception.ResponseException;
+import model.GameData;
 import model.UserData;
 import spark.*;
 import service.Service;
+
+import java.util.Collection;
 
 public class Server {
 
@@ -97,8 +100,10 @@ public class Server {
         String authToken = request.headers("Authorization");
         String gameName = request.queryParams("gameName");
         int gameID = service.create(authToken, gameName);
-        if (gameID == 0) {
+        if (gameID == -401) {
             return error401(response);
+        } else if (gameID == -400) {
+            return error400(response);
         } else {
             response.status(200);
             return "{\"gameID\": " + gameID + "}";
@@ -129,11 +134,12 @@ public class Server {
 
     private Object listGames(Request request, Response response) throws ResponseException {
         String authToken = request.headers("Authorization");
-        String games = service.list(authToken);
+        Collection<GameData> games = service.list(authToken);
         if (games == null) {
             return error401(response);
         }
-        String gamesJson = "{\"games\": " + games + "}";
+        String allGames = serializer.toJson(games);
+        String gamesJson = "{\"games\": " + allGames + "}";
         response.status(200);
         return gamesJson;
     }

@@ -5,6 +5,8 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
+import java.util.Collection;
+
 public interface DataAccess {
     void clear() throws ResponseException;
     UserData getUser(String username) throws ResponseException;
@@ -15,5 +17,5 @@ public interface DataAccess {
     int createGame(String gameName) throws ResponseException;
     GameData getGameData(int gameID) throws ResponseException;
     void updateGameData(GameData newGameData) throws ResponseException;
-    Object getGames() throws ResponseException;
+    Collection<GameData> getGames() throws ResponseException;
 }

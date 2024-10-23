@@ -69,7 +69,7 @@ public class MemoryDataAccess implements DataAccess{
     }
 
     @Override
-    public Object getGames() throws ResponseException {
+    public Collection<GameData> getGames() throws ResponseException {
         List<GameData> targetList = new ArrayList<>(gameDataMap.values());
         return targetList;
     }

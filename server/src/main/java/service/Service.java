@@ -8,6 +8,8 @@ import model.GameData;
 import model.UserData;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 public class Service {
@@ -26,6 +28,11 @@ public class Service {
     }
 
     public AuthData register(UserData userData) throws ResponseException {
+        if (userData == null || userData.username() == null ||
+                userData.password() == null || userData.email() == null) {
+            return null;
+        }
+
         UserData emptyUserData = dataAccess.getUser(userData.username());
 
         if (emptyUserData == null) {
@@ -60,11 +67,13 @@ public class Service {
     }
 
     public int create(String authToken, String gameName) throws ResponseException {
-        if (validAuthToken(authToken)) {
+        if (gameName == null) {
+            return -400;
+        } else if (validAuthToken(authToken)) {
             int gameId = dataAccess.createGame(gameName);
             return gameId;
         } else {
-            return 0;
+            return -401;
         }
     }
 
@@ -100,10 +109,9 @@ public class Service {
         return 400;
     }
 
-    public String list(String authToken) throws ResponseException {
+    public Collection<GameData> list(String authToken) throws ResponseException {
         if (validAuthToken(authToken)) {
-            String allGames = new Gson().toJson(dataAccess.getGames());
-            return allGames;
+            return dataAccess.getGames();
         } else {
             return null;
         }
