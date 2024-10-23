@@ -10,7 +10,7 @@ import org.junit.jupiter.api.*;
 import java.util.Collection;
 
 public class ServiceTests {
-    static final Service service = new Service(new MemoryDataAccess());
+    private final Service service = new Service(new MemoryDataAccess());
 
     @BeforeEach
     void setUp() throws ResponseException {

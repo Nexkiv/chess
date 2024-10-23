@@ -8,15 +8,15 @@ public class ChessRules {
     /**
      * A HashMap containing all the movement rules based on piece.
      */
-    static private final HashMap<PieceType, MovementRule> rules = new HashMap<>();
+    static private final HashMap<PieceType, MovementRule> RULES = new HashMap<>();
 
     static {
-        rules.put(PieceType.KING, new KingMovementRule());
-        rules.put(PieceType.QUEEN, new QueenMovementRule());
-        rules.put(PieceType.KNIGHT, new KnightMovementRule());
-        rules.put(PieceType.BISHOP, new BishopMovementRule());
-        rules.put(PieceType.ROOK, new RookMovementRule());
-        rules.put(PieceType.PAWN, new PawnMovementRule());
+        RULES.put(PieceType.KING, new KingMovementRule());
+        RULES.put(PieceType.QUEEN, new QueenMovementRule());
+        RULES.put(PieceType.KNIGHT, new KnightMovementRule());
+        RULES.put(PieceType.BISHOP, new BishopMovementRule());
+        RULES.put(PieceType.ROOK, new RookMovementRule());
+        RULES.put(PieceType.PAWN, new PawnMovementRule());
     }
 
     /**
@@ -25,7 +25,7 @@ public class ChessRules {
      * @return the rules for the given piece
      */
     static public MovementRule getMovementRule(ChessPiece.PieceType type) {
-        return rules.get(type);
+        return RULES.get(type);
     }
 
     static public MovementRule getPawnCaptureMovementRule() {

@@ -14,7 +14,7 @@ import java.util.Collection;
 public class Server {
 
     private final Service service;
-    private final static Gson serializer = new Gson();
+    private final static Gson SERIALIZER = new Gson();
 
     public Server() {
         service = new Service(new MemoryDataAccess());
@@ -49,7 +49,7 @@ public class Server {
     }
 
     private void exceptionHandler(ResponseException exception, Request request, Response response) {
-        response.status(exception.StatusCode());
+        response.status(exception.statusCode());
     }
 
     private Object clearData(Request request, Response response) throws ResponseException {
@@ -59,7 +59,7 @@ public class Server {
     }
 
     private Object registerUser(Request request, Response response) throws ResponseException {
-        var user = serializer.fromJson(request.body(), UserData.class);
+        var user = SERIALIZER.fromJson(request.body(), UserData.class);
         if (user.username() == null || user.password() == null || user.email() == null) {
             return error400(response);
         }
@@ -72,7 +72,7 @@ public class Server {
     }
 
     private Object login(Request request, Response response) throws ResponseException {
-        var user = serializer.fromJson(request.body(), UserData.class);
+        var user = SERIALIZER.fromJson(request.body(), UserData.class);
         if (user.username() == null || user.password() == null) {
             return error400(response);
         }
@@ -98,7 +98,7 @@ public class Server {
 
     private Object createGame(Request request, Response response) throws ResponseException {
         String authToken = request.headers("Authorization");
-        JsonObject jsonObject = serializer.fromJson(request.body(), JsonObject.class);
+        JsonObject jsonObject = SERIALIZER.fromJson(request.body(), JsonObject.class);
         if (jsonObject.get("gameName") == null) {
             return error400(response);
         }
@@ -116,7 +116,7 @@ public class Server {
 
     private Object joinGame(Request request, Response response) throws ResponseException {
         String authToken = request.headers("Authorization");
-        JsonObject jsonObject = serializer.fromJson(request.body(), JsonObject.class);
+        JsonObject jsonObject = SERIALIZER.fromJson(request.body(), JsonObject.class);
         if (jsonObject.get("playerColor") == null || jsonObject.get("gameID") == null) {
             return error400(response);
         }
@@ -142,7 +142,7 @@ public class Server {
         if (games == null) {
             return error401(response);
         }
-        String allGames = serializer.toJson(games);
+        String allGames = SERIALIZER.toJson(games);
         String gamesJson = "{\"games\": " + allGames + "}";
         response.status(200);
         return gamesJson;
