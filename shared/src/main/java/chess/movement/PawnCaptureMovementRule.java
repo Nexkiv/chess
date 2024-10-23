@@ -5,7 +5,7 @@ import chess.*;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class PawnCaptureMovementRule extends BaseMovementRule {
+public class PawnCaptureMovementRule extends PawnMovementRuleAbstract {
 
     protected void capturePiece (ChessBoard board, ChessPosition pos,
                                  Collection<ChessMove> moves) {
@@ -24,15 +24,7 @@ public class PawnCaptureMovementRule extends BaseMovementRule {
             ChessPosition newPos = new ChessPosition(newRank, newFile);
             boolean canTake = (board.getPiece(newPos) == null) || (board.getPiece(newPos).getTeamColor() != board.getPiece(pos).getTeamColor());
             if (canTake) {
-                // TODO: Encapsulate promotion potential
-                if (newRank == 1 || newRank == 8) {
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.QUEEN));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.KNIGHT));
-                } else {
-                    moves.add(new ChessMove(pos, newPos,null));
-                }
+                addPawnMoves(pos, moves, newPos);
             }
         }
 
@@ -43,15 +35,7 @@ public class PawnCaptureMovementRule extends BaseMovementRule {
             ChessPosition newPos = new ChessPosition(newRank, newFile);
             boolean canTake = (board.getPiece(newPos) == null) || (board.getPiece(newPos).getTeamColor() != board.getPiece(pos).getTeamColor());
             if (canTake) {
-                // TODO: Encapsulate promotion potential
-                if (newRank == 1 || newRank == 8) {
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.QUEEN));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.KNIGHT));
-                } else {
-                    moves.add(new ChessMove(pos, newPos,null));
-                }
+                addPawnMoves(pos, moves, newPos);
             }
         }
     }

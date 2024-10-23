@@ -5,7 +5,7 @@ import chess.*;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class PawnMovementRule extends BaseMovementRule {
+public class PawnMovementRule extends PawnMovementRuleAbstract {
 
     protected void advanceForward(ChessBoard board, ChessPosition pos,
                                   Collection<ChessMove> moves) {
@@ -23,25 +23,16 @@ public class PawnMovementRule extends BaseMovementRule {
             ChessPosition newPos = new ChessPosition(newRank, currentFile);
             boolean isEmptyPosition = (board.getPiece(newPos) == null);
             if (isEmptyPosition) {
-                // TODO: Encapsulate promotion potential
-                if (newRank == 1 || newRank == 8) {
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.QUEEN));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.KNIGHT));
-                } else {
-                    moves.add(new ChessMove(pos, newPos,null));
+                addPawnMoves(pos, moves, newPos);
 
-                    // TODO: Encapsulate initial pawn move rules
-                    if ((pos.getRank() == 2 && pawnColor == ChessGame.TeamColor.WHITE)
-                            || (pos.getRank() == 7 && pawnColor == ChessGame.TeamColor.BLACK)) {
-                        newRank = newRank + rankInc;
-                        currentFile = pos.getFile();
-                        newPos = new ChessPosition(newRank, currentFile);
-                        isEmptyPosition = (board.getPiece(newPos) == null);
-                        if (isEmptyPosition) {
-                            moves.add(new ChessMove(pos, newPos,null));
-                        }
+                if ((pos.getRank() == 2 && pawnColor == ChessGame.TeamColor.WHITE)
+                        || (pos.getRank() == 7 && pawnColor == ChessGame.TeamColor.BLACK)) {
+                    newRank = newRank + rankInc;
+                    currentFile = pos.getFile();
+                    newPos = new ChessPosition(newRank, currentFile);
+                    isEmptyPosition = (board.getPiece(newPos) == null);
+                    if (isEmptyPosition) {
+                        moves.add(new ChessMove(pos, newPos,null));
                     }
                 }
             }
@@ -65,15 +56,7 @@ public class PawnMovementRule extends BaseMovementRule {
             ChessPosition newPos = new ChessPosition(newRank, newFile);
             boolean canTake = (board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() != board.getPiece(pos).getTeamColor());
             if (canTake) {
-                // TODO: Encapsulate promotion potential
-                if (newRank == 1 || newRank == 8) {
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.QUEEN));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.KNIGHT));
-                } else {
-                    moves.add(new ChessMove(pos, newPos,null));
-                }
+                addPawnMoves(pos, moves, newPos);
             }
         }
 
@@ -84,15 +67,7 @@ public class PawnMovementRule extends BaseMovementRule {
             ChessPosition newPos = new ChessPosition(newRank, newFile);
             boolean canTake = (board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() != board.getPiece(pos).getTeamColor());
             if (canTake) {
-                // TODO: Encapsulate promotion potential
-                if (newRank == 1 || newRank == 8) {
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.QUEEN));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.KNIGHT));
-                } else {
-                    moves.add(new ChessMove(pos, newPos,null));
-                }
+                addPawnMoves(pos, moves, newPos);
             }
         }
     }
