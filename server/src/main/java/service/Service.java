@@ -1,14 +1,11 @@
 package service;
 
-import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
