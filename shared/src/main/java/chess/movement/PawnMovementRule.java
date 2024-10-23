@@ -62,7 +62,7 @@ public class PawnMovementRule extends BaseMovementRule {
             moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.QUEEN));
             moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.BISHOP));
             moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.ROOK));
-            moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.KNIGHT));;
+            moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.KNIGHT));
         } else {
             moves.add(new ChessMove(pos, newPos,null));
         }

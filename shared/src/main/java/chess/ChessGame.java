@@ -223,11 +223,7 @@ public class ChessGame {
         generateDangerMap(teamColor);
 
         ChessPosition kingLocation = findKing(teamColor);
-        if (kingLocation != null && dangerMap[kingLocation.getRank() - 1][kingLocation.getFile() - 1] == Safety.DANGER) {
-            return true;
-        } else {
-            return false;
-        }
+        return kingLocation != null && dangerMap[kingLocation.getRank() - 1][kingLocation.getFile() - 1] == Safety.DANGER;
     }
 
     private ChessPosition findKing(TeamColor teamColor) {
@@ -258,11 +254,7 @@ public class ChessGame {
             return false;
         } else {
             Collection<ChessMove> validMoves = allValidMoves(teamColor);
-            if (validMoves.isEmpty()) {
-                return true;
-            } else {
-                return false;
-            }
+            return validMoves.isEmpty();
         }
     }
 
@@ -278,11 +270,7 @@ public class ChessGame {
             return false;
         } else {
             Collection<ChessMove> validMoves = allValidMoves(teamColor);
-            if (validMoves.isEmpty()) {
-                return true;
-            } else {
-                return false;
-            }
+            return validMoves.isEmpty();
         }
     }
 
