@@ -6,8 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class PawnMovementRule extends BaseMovementRule {
-
-    protected void advanceForward(ChessBoard board, ChessPosition pos,
+    private void advanceForward(ChessBoard board, ChessPosition pos,
                                   Collection<ChessMove> moves) {
         ChessGame.TeamColor pawnColor = board.getPiece(pos).getTeamColor();
         int rankInc = switch (pawnColor) {
@@ -25,16 +24,7 @@ public class PawnMovementRule extends BaseMovementRule {
             if (isEmptyPosition) {
                 addPawnMoves(pos, moves, newPos);
 
-                if ((pos.getRank() == 2 && pawnColor == ChessGame.TeamColor.WHITE)
-                        || (pos.getRank() == 7 && pawnColor == ChessGame.TeamColor.BLACK)) {
-                    newRank = newRank + rankInc;
-                    currentFile = pos.getFile();
-                    newPos = new ChessPosition(newRank, currentFile);
-                    isEmptyPosition = (board.getPiece(newPos) == null);
-                    if (isEmptyPosition) {
-                        moves.add(new ChessMove(pos, newPos,null));
-                    }
-                }
+                addPawnStartingMoves(board, pos, moves, newRank,rankInc);
             }
         }
     }
@@ -77,6 +67,22 @@ public class PawnMovementRule extends BaseMovementRule {
             moves.add(new ChessMove(pos, newPos, ChessPiece.PieceType.KNIGHT));;
         } else {
             moves.add(new ChessMove(pos, newPos,null));
+        }
+    }
+
+    private void addPawnStartingMoves (ChessBoard board, ChessPosition pos, Collection<ChessMove> moves,
+                                       int newRank, int rankInc) {
+        ChessGame.TeamColor pawnColor = board.getPiece(pos).getTeamColor();
+
+        if ((pos.getRank() == 2 && pawnColor == ChessGame.TeamColor.WHITE)
+                || (pos.getRank() == 7 && pawnColor == ChessGame.TeamColor.BLACK)) {
+            newRank = newRank + rankInc;
+            int currentFile = pos.getFile();
+            ChessPosition newPos = new ChessPosition(newRank, currentFile);
+            boolean isEmptyPosition = (board.getPiece(newPos) == null);
+            if (isEmptyPosition) {
+                moves.add(new ChessMove(pos, newPos,null));
+            }
         }
     }
 
