@@ -8,8 +8,6 @@ import model.UserData;
 import spark.*;
 import service.Service;
 
-import java.util.Vector;
-
 public class Server {
 
     private final Service service;
@@ -46,9 +44,8 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object exceptionHandler(ResponseException exception, Request request, Response response) {
+    private void exceptionHandler(ResponseException exception, Request request, Response response) {
         response.status(exception.StatusCode());
-        return "{\"message\": " + exception.getMessage() + "}";
     }
 
     private Object clearData(Request request, Response response) throws ResponseException {
@@ -59,7 +56,14 @@ public class Server {
 
     private Object registerUser(Request request, Response response) throws ResponseException {
         var user = new Gson().fromJson(request.body(), UserData.class);
+        if (user.username() == null || user.password() == null || user.email() == null) {
+            return error400(response);
+        }
         var auth = service.register(user);
+        if (auth == null) {
+            response.status(403);
+            return "{\"message\": \"Error: already taken\"}";
+        }
         response.status(200);
         return auth.toJson();
     }
@@ -67,8 +71,7 @@ public class Server {
     private Object login(Request request, Response response) throws ResponseException {
         var user = new Gson().fromJson(request.body(), UserData.class);
         if (user.username() == null || user.password() == null) {
-            response.status(400);
-            return "{\"message\": \"Error: bad request\"}";
+            return error400(response);
         }
         var auth = service.login(user);
         if (auth == null) {
@@ -110,5 +113,10 @@ public class Server {
         String games = "{\"games\": " + service.list(authToken) + "}";
         response.status(200);
         return games;
+    }
+
+    private String error400 (Response response) {
+        response.status(400);
+        return "{\"message\": \"Error: bad request\"}";
     }
 }
