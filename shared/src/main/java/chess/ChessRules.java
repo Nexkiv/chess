@@ -1,6 +1,6 @@
 package chess;
 
-import chess.movementRule.*;
+import chess.MovementRule.*;
 import chess.ChessPiece.PieceType;
 import java.util.HashMap;
 
