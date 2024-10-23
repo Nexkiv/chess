@@ -5,8 +5,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MemoryDataAccess implements DataAccess{
 
@@ -50,6 +49,8 @@ public class MemoryDataAccess implements DataAccess{
     public int createGame(String gameName) {
         int gameId = nextGameId;
         GameData newGame = new GameData(gameId, null, null, gameName, new ChessGame());
+        gameDataMap.put(gameId, newGame);
+
         nextGameId++;
 
         return gameId;
@@ -63,5 +64,11 @@ public class MemoryDataAccess implements DataAccess{
     @Override
     public void updateGameData(GameData newGameData) {
         gameDataMap.replace(newGameData.gameID(), newGameData);
+    }
+
+    @Override
+    public Object getGames() {
+        List<GameData> targetList = new ArrayList<>(gameDataMap.values());
+        return targetList;
     }
 }

@@ -29,6 +29,8 @@ public class Server {
         Spark.delete("/session", this::logout);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
+        Spark.get("/game", this::listGames);
+
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -81,6 +83,14 @@ public class Server {
         response.status(200);
         return "";
     }
+
+    private Object listGames(Request request, Response response) {
+        String authToken = request.headers("Authorization");
+        String games = "{\"games\": " + service.list(authToken) + "}";
+        response.status(200);
+        return games;
+    }
+
 
     public void stop() {
         Spark.stop();

@@ -1,5 +1,7 @@
 package service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dataaccess.DataAccess;
 import model.AuthData;
 import model.GameData;
@@ -68,18 +70,27 @@ public class Service {
             if (playerColor == null) {
                 // TODO: Add the user as a spectator
             } else if (playerColor.equals("WHITE")) {
-                if (gameData.whiteUsername() != null) {
+                if (gameData.whiteUsername() == null) {
                     newGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(), gameData.gameName(), gameData.game());
                     dataAccess.updateGameData(newGameData);
                 }
             } else if (playerColor.equals("BLACK")) {
-                if (gameData.blackUsername() != null) {
+                if (gameData.blackUsername() == null) {
                     newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.game());
                     dataAccess.updateGameData(newGameData);
                 }
             } else {
                 // TODO: Add error saying the position is already taken
             }
+        }
+    }
+
+    public String list(String authToken) {
+        if (validAuthToken(authToken)) {
+            String allGames = new Gson().toJson(dataAccess.getGames());
+            return allGames;
+        } else {
+            return null;
         }
     }
 

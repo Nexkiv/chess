@@ -16,4 +16,6 @@ public interface DataAccess {
 
     GameData getGameData(int gameID);
     void updateGameData(GameData newGameData);
+
+    Object getGames();
 }
