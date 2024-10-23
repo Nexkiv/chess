@@ -87,7 +87,8 @@ public class Service {
                 return 200;
             } else if (playerColor.equals("WHITE")) {
                 if (gameData.whiteUsername() == null) {
-                    newGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+                    newGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(),
+                                                    gameData.gameName(), gameData.game());
                     dataAccess.updateGameData(newGameData);
                     return 200;
                 } else {
@@ -95,7 +96,8 @@ public class Service {
                 }
             } else if (playerColor.equals("BLACK")) {
                 if (gameData.blackUsername() == null) {
-                    newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.game());
+                    newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(),
+                                                    gameData.gameName(), gameData.game());
                     dataAccess.updateGameData(newGameData);
                     return 200;
                 } else {

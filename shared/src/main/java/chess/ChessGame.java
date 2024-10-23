@@ -71,7 +71,8 @@ public class ChessGame {
                 if (gameBoard.getPiece(previousMoveEnd).getPieceType() == ChessPiece.PieceType.PAWN) {
                     if ((previousMoveEnd.getRank() - previousMoveStart.getRank()) == 2 ||
                             (previousMoveEnd.getRank() - previousMoveStart.getRank()) == -2) {
-                        enPassantPieceLocation = new ChessPosition((previousMoveStart.getRank() + previousMoveEnd.getRank()) / 2, previousMoveEnd.getFile());
+                        enPassantPieceLocation = new ChessPosition(
+                                (previousMoveStart.getRank() + previousMoveEnd.getRank()) / 2, previousMoveEnd.getFile());
                         possibleMoves.add(new ChessMove(startPosition, enPassantPieceLocation, null));
                     }
                 }
@@ -224,7 +225,8 @@ public class ChessGame {
         for (int i = 1; i <= dimension; i++) {
             for (int j = 1; j <= dimension; j++) {
                 ChessPiece pieceOfInterest = gameBoard.getPiece(new ChessPosition(i, j));
-                if (pieceOfInterest != null && pieceOfInterest.getPieceType() == ChessPiece.PieceType.KING && pieceOfInterest.getTeamColor() == teamColor) {
+                if (pieceOfInterest != null && pieceOfInterest.getPieceType() == ChessPiece.PieceType.KING
+                        && pieceOfInterest.getTeamColor() == teamColor) {
                     kingLocation = new ChessPosition(i, j);
                     return kingLocation;
                 }

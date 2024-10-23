@@ -33,7 +33,8 @@ public class PawnMovementRule extends BaseMovementRule {
                     moves.add(new ChessMove(pos, newPos,null));
 
                     // TODO: Encapsulate initial pawn move rules
-                    if ((pos.getRank() == 2 && pawnColor == ChessGame.TeamColor.WHITE) || (pos.getRank() == 7 && pawnColor == ChessGame.TeamColor.BLACK)) {
+                    if ((pos.getRank() == 2 && pawnColor == ChessGame.TeamColor.WHITE)
+                            || (pos.getRank() == 7 && pawnColor == ChessGame.TeamColor.BLACK)) {
                         newRank = newRank + rankInc;
                         currentFile = pos.getFile();
                         newPos = new ChessPosition(newRank, currentFile);
