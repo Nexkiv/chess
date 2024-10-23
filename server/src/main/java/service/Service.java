@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 public class Service {
-    private DataAccess dataAccess;
+    private final DataAccess dataAccess;
 
     public Service (DataAccess dataAccess) {
         this.dataAccess = dataAccess;
@@ -67,8 +67,7 @@ public class Service {
         if (gameName == null) {
             return -400;
         } else if (validAuthToken(authToken)) {
-            int gameId = dataAccess.createGame(gameName);
-            return gameId;
+            return dataAccess.createGame(gameName);
         } else {
             return -401;
         }
@@ -127,7 +126,7 @@ public class Service {
     }
 
     private boolean validAuthToken(String authToken) {
-        AuthData authData = null;
+        AuthData authData;
         try {
             authData = dataAccess.getAuthData(authToken);
         } catch (ResponseException exception) {

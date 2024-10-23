@@ -1,13 +1,14 @@
 package model;
 
-import com.google.gson.Gson;
+// import com.google.gson.Gson;
 
 import java.util.Objects;
 
 public record UserData(String username, String password, String email) {
-    public String toJson() {
-        return new Gson().toJson(this);
-    }
+
+//    public String toJson() {
+//        return new Gson().toJson(this);
+//    }
 
     public boolean loginEquals(Object o) {
         if (this == o) {
