@@ -12,7 +12,6 @@ public class PawnMovementRule extends BaseMovementRule {
         int rankInc = switch (pawnColor) {
             case WHITE -> 1;
             case BLACK -> -1;
-            default -> 0;
         };
 
         int newRank = pos.getRank() + rankInc;
@@ -35,7 +34,6 @@ public class PawnMovementRule extends BaseMovementRule {
         int rankInc = switch (pawnColor) {
             case WHITE -> 1;
             case BLACK -> -1;
-            default -> 0;
         };
 
         int newRank = pos.getRank() + rankInc;

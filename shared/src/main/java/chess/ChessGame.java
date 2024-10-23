@@ -15,6 +15,10 @@ public class ChessGame {
     private final short dimension = 8;
     private final Safety[][] dangerMap = new Safety[dimension][dimension];
     private ChessPosition enPassantPieceLocation = null;
+    private enum CastleSide {
+        QUEEN_SIDE,
+        KING_SIDE
+    }
 
     private enum Safety {
         SAFE,
@@ -105,31 +109,15 @@ public class ChessGame {
 
                 if (startPosition.equals(kingStartingPosition) && canCastle) {
 
-
                     // Queen Side Castle
-                    ChessPosition queenSideCastleAdj = new ChessPosition(homeRank, 4);
-                    ChessPosition queenSideCastleEnd = new ChessPosition(homeRank, 3);
-                    ChessMove queenSideCastle = new ChessMove(startPosition, queenSideCastleEnd, null);
-                    if (possibleMoves.contains(new ChessMove(startPosition, queenSideCastleAdj, null)) &&
-                            gameBoard.getPiece(queenSideCastleAdj) == null &&
-                            gameBoard.getPiece(queenSideCastleEnd) == null &&
-                            canQueenSideCastle) {
-                        if (gameBoard.getPiece(queenSideRookPos).getPieceType() == ChessPiece.PieceType.ROOK) {
-                            possibleMoves.add(queenSideCastle);
-                        }
+                    if (canQueenSideCastle) {
+                        castleMove(CastleSide.QUEEN_SIDE, startPosition, queenSideRookPos, homeRank, possibleMoves);
                     }
 
+
                     // King Side Castle
-                    ChessPosition kingSideCastleAdj = new ChessPosition(homeRank, 6);
-                    ChessPosition kingSideCastleEnd = new ChessPosition(homeRank, 7);
-                    ChessMove kingSideCastle = new ChessMove(startPosition, kingSideCastleEnd, null);
-                    if (possibleMoves.contains(new ChessMove(startPosition, kingSideCastleAdj, null)) &&
-                            gameBoard.getPiece(kingSideCastleAdj) == null &&
-                            gameBoard.getPiece(kingSideCastleEnd) == null &&
-                            canKingSideCastle) {
-                        if (gameBoard.getPiece(kingSideRookPos).getPieceType() == ChessPiece.PieceType.ROOK) {
-                            possibleMoves.add(kingSideCastle);
-                        }
+                    if (canKingSideCastle) {
+                        castleMove(CastleSide.KING_SIDE, startPosition, kingSideRookPos, homeRank, possibleMoves);
                     }
                 }
             }
@@ -138,6 +126,29 @@ public class ChessGame {
         possibleMoves.removeIf(this::moveIntoCheckCheck);
 
         return possibleMoves;
+    }
+
+    private void castleMove(CastleSide castleSide, ChessPosition startPosition, ChessPosition rookPosition,
+                                int homeRank, Collection<ChessMove> possibleMoves) {
+        ChessPosition castleAdj;
+        ChessPosition castleEnd;
+        if (castleSide == CastleSide.QUEEN_SIDE) {
+            castleAdj = new ChessPosition(homeRank, 4);
+            castleEnd = new ChessPosition(homeRank, 3);
+
+        } else {
+            castleAdj = new ChessPosition(homeRank, 6);
+            castleEnd = new ChessPosition(homeRank, 7);
+        }
+
+        ChessMove queenSideCastle = new ChessMove(startPosition, castleEnd, null);
+        if (possibleMoves.contains(new ChessMove(startPosition, castleAdj, null)) &&
+                gameBoard.getPiece(castleAdj) == null &&
+                gameBoard.getPiece(castleEnd) == null) {
+            if (gameBoard.getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK) {
+                possibleMoves.add(queenSideCastle);
+            }
+        }
     }
 
     private boolean moveIntoCheckCheck(ChessMove move) {
