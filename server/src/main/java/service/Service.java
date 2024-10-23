@@ -2,7 +2,9 @@ package service;
 
 import dataaccess.DataAccess;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -57,7 +59,31 @@ public class Service {
         }
     }
 
-    @org.jetbrains.annotations.NotNull
+    public void join(String authToken, String playerColor, int gameID) {
+        AuthData authData = dataAccess.getAuthData(authToken);
+        GameData gameData = dataAccess.getGameData(gameID);
+
+        if (authData != null && gameData != null) {
+            GameData newGameData;
+            if (playerColor == null) {
+                // TODO: Add the user as a spectator
+            } else if (playerColor.equals("WHITE")) {
+                if (gameData.whiteUsername() != null) {
+                    newGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+                    dataAccess.updateGameData(newGameData);
+                }
+            } else if (playerColor.equals("BLACK")) {
+                if (gameData.blackUsername() != null) {
+                    newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.game());
+                    dataAccess.updateGameData(newGameData);
+                }
+            } else {
+                // TODO: Add error saying the position is already taken
+            }
+        }
+    }
+
+    @NotNull
     private AuthData createAuthData(String username) {
         AuthData userAuthData = new AuthData(username, generateToken());
         dataAccess.createAuthData(userAuthData);
@@ -68,6 +94,4 @@ public class Service {
         AuthData authData = dataAccess.getAuthData(authToken);
         return authData != null;
     }
-
-
 }

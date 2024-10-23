@@ -1,10 +1,13 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dataaccess.MemoryDataAccess;
 import model.UserData;
 import spark.*;
 import service.Service;
+
+import java.util.Vector;
 
 public class Server {
 
@@ -25,6 +28,7 @@ public class Server {
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
         Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -66,6 +70,16 @@ public class Server {
         int gameID = service.create(authToken, gameName);
         response.status(200);
         return "{\"gameID\": " + gameID + "}";
+    }
+
+    private Object joinGame(Request request, Response response) {
+        String authToken = request.headers("Authorization");
+        JsonObject jsonObject = new Gson().fromJson(request.body(), JsonObject.class);
+        String playerColor = jsonObject.get("playerColor").getAsString();
+        int gameID = jsonObject.get("gameID").getAsInt();
+        service.join(authToken, playerColor, gameID);
+        response.status(200);
+        return "";
     }
 
     public void stop() {

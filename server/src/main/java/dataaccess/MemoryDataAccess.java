@@ -54,4 +54,14 @@ public class MemoryDataAccess implements DataAccess{
 
         return gameId;
     }
+
+    @Override
+    public GameData getGameData(int gameID) {
+        return gameDataMap.get(gameID);
+    }
+
+    @Override
+    public void updateGameData(GameData newGameData) {
+        gameDataMap.replace(newGameData.gameID(), newGameData);
+    }
 }
