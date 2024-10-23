@@ -97,8 +97,12 @@ public class Server {
         String authToken = request.headers("Authorization");
         String gameName = request.queryParams("gameName");
         int gameID = service.create(authToken, gameName);
-        response.status(200);
-        return "{\"gameID\": " + gameID + "}";
+        if (gameID == 0) {
+            return error401(response);
+        } else {
+            response.status(200);
+            return "{\"gameID\": " + gameID + "}";
+        }
     }
 
     private Object joinGame(Request request, Response response) throws ResponseException {
