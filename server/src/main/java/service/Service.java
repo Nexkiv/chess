@@ -1,8 +1,8 @@
 package service;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import dataaccess.DataAccess;
+import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -18,10 +18,14 @@ public class Service {
     }
 
     public void clear () {
-        dataAccess.clear();
+        try {
+            dataAccess.clear();
+        } catch (ResponseException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
-    public AuthData register(UserData userData) {
+    public AuthData register(UserData userData) throws ResponseException {
         UserData emptyUserData = dataAccess.getUser(userData.username());
 
         if (emptyUserData == null) {
@@ -36,7 +40,7 @@ public class Service {
         return UUID.randomUUID().toString();
     }
 
-    public AuthData login(UserData userData) {
+    public AuthData login(UserData userData) throws ResponseException {
         UserData validUserData = dataAccess.getUser(userData.username());
 
         if (validUserData.loginEquals(userData)) {
@@ -46,13 +50,13 @@ public class Service {
         }
     }
 
-    public void logout(String authToken) {
+    public void logout(String authToken) throws ResponseException {
         if (validAuthToken(authToken)) {
             dataAccess.deleteAuth(authToken);
         }
     }
 
-    public int create(String authToken, String gameName) {
+    public int create(String authToken, String gameName) throws ResponseException {
         if (validAuthToken(authToken)) {
             int gameId = dataAccess.createGame(gameName);
             return gameId;
@@ -61,7 +65,7 @@ public class Service {
         }
     }
 
-    public void join(String authToken, String playerColor, int gameID) {
+    public void join(String authToken, String playerColor, int gameID) throws ResponseException {
         AuthData authData = dataAccess.getAuthData(authToken);
         GameData gameData = dataAccess.getGameData(gameID);
 
@@ -85,7 +89,7 @@ public class Service {
         }
     }
 
-    public String list(String authToken) {
+    public String list(String authToken) throws ResponseException {
         if (validAuthToken(authToken)) {
             String allGames = new Gson().toJson(dataAccess.getGames());
             return allGames;
@@ -97,12 +101,21 @@ public class Service {
     @NotNull
     private AuthData createAuthData(String username) {
         AuthData userAuthData = new AuthData(username, generateToken());
-        dataAccess.createAuthData(userAuthData);
+        try {
+            dataAccess.createAuthData(userAuthData);
+        } catch (ResponseException exception) {
+            throw new RuntimeException(exception);
+        }
         return userAuthData;
     }
 
     private boolean validAuthToken(String authToken) {
-        AuthData authData = dataAccess.getAuthData(authToken);
+        AuthData authData = null;
+        try {
+            authData = dataAccess.getAuthData(authToken);
+        } catch (ResponseException exception) {
+            throw new RuntimeException(exception);
+        }
         return authData != null;
     }
 }
