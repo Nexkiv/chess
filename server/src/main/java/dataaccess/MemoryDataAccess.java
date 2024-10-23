@@ -19,6 +19,7 @@ public class MemoryDataAccess implements DataAccess{
     public void clear() throws ResponseException {
         userDataMap.clear();
         authTokensMap.clear();
+        gameDataMap.clear();
     }
 
     @Override

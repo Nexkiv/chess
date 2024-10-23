@@ -68,28 +68,36 @@ public class Service {
         }
     }
 
-    public void join(String authToken, String playerColor, int gameID) throws ResponseException {
+    public int join(String authToken, String playerColor, int gameID) throws ResponseException {
         AuthData authData = dataAccess.getAuthData(authToken);
         GameData gameData = dataAccess.getGameData(gameID);
 
-        if (authData != null && gameData != null) {
+        if (authData == null) {
+            return 401;
+        } else if (gameData != null) {
             GameData newGameData;
             if (playerColor == null) {
                 // TODO: Add the user as a spectator
+                return 200;
             } else if (playerColor.equals("WHITE")) {
                 if (gameData.whiteUsername() == null) {
                     newGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(), gameData.gameName(), gameData.game());
                     dataAccess.updateGameData(newGameData);
+                    return 200;
+                } else {
+                    return 403;
                 }
             } else if (playerColor.equals("BLACK")) {
                 if (gameData.blackUsername() == null) {
                     newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.game());
                     dataAccess.updateGameData(newGameData);
+                    return 200;
+                } else {
+                    return 403;
                 }
-            } else {
-                // TODO: Add error saying the position is already taken
             }
         }
+        return 400;
     }
 
     public String list(String authToken) throws ResponseException {

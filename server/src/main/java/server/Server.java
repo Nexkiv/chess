@@ -59,13 +59,12 @@ public class Server {
         if (user.username() == null || user.password() == null || user.email() == null) {
             return error400(response);
         }
-        var auth = service.register(user);
-        if (auth == null) {
-            response.status(403);
-            return "{\"message\": \"Error: already taken\"}";
+        var userInfo = service.register(user);
+        if (userInfo == null) {
+            return error403(response);
         }
         response.status(200);
-        return auth.toJson();
+        return userInfo.toJson();
     }
 
     private Object login(Request request, Response response) throws ResponseException {
@@ -108,11 +107,20 @@ public class Server {
     private Object joinGame(Request request, Response response) throws ResponseException {
         String authToken = request.headers("Authorization");
         JsonObject jsonObject = new Gson().fromJson(request.body(), JsonObject.class);
+        if (jsonObject.get("playerColor") == null || jsonObject.get("gameID") == null) {
+            return error400(response);
+        }
         String playerColor = jsonObject.get("playerColor").getAsString();
         int gameID = jsonObject.get("gameID").getAsInt();
-        service.join(authToken, playerColor, gameID);
-        response.status(200);
-        return "";
+        int statusCode = service.join(authToken, playerColor, gameID);
+
+        switch (statusCode) {
+            case 200: response.status(200); return "";
+            case 400: return error400(response);
+            case 401: return error401(response);
+            case 403: return error403(response);
+            default: throw new ResponseException(500, "something went wrong in joinGame()");
+        }
     }
 
     private Object listGames(Request request, Response response) throws ResponseException {
@@ -130,5 +138,10 @@ public class Server {
     private String error401 (Response response) {
         response.status(401);
         return "{\"message\": \"Error: unauthorized\"}";
+    }
+
+    private String error403 (Response response) {
+        response.status(403);
+        return "{\"message\": \"Error: already taken\"}";
     }
 }
