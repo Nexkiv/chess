@@ -32,6 +32,24 @@ public class Service {
         return UUID.randomUUID().toString();
     }
 
+    public AuthData login(UserData userData) {
+        UserData validUserData = dataAccess.getUser(userData.username());
+
+        if (validUserData.loginEquals(userData)) {
+            return createAuthData(userData.username());
+        } else {
+            return null;
+        }
+    }
+
+    public void logout(String authToken) {
+        AuthData authData = dataAccess.getAuthData(authToken);
+
+        if (authData != null) {
+            dataAccess.deleteAuth(authData);
+        }
+    }
+
     @org.jetbrains.annotations.NotNull
     private AuthData createAuthData(String username) {
         AuthData userAuthData = new AuthData(username, generateToken());
