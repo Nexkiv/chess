@@ -50,9 +50,12 @@ public class Service {
         }
     }
 
-    public void logout(String authToken) throws ResponseException {
+    public boolean successfulLogout(String authToken) throws ResponseException {
         if (validAuthToken(authToken)) {
             dataAccess.deleteAuth(authToken);
+            return true;
+        } else {
+            return false;
         }
     }
 

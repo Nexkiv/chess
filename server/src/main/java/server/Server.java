@@ -75,8 +75,7 @@ public class Server {
         }
         var auth = service.login(user);
         if (auth == null) {
-            response.status(401);
-            return "{\"message\": \"Error: unauthorized\"}";
+            return error401(response);
         } else {
             response.status(200);
             return auth.toJson();
@@ -85,9 +84,13 @@ public class Server {
 
     private Object logout(Request request, Response response) throws ResponseException {
         String authToken = request.headers("Authorization");
-        service.logout(authToken);
-        response.status(200);
-        return "";
+        if (service.successfulLogout(authToken)) {
+            response.status(200);
+            return "";
+        } else {
+            return error401(response);
+        }
+
     }
 
     private Object createGame(Request request, Response response) throws ResponseException {
@@ -118,5 +121,10 @@ public class Server {
     private String error400 (Response response) {
         response.status(400);
         return "{\"message\": \"Error: bad request\"}";
+    }
+
+    private String error401 (Response response) {
+        response.status(401);
+        return "{\"message\": \"Error: unauthorized\"}";
     }
 }
