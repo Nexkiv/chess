@@ -43,10 +43,17 @@ public class Service {
     }
 
     public void logout(String authToken) {
-        AuthData authData = dataAccess.getAuthData(authToken);
+        if (validAuthToken(authToken)) {
+            dataAccess.deleteAuth(authToken);
+        }
+    }
 
-        if (authData != null) {
-            dataAccess.deleteAuth(authData);
+    public int create(String authToken, String gameName) {
+        if (validAuthToken(authToken)) {
+            int gameId = dataAccess.createGame(gameName);
+            return gameId;
+        } else {
+            return 0;
         }
     }
 
@@ -56,4 +63,11 @@ public class Service {
         dataAccess.createAuthData(userAuthData);
         return userAuthData;
     }
+
+    private boolean validAuthToken(String authToken) {
+        AuthData authData = dataAccess.getAuthData(authToken);
+        return authData != null;
+    }
+
+
 }

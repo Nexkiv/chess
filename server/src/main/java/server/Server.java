@@ -24,6 +24,7 @@ public class Server {
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
+        Spark.post("/game", this::createGame);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -42,21 +43,29 @@ public class Server {
         var user = new Gson().fromJson(request.body(), UserData.class);
         var auth = service.register(user);
         response.status(200);
-        return new Gson().toJson(auth);
+        return auth.toJson();
     }
 
     private Object login(Request request, Response response) {
         var user = new Gson().fromJson(request.body(), UserData.class);
         var auth = service.login(user);
         response.status(200);
-        return new Gson().toJson(auth);
+        return auth.toJson();
     }
 
     private Object logout(Request request, Response response) {
-        String authToken = new Gson().fromJson(request.body(), String.class);
+        String authToken = request.headers("Authorization");
         service.logout(authToken);
         response.status(200);
         return "";
+    }
+
+    private Object createGame(Request request, Response response) {
+        String authToken = request.headers("Authorization");
+        String gameName = request.queryParams("gameName");
+        int gameID = service.create(authToken, gameName);
+        response.status(200);
+        return "{\"gameID\": " + gameID + "}";
     }
 
     public void stop() {
