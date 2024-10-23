@@ -22,12 +22,7 @@ public class Service {
 
         if (emptyUserData == null) {
             dataAccess.createUser(userData);
-
-            AuthData userAuthData = new AuthData(userData.username(), generateToken());
-
-            dataAccess.createAuthData(userAuthData);
-
-            return userAuthData;
+            return createAuthData(userData.username());
         } else {
             return null;
         }
@@ -37,4 +32,10 @@ public class Service {
         return UUID.randomUUID().toString();
     }
 
+    @org.jetbrains.annotations.NotNull
+    private AuthData createAuthData(String username) {
+        AuthData userAuthData = new AuthData(username, generateToken());
+        dataAccess.createAuthData(userAuthData);
+        return userAuthData;
+    }
 }
