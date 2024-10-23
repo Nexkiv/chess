@@ -98,7 +98,11 @@ public class Server {
 
     private Object createGame(Request request, Response response) throws ResponseException {
         String authToken = request.headers("Authorization");
-        String gameName = request.queryParams("gameName");
+        JsonObject jsonObject = serializer.fromJson(request.body(), JsonObject.class);
+        if (jsonObject.get("gameName") == null) {
+            return error400(response);
+        }
+        String gameName = jsonObject.get("gameName").getAsString();
         int gameID = service.create(authToken, gameName);
         if (gameID == -401) {
             return error401(response);
