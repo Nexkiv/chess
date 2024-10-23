@@ -128,9 +128,13 @@ public class Server {
 
     private Object listGames(Request request, Response response) throws ResponseException {
         String authToken = request.headers("Authorization");
-        String games = "{\"games\": " + service.list(authToken) + "}";
+        String games = service.list(authToken);
+        if (games == null) {
+            return error401(response);
+        }
+        String gamesJson = "{\"games\": " + games + "}";
         response.status(200);
-        return games;
+        return gamesJson;
     }
 
     private String error400 (Response response) {
