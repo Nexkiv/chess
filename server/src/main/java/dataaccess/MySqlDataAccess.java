@@ -17,16 +17,28 @@ public class MySqlDataAccess implements DataAccess {
 
     private final String[] createStatements = {
             """
+            CREATE TABLE IF NOT EXISTS  user (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `username` varchar(256) NOT NULL,
+              `password` TEXT NOT NULL,
+              `email` varchar(256) NOT NULL,
+              PRIMARY KEY (`id`),
+              INDEX(username)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+            """,
+            """
             CREATE TABLE IF NOT EXISTS  authentication (
               `id` int NOT NULL AUTO_INCREMENT,
               `userId` int NOT NULL,
               `username` varchar(256) NOT NULL,
               `authtoken` varchar(256) NOT NULL,
               PRIMARY KEY (`id`),
-              FOREIGN KEY (`userId`),
+              FOREIGN KEY (`userId`) REFERENCES user(`id`) ON DELETE CASCADE,
               INDEX(username),
               INDEX(authtoken)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+            """,
+            """
             CREATE TABLE IF NOT EXISTS  game (
               `id` int NOT NULL AUTO_INCREMENT,
               `whiteUserName` varchar(256) DEFAULT NULL,
@@ -35,14 +47,6 @@ public class MySqlDataAccess implements DataAccess {
               `json` TEXT NOT NULL,
               PRIMARY KEY (`id`),
               INDEX(gameName)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            CREATE TABLE IF NOT EXISTS  user (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `username` varchar(256) NOT NULL,
-              `password` TEXT NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`id`),
-              INDEX(username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
             """
     };
@@ -53,14 +57,16 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void clear() throws ResponseException {
-        var statement = """
-                        SET FOREIGN_KEY_CHECKS=0;
-                        TRUNCATE authentication;
-                        TRUNCATE game;
-                        TRUNCATE user;
-                        SET FOREIGN_KEY_CHECKS=1;
-                        """;
-        executeUpdate(statement);
+        String clearStatements =
+                """
+                SET FOREIGN_KEY_CHECKS=0;
+                TRUNCATE authentication;
+                TRUNCATE game;
+                TRUNCATE user;
+                SET FOREIGN_KEY_CHECKS=1;
+                """;
+
+        executeUpdate(clearStatements);
     }
 
     @Override

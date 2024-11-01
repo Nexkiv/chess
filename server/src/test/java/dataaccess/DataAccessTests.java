@@ -19,5 +19,29 @@ Database Unit Tests
 
 package dataaccess;
 
+import dataaccess.MemoryDataAccess;
+import exception.ResponseException;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
+import org.junit.jupiter.api.*;
+
+import java.util.Collection;
+
 public class DataAccessTests {
+    private final MySqlDataAccess dataAccess = new MySqlDataAccess();
+
+    public DataAccessTests() throws ResponseException {
+    }
+
+    @BeforeEach
+    void setUp() throws ResponseException {
+        dataAccess.clear();
+    }
+
+    @Test
+    @DisplayName("Bologna")
+    public void testBologna() {
+        Assertions.assertEquals(1, 1, "The numbers 1 and 1 are not equal?");
+    }
 }
