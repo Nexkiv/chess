@@ -1,5 +1,7 @@
 package model;
 
+import com.google.gson.Gson;
+
 import java.util.Objects;
 
 public record UserData(String username, String password, String email) {
@@ -13,6 +15,10 @@ public record UserData(String username, String password, String email) {
         }
         UserData userData = (UserData) o;
         return Objects.equals(username, userData.username) && Objects.equals(password, userData.password);
+    }
+
+    public String toJson() {
+        return new Gson().toJson(this);
     }
 
     @Override

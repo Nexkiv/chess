@@ -9,11 +9,14 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
+
 public class MySqlDataAccess implements DataAccess {
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  pet (
+            CREATE TABLE IF NOT EXISTS  user (
               `id` int NOT NULL AUTO_INCREMENT,
               `name` varchar(256) NOT NULL,
               `type` ENUM('CAT', 'DOG', 'FISH', 'FROG', 'ROCK') DEFAULT 'CAT',
@@ -77,6 +80,36 @@ public class MySqlDataAccess implements DataAccess {
     @Override
     public Collection<GameData> getGames() throws ResponseException {
         return List.of();
+    }
+
+    private int executeUpdate(String statement, Object... params) throws ResponseException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    switch (param) {
+                        case String p -> ps.setString(i + 1, p);
+                        case Integer p -> ps.setInt(i + 1, p);
+                        case AuthData p -> ps.setString(i + 1, p.toJson());
+                        case GameData p -> ps.setString(i + 1, p.toJson());
+                        case UserData p -> ps.setString(i + 1, p.toJson());
+                        case null -> ps.setNull(i + 1, NULL);
+                        default -> {
+                        }
+                    }
+                }
+                ps.executeUpdate();
+
+                var rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+
+                return 0;
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
     }
 
     private void configureDatabase() throws ResponseException {
