@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
@@ -16,15 +17,33 @@ public class MySqlDataAccess implements DataAccess {
 
     private final String[] createStatements = {
             """
+            CREATE TABLE IF NOT EXISTS  authentication (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `userId` int NOT NULL,
+              `username` varchar(256) NOT NULL,
+              `authtoken` varchar(256) NOT NULL,
+              PRIMARY KEY (`id`),
+              FOREIGN KEY (`userId`),
+              INDEX(username),
+              INDEX(authtoken)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            CREATE TABLE IF NOT EXISTS  game (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `whiteUserName` varchar(256) DEFAULT NULL,
+              `blackUserName` varchar(256) DEFAULT NULL,
+              `gameName` varchar(256) NOT NULL,
+              `json` TEXT NOT NULL,
+              PRIMARY KEY (`id`),
+              INDEX(gameName)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             CREATE TABLE IF NOT EXISTS  user (
               `id` int NOT NULL AUTO_INCREMENT,
-              `name` varchar(256) NOT NULL,
-              `type` ENUM('CAT', 'DOG', 'FISH', 'FROG', 'ROCK') DEFAULT 'CAT',
-              `json` TEXT DEFAULT NULL,
+              `username` varchar(256) NOT NULL,
+              `password` TEXT NOT NULL,
+              `email` varchar(256) NOT NULL,
               PRIMARY KEY (`id`),
-              INDEX(type),
-              INDEX(name)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+              INDEX(username)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
             """
     };
 
@@ -34,7 +53,14 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void clear() throws ResponseException {
-
+        var statement = """
+                        SET FOREIGN_KEY_CHECKS=0;
+                        TRUNCATE authentication;
+                        TRUNCATE game;
+                        TRUNCATE user;
+                        SET FOREIGN_KEY_CHECKS=1;
+                        """;
+        executeUpdate(statement);
     }
 
     @Override
@@ -90,9 +116,7 @@ public class MySqlDataAccess implements DataAccess {
                     switch (param) {
                         case String p -> ps.setString(i + 1, p);
                         case Integer p -> ps.setInt(i + 1, p);
-                        case AuthData p -> ps.setString(i + 1, p.toJson());
-                        case GameData p -> ps.setString(i + 1, p.toJson());
-                        case UserData p -> ps.setString(i + 1, p.toJson());
+                        case ChessGame p -> ps.setString(i + 1, p.toJson());
                         case null -> ps.setNull(i + 1, NULL);
                         default -> {
                         }

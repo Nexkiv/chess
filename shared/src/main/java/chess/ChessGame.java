@@ -1,5 +1,7 @@
 package chess;
 
+import com.google.gson.Gson;
+
 import java.util.*;
 
 /**
@@ -338,5 +340,9 @@ public class ChessGame {
         }
 
         return validMoves;
+    }
+
+    public String toJson() {
+        return new Gson().toJson(this);
     }
 }

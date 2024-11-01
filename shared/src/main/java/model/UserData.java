@@ -17,10 +17,6 @@ public record UserData(String username, String password, String email) {
         return Objects.equals(username, userData.username) && Objects.equals(password, userData.password);
     }
 
-    public String toJson() {
-        return new Gson().toJson(this);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
