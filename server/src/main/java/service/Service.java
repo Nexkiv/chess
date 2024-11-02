@@ -5,6 +5,7 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -33,11 +34,16 @@ public class Service {
         UserData emptyUserData = dataAccess.getUser(userData.username());
 
         if (emptyUserData == null) {
-            dataAccess.createUser(userData);
-            return createAuthData(userData.username());
+            UserData userWithHashedPassword = new UserData(userData.username(), hashPassword(userData.password()), userData.email());
+            dataAccess.createUser(userWithHashedPassword);
+            return createAuthData(userWithHashedPassword.username());
         } else {
             return null;
         }
+    }
+
+    private String hashPassword(String clearTextPassword) {
+        return BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
     }
 
     private String generateToken() {
@@ -45,12 +51,20 @@ public class Service {
     }
 
     public AuthData login(UserData userData) throws ResponseException {
-        UserData validUserData = dataAccess.getUser(userData.username());
-
-        if (validUserData == null || !validUserData.loginEquals(userData)) {
+        if (!verifyUser(userData.username(), userData.password())) {
             return null;
         } else {
             return createAuthData(userData.username());
+        }
+    }
+
+    private boolean verifyUser(String username, String providedClearTextPassword) throws ResponseException {
+        UserData validUserData = dataAccess.getUser(username);
+
+        if (validUserData == null) {
+            return false;
+        } else {
+            return BCrypt.checkpw(providedClearTextPassword, validUserData.password());
         }
     }
 
