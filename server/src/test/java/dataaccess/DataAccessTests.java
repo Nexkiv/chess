@@ -86,4 +86,11 @@ public class DataAccessTests {
         Assertions.assertDoesNotThrow(() -> Assertions.assertNull(dataAccess.getAuthData(authData.authToken())));
     }
 
+    @Test
+    @DisplayName("Add game to Database")
+    public void testAddGame() {
+        String gameName = "gameName";
+        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(1, dataAccess.createGame(gameName)));
+    }
+
 }

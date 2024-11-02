@@ -143,7 +143,10 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public int createGame(String gameName) throws ResponseException {
-        return 0;
+        String statement = "INSERT INTO game (gameName, json) VALUES (?, ?)";
+        ChessGame chessGame = new ChessGame();
+
+        return executeUpdate(statement, gameName, chessGame.toJson());
     }
 
     @Override
