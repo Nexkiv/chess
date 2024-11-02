@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.MemoryDataAccess;
+import dataaccess.MySqlDataAccess;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
@@ -11,6 +12,9 @@ import java.util.Collection;
 
 public class ServiceTests {
     private final Service service = new Service(new MemoryDataAccess());
+
+    public ServiceTests() throws ResponseException {
+    }
 
     @BeforeEach
     void setUp() throws ResponseException {
