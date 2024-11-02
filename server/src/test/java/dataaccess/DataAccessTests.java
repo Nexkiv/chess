@@ -20,26 +20,32 @@ Database Unit Tests
 package dataaccess;
 
 import chess.ChessGame;
-import dataaccess.MySqlDataAccess;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 
-import java.lang.reflect.Executable;
 import java.util.Collection;
 import java.util.Iterator;
 
 public class DataAccessTests {
-    private final MySqlDataAccess dataAccess = new MySqlDataAccess();
+    private static final MySqlDataAccess DATA_ACCESS;
+
+    static {
+        try {
+            DATA_ACCESS = new MySqlDataAccess();
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public DataAccessTests() throws ResponseException {
     }
 
     @BeforeEach
     void setUp() throws ResponseException {
-        dataAccess.clear();
+        DATA_ACCESS.clear();
     }
 
     @Test
@@ -52,46 +58,46 @@ public class DataAccessTests {
     @DisplayName("Add user to Database")
     public void testAddUser() throws ResponseException {
         UserData userData = new UserData("name","pass","email");
-        dataAccess.createUser(userData);
+        DATA_ACCESS.createUser(userData);
     }
 
     @Test
     @DisplayName("Retrieve user from Database")
     public void testRetrieveUser() throws ResponseException {
         UserData userData = new UserData("name","pass","email");
-        dataAccess.createUser(userData);
-        Assertions.assertEquals(userData, dataAccess.getUser(userData.username()));
+        DATA_ACCESS.createUser(userData);
+        Assertions.assertEquals(userData, DATA_ACCESS.getUser(userData.username()));
     }
 
     @Test
     @DisplayName("Add authData to Database")
     public void testAddAuthData() throws ResponseException {
         AuthData authData = new AuthData("username","authToken");
-        dataAccess.createAuthData(authData);
+        DATA_ACCESS.createAuthData(authData);
     }
 
     @Test
     @DisplayName("Retrieve authData from Database")
     public void testRetrieveAuthData() throws ResponseException {
         AuthData authData = new AuthData("username","authToken");
-        dataAccess.createAuthData(authData);
-        Assertions.assertEquals(authData, dataAccess.getAuthData(authData.authToken()));
+        DATA_ACCESS.createAuthData(authData);
+        Assertions.assertEquals(authData, DATA_ACCESS.getAuthData(authData.authToken()));
     }
 
     @Test
     @DisplayName("Remove authData from Database")
     public void testRemoveAuthData() throws ResponseException {
         AuthData authData = new AuthData("username","authToken");
-        dataAccess.createAuthData(authData);
-        dataAccess.deleteAuth(authData.authToken());
-        Assertions.assertNull(dataAccess.getAuthData(authData.authToken()));
+        DATA_ACCESS.createAuthData(authData);
+        DATA_ACCESS.deleteAuth(authData.authToken());
+        Assertions.assertNull(DATA_ACCESS.getAuthData(authData.authToken()));
     }
 
     @Test
     @DisplayName("Add game to Database")
     public void testAddGame() {
         String gameName = "gameName";
-        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(1, dataAccess.createGame(gameName)));
+        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(1, DATA_ACCESS.createGame(gameName)));
     }
 
     @Test
@@ -99,8 +105,8 @@ public class DataAccessTests {
     public void testRetrieveGame() throws ResponseException {
         String gameName = "gameName";
         int gameId;
-        gameId = dataAccess.createGame(gameName);
-        Assertions.assertEquals(gameName, dataAccess.getGameData(gameId).gameName());
+        gameId = DATA_ACCESS.createGame(gameName);
+        Assertions.assertEquals(gameName, DATA_ACCESS.getGameData(gameId).gameName());
     }
 
     @Test
@@ -108,10 +114,10 @@ public class DataAccessTests {
     public void testUpdateGame() throws ResponseException {
         String gameName = "gameName";
         int gameId;
-        gameId = dataAccess.createGame(gameName);
+        gameId = DATA_ACCESS.createGame(gameName);
         GameData newGameData = new GameData(gameId, "user1", "user2", "newGameName", new ChessGame());
-        dataAccess.updateGameData(newGameData);
-        GameData updatedGameData = dataAccess.getGameData(gameId);
+        DATA_ACCESS.updateGameData(newGameData);
+        GameData updatedGameData = DATA_ACCESS.getGameData(gameId);
         Assertions.assertEquals(newGameData, updatedGameData);
     }
 
@@ -120,14 +126,14 @@ public class DataAccessTests {
     public void testRetrieveAllGames() throws ResponseException {
         String gameName1 = "gameName1";
         int gameId1;
-        gameId1 = dataAccess.createGame(gameName1);
-        GameData gameData1 = dataAccess.getGameData(gameId1);
+        gameId1 = DATA_ACCESS.createGame(gameName1);
+        GameData gameData1 = DATA_ACCESS.getGameData(gameId1);
         String gameName2 = "gameName2";
         int gameId2;
-        gameId2 = dataAccess.createGame(gameName2);
-        GameData gameData2 = dataAccess.getGameData(gameId2);
+        gameId2 = DATA_ACCESS.createGame(gameName2);
+        GameData gameData2 = DATA_ACCESS.getGameData(gameId2);
 
-        Collection<GameData> games = dataAccess.getGames();
+        Collection<GameData> games = DATA_ACCESS.getGames();
 
         Iterator<GameData> iter = games.iterator();
 
@@ -140,17 +146,22 @@ public class DataAccessTests {
     @DisplayName("Clear functionality")
     public void testClear() throws ResponseException {
         UserData userData = new UserData("name","pass","email");
-        dataAccess.createUser(userData);
+        DATA_ACCESS.createUser(userData);
         AuthData authData = new AuthData("username","authToken");
-        dataAccess.createAuthData(authData);
+        DATA_ACCESS.createAuthData(authData);
         String gameName = "gameName";
         int gameId;
-        gameId = dataAccess.createGame(gameName);
+        gameId = DATA_ACCESS.createGame(gameName);
 
-        dataAccess.clear();
+        DATA_ACCESS.clear();
 
-        Assertions.assertNull(dataAccess.getUser(userData.username()));
-        Assertions.assertNull(dataAccess.getAuthData(authData.authToken()));
-        Assertions.assertNull(dataAccess.getGameData(gameId));
+        Assertions.assertNull(DATA_ACCESS.getUser(userData.username()));
+        Assertions.assertNull(DATA_ACCESS.getAuthData(authData.authToken()));
+        Assertions.assertNull(DATA_ACCESS.getGameData(gameId));
+    }
+
+    @AfterAll
+    public static void tearDown() throws ResponseException {
+        DATA_ACCESS.eraseDatabase();
     }
 }
