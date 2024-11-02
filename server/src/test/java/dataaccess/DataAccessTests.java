@@ -135,4 +135,22 @@ public class DataAccessTests {
         Assertions.assertEquals(iter.next(), gameData2);
 
     }
+
+    @Test
+    @DisplayName("Clear functionality")
+    public void testClear() throws ResponseException {
+        UserData userData = new UserData("name","pass","email");
+        dataAccess.createUser(userData);
+        AuthData authData = new AuthData("username","authToken");
+        dataAccess.createAuthData(authData);
+        String gameName = "gameName";
+        int gameId;
+        gameId = dataAccess.createGame(gameName);
+
+        dataAccess.clear();
+
+        Assertions.assertNull(dataAccess.getUser(userData.username()));
+        Assertions.assertNull(dataAccess.getAuthData(authData.authToken()));
+        Assertions.assertNull(dataAccess.getGameData(gameId));
+    }
 }
