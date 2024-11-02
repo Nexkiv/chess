@@ -57,16 +57,23 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void clear() throws ResponseException {
-        String clearStatements =
-                """
-                SET FOREIGN_KEY_CHECKS=0;
-                TRUNCATE authentication;
-                TRUNCATE game;
-                TRUNCATE user;
-                SET FOREIGN_KEY_CHECKS=1;
-                """;
 
-        executeUpdate(clearStatements);
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var stmt = conn.createStatement()) {
+                // Disable foreign key checks
+                stmt.execute("SET FOREIGN_KEY_CHECKS = 0;");
+
+                // Truncate your tables
+                stmt.execute("TRUNCATE authentication;");
+                stmt.execute("TRUNCATE game;");
+                stmt.execute("TRUNCATE user;");
+
+                // Re-enable foreign key checks
+                stmt.execute("SET FOREIGN_KEY_CHECKS = 1;");
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(500, String.format("unable to update database: %s, %s", "truncate all tables", e.getMessage()));
+        }
     }
 
     @Override
