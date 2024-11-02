@@ -19,7 +19,7 @@ Database Unit Tests
 
 package dataaccess;
 
-import dataaccess.MemoryDataAccess;
+import dataaccess.MySqlDataAccess;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
@@ -49,17 +49,31 @@ public class DataAccessTests {
     @Test
     @DisplayName("Add user to Database")
     public void testAddUser() {
-        UserData userData = new UserData("test","test","test");
+        UserData userData = new UserData("name","pass","email");
         Assertions.assertDoesNotThrow(() -> dataAccess.createUser(userData));
     }
 
     @Test
     @DisplayName("Retrieve user from Database")
     public void testRetrieveUser() {
-        UserData userData = new UserData("test","test","test");
+        UserData userData = new UserData("name","pass","email");
         Assertions.assertDoesNotThrow(() -> dataAccess.createUser(userData));
         Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(userData, dataAccess.getUser(userData.username())));
     }
 
+    @Test
+    @DisplayName("Add authData to Database")
+    public void testAddAuthData() {
+        AuthData authData = new AuthData("username","authToken");
+        Assertions.assertDoesNotThrow(() -> dataAccess.createAuthData(authData));
+    }
+
+    @Test
+    @DisplayName("Retrieve authData from Database")
+    public void testRetrieveAuthData() {
+        AuthData authData = new AuthData("username","authToken");
+        Assertions.assertDoesNotThrow(() -> dataAccess.createAuthData(authData));
+        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(authData, dataAccess.getAuthData(authData.authToken())));
+    }
 
 }

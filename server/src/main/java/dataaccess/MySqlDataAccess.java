@@ -26,14 +26,13 @@ public class MySqlDataAccess implements DataAccess {
               INDEX(username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
             """,
+            // TODO: incorporate foreign keys, "`userId` int NOT NULL, FOREIGN KEY (`userId`) REFERENCES user(`id`) ON DELETE CASCADE,"
             """
             CREATE TABLE IF NOT EXISTS  authentication (
               `id` int NOT NULL AUTO_INCREMENT,
-              `userId` int NOT NULL,
               `username` varchar(256) NOT NULL,
-              `authtoken` varchar(256) NOT NULL,
+              `authToken` varchar(256) NOT NULL,
               PRIMARY KEY (`id`),
-              FOREIGN KEY (`userId`) REFERENCES user(`id`) ON DELETE CASCADE,
               INDEX(username),
               INDEX(authtoken)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -63,9 +62,9 @@ public class MySqlDataAccess implements DataAccess {
                 stmt.execute("SET FOREIGN_KEY_CHECKS = 0;");
 
                 // Truncate the tables
-                stmt.execute("TRUNCATE authentication;");
-                stmt.execute("TRUNCATE game;");
-                stmt.execute("TRUNCATE user;");
+                stmt.execute("TRUNCATE TABLE authentication;");
+                stmt.execute("TRUNCATE TABLE game;");
+                stmt.execute("TRUNCATE TABLE user;");
 
                 // Re-enable the foreign key checks
                 stmt.execute("SET FOREIGN_KEY_CHECKS = 1;");
@@ -87,7 +86,6 @@ public class MySqlDataAccess implements DataAccess {
                     }
                 }
             }
-
         } catch (Exception e) {
             throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
         }
@@ -109,12 +107,32 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public AuthData getAuthData(String authToken) throws ResponseException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "SELECT username, authToken FROM authentication WHERE authToken = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readAuth(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+        }
         return null;
+    }
+
+    private AuthData readAuth(ResultSet rs) throws SQLException {
+        String username = rs.getString("username");
+        String authToken = rs.getString("authToken");
+        return new AuthData(username, authToken);
     }
 
     @Override
     public void createAuthData(AuthData authData) throws ResponseException {
-
+        String statement = "INSERT INTO authentication (username, authToken) VALUES (?, ?)";
+        int id = executeUpdate(statement, authData.username(), authData.authToken());
     }
 
     @Override
@@ -180,6 +198,25 @@ public class MySqlDataAccess implements DataAccess {
             }
         } catch (SQLException ex) {
             throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+        }
+    }
+
+    public void eraseDatabase() throws ResponseException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var stmt = conn.createStatement()) {
+                // Disable the foreign key checks
+                stmt.execute("SET FOREIGN_KEY_CHECKS = 0;");
+
+                // Truncate the tables
+                stmt.execute("DROP TABLE authentication;");
+                stmt.execute("DROP TABLE game;");
+                stmt.execute("DROP TABLE user;");
+
+                // Re-enable the foreign key checks
+                stmt.execute("SET FOREIGN_KEY_CHECKS = 1;");
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(500, String.format("unable to update database: %s, %s", "truncate all tables", e.getMessage()));
         }
     }
 }
