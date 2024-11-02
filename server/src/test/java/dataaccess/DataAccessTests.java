@@ -76,4 +76,14 @@ public class DataAccessTests {
         Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(authData, dataAccess.getAuthData(authData.authToken())));
     }
 
+    @Test
+    @DisplayName("Remove authData from Database")
+    public void testRemoveAuthData() {
+        AuthData authData = new AuthData("username","authToken");
+        Assertions.assertDoesNotThrow(() -> dataAccess.createAuthData(authData));
+        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(authData, dataAccess.getAuthData(authData.authToken())));
+        Assertions.assertDoesNotThrow(() -> dataAccess.deleteAuth(authData.authToken()));
+        Assertions.assertDoesNotThrow(() -> Assertions.assertNull(dataAccess.getAuthData(authData.authToken())));
+    }
+
 }

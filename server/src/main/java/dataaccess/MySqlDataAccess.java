@@ -137,7 +137,8 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void deleteAuth(String authToken) throws ResponseException {
-
+        String statement = "DELETE FROM authentication WHERE authToken = ?";
+        int id = executeUpdate(statement, authToken);
     }
 
     @Override
