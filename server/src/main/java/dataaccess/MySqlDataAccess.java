@@ -6,7 +6,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class MySqlDataAccess implements DataAccess {
               `id` int NOT NULL AUTO_INCREMENT,
               `username` varchar(256) NOT NULL,
               `password` TEXT NOT NULL,
-              `email` varchar(256) NOT NULL,
+              `email` varchar(256) DEFAULT NULL,
               PRIMARY KEY (`id`),
               INDEX(username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -57,18 +57,17 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void clear() throws ResponseException {
-
         try (var conn = DatabaseManager.getConnection()) {
             try (var stmt = conn.createStatement()) {
-                // Disable foreign key checks
+                // Disable the foreign key checks
                 stmt.execute("SET FOREIGN_KEY_CHECKS = 0;");
 
-                // Truncate your tables
+                // Truncate the tables
                 stmt.execute("TRUNCATE authentication;");
                 stmt.execute("TRUNCATE game;");
                 stmt.execute("TRUNCATE user;");
 
-                // Re-enable foreign key checks
+                // Re-enable the foreign key checks
                 stmt.execute("SET FOREIGN_KEY_CHECKS = 1;");
             }
         } catch (SQLException e) {
@@ -78,12 +77,34 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public UserData getUser(String username) throws ResponseException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "SELECT username, password, email FROM user WHERE username = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readUser(rs);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+        }
         return null;
+    }
+
+    private UserData readUser(ResultSet rs) throws SQLException {
+        String username = rs.getString("username");
+        String password = rs.getString("password");
+        String email = rs.getString("email");
+        return new UserData(username, password, email);
     }
 
     @Override
     public void createUser(UserData userData) throws ResponseException {
-
+        String statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        int id = executeUpdate(statement, userData.username(), userData.password(), userData.email());
     }
 
     @Override

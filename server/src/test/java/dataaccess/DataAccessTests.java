@@ -26,6 +26,7 @@ import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 
+import java.lang.reflect.Executable;
 import java.util.Collection;
 
 public class DataAccessTests {
@@ -44,4 +45,21 @@ public class DataAccessTests {
     public void testBologna() {
         Assertions.assertEquals(1, 1, "The numbers 1 and 1 are not equal?");
     }
+
+    @Test
+    @DisplayName("Add user to Database")
+    public void testAddUser() {
+        UserData userData = new UserData("test","test","test");
+        Assertions.assertDoesNotThrow(() -> dataAccess.createUser(userData));
+    }
+
+    @Test
+    @DisplayName("Retrieve user from Database")
+    public void testRetrieveUser() {
+        UserData userData = new UserData("test","test","test");
+        Assertions.assertDoesNotThrow(() -> dataAccess.createUser(userData));
+        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(userData, dataAccess.getUser(userData.username())));
+    }
+
+
 }
