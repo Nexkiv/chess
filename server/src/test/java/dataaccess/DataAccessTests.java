@@ -170,6 +170,18 @@ public class DataAccessTests {
     }
 
     @Test
+    @DisplayName("Bad update of gameData in Database")
+    public void testBadUpdateGame() throws ResponseException {
+        String gameName = "gameName";
+        int gameId;
+        gameId = DATA_ACCESS.createGame(gameName);
+        GameData newGameData = new GameData(-1, "user1", "user2", "newGameName", new ChessGame());
+        DATA_ACCESS.updateGameData(newGameData);
+        GameData updatedGameData = DATA_ACCESS.getGameData(gameId);
+        Assertions.assertNotEquals(newGameData, updatedGameData);
+    }
+
+    @Test
     @DisplayName("Return a list of games")
     public void testRetrieveAllGames() throws ResponseException {
         String gameName1 = "gameName1";
@@ -187,7 +199,6 @@ public class DataAccessTests {
 
         Assertions.assertEquals(iter.next(), gameData1);
         Assertions.assertEquals(iter.next(), gameData2);
-
     }
 
     @Test
