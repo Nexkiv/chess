@@ -28,6 +28,7 @@ import org.junit.jupiter.api.*;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class DataAccessTests {
     private static final MySqlDataAccess DATA_ACCESS;
@@ -199,6 +200,16 @@ public class DataAccessTests {
 
         Assertions.assertEquals(iter.next(), gameData1);
         Assertions.assertEquals(iter.next(), gameData2);
+    }
+
+    @Test
+    @DisplayName("Fail to return a list of games")
+    public void testRetrieveAllGamesFail() throws ResponseException {
+        GameData gameData = new GameData(-1, "user1", "user2", "gameName", new ChessGame());
+
+        Collection<GameData> games = DATA_ACCESS.getGames();
+
+        Assertions.assertTrue(games.isEmpty());
     }
 
     @Test
