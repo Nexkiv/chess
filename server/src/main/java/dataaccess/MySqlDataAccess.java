@@ -9,6 +9,7 @@ import model.GameData;
 import model.UserData;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -188,7 +189,20 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public Collection<GameData> getGames() throws ResponseException {
-        return List.of();
+        Collection<GameData> games = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT id, whiteUsername, blackUsername, gameName, gameJson FROM game";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        games.add(readGame(rs));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+        }
+        return games;
     }
 
     private int executeUpdate(String statement, Object... params) throws ResponseException {

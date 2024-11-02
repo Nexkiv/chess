@@ -29,6 +29,7 @@ import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Executable;
 import java.util.Collection;
+import java.util.Iterator;
 
 public class DataAccessTests {
     private final MySqlDataAccess dataAccess = new MySqlDataAccess();
@@ -112,5 +113,26 @@ public class DataAccessTests {
         dataAccess.updateGameData(newGameData);
         GameData updatedGameData = dataAccess.getGameData(gameId);
         Assertions.assertEquals(newGameData, updatedGameData);
+    }
+
+    @Test
+    @DisplayName("Return a list of games")
+    public void testRetrieveAllGames() throws ResponseException {
+        String gameName1 = "gameName1";
+        int gameId1;
+        gameId1 = dataAccess.createGame(gameName1);
+        GameData gameData1 = dataAccess.getGameData(gameId1);
+        String gameName2 = "gameName2";
+        int gameId2;
+        gameId2 = dataAccess.createGame(gameName2);
+        GameData gameData2 = dataAccess.getGameData(gameId2);
+
+        Collection<GameData> games = dataAccess.getGames();
+
+        Iterator<GameData> iter = games.iterator();
+
+        Assertions.assertEquals(iter.next(), gameData1);
+        Assertions.assertEquals(iter.next(), gameData2);
+
     }
 }
