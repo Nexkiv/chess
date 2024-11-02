@@ -124,7 +124,8 @@ public class DataAccessTests {
     public void testBadRemoveAuthData() throws ResponseException {
         AuthData authData = new AuthData("username","authToken");
         DATA_ACCESS.createAuthData(authData);
-        Assertions.assertThrows(ResponseException.class, () -> DATA_ACCESS.deleteAuth("wrongToken"));
+        DATA_ACCESS.deleteAuth("wrongToken");
+        Assertions.assertNotNull(DATA_ACCESS.getAuthData(authData.authToken()));
     }
 
     @Test
