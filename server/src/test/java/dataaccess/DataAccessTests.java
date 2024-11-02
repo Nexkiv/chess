@@ -130,9 +130,16 @@ public class DataAccessTests {
 
     @Test
     @DisplayName("Add game to Database")
-    public void testAddGame() {
+    public void testAddGame() throws ResponseException {
         String gameName = "gameName";
-        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(1, DATA_ACCESS.createGame(gameName)));
+        Assertions.assertEquals(1, DATA_ACCESS.createGame(gameName));
+    }
+
+    @Test
+    @DisplayName("Add bad game to Database")
+    public void testAddBadGame() {
+        String gameName = null;
+        Assertions.assertThrows(ResponseException.class, () -> DATA_ACCESS.createGame(gameName));
     }
 
     @Test
@@ -142,6 +149,12 @@ public class DataAccessTests {
         int gameId;
         gameId = DATA_ACCESS.createGame(gameName);
         Assertions.assertEquals(gameName, DATA_ACCESS.getGameData(gameId).gameName());
+    }
+
+    @Test
+    @DisplayName("Bad retrieval of gameData from Database")
+    public void testBadRetrieveGame() throws ResponseException {
+        Assertions.assertNull(DATA_ACCESS.getGameData(-1));
     }
 
     @Test
