@@ -77,8 +77,8 @@ public class DataAccessTests {
     }
 
     @Test
-    @DisplayName("Bad retrieval from Database")
-    public void testBadRetrieveUser() throws ResponseException {
+    @DisplayName("Bad user retrieval from Database")
+    public void testBadUserRetrieveUser() throws ResponseException {
         Assertions.assertNull(DATA_ACCESS.getUser("name"));
     }
 
@@ -90,11 +90,24 @@ public class DataAccessTests {
     }
 
     @Test
+    @DisplayName("Add bad authData to Database")
+    public void testAddBadAuthData() throws ResponseException {
+        AuthData authData = new AuthData("username",null);
+        Assertions.assertThrows(ResponseException.class, () -> DATA_ACCESS.createAuthData(authData));
+    }
+
+    @Test
     @DisplayName("Retrieve authData from Database")
     public void testRetrieveAuthData() throws ResponseException {
         AuthData authData = new AuthData("username","authToken");
         DATA_ACCESS.createAuthData(authData);
         Assertions.assertEquals(authData, DATA_ACCESS.getAuthData(authData.authToken()));
+    }
+
+    @Test
+    @DisplayName("Bad authData retrieval from Database")
+    public void testBadAuthDataRetrieveAuthData() throws ResponseException {
+        Assertions.assertNull(DATA_ACCESS.getAuthData(null));
     }
 
     @Test
@@ -104,6 +117,14 @@ public class DataAccessTests {
         DATA_ACCESS.createAuthData(authData);
         DATA_ACCESS.deleteAuth(authData.authToken());
         Assertions.assertNull(DATA_ACCESS.getAuthData(authData.authToken()));
+    }
+
+    @Test
+    @DisplayName("Bad removal of authData from Database")
+    public void testBadRemoveAuthData() throws ResponseException {
+        AuthData authData = new AuthData("username","authToken");
+        DATA_ACCESS.createAuthData(authData);
+        Assertions.assertThrows(ResponseException.class, () -> DATA_ACCESS.deleteAuth("wrongToken"));
     }
 
     @Test
