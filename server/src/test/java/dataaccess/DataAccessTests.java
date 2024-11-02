@@ -62,11 +62,24 @@ public class DataAccessTests {
     }
 
     @Test
+    @DisplayName("Add bad user to Database")
+    public void testAddBadUser() throws ResponseException {
+        UserData userData = new UserData("name",null,null);
+        Assertions.assertThrows(ResponseException.class, () -> DATA_ACCESS.createUser(userData));
+    }
+
+    @Test
     @DisplayName("Retrieve user from Database")
     public void testRetrieveUser() throws ResponseException {
         UserData userData = new UserData("name","pass","email");
         DATA_ACCESS.createUser(userData);
         Assertions.assertEquals(userData, DATA_ACCESS.getUser(userData.username()));
+    }
+
+    @Test
+    @DisplayName("Bad retrieval from Database")
+    public void testBadRetrieveUser() throws ResponseException {
+        Assertions.assertNull(DATA_ACCESS.getUser("name"));
     }
 
     @Test
