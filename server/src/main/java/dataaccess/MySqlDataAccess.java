@@ -1,6 +1,8 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
@@ -34,7 +36,7 @@ public class MySqlDataAccess implements DataAccess {
               `authToken` varchar(256) NOT NULL,
               PRIMARY KEY (`id`),
               INDEX(username),
-              INDEX(authtoken)
+              INDEX(authToken)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
             """,
             """
@@ -43,7 +45,7 @@ public class MySqlDataAccess implements DataAccess {
               `whiteUserName` varchar(256) DEFAULT NULL,
               `blackUserName` varchar(256) DEFAULT NULL,
               `gameName` varchar(256) NOT NULL,
-              `json` TEXT NOT NULL,
+              `gameJson` TEXT NOT NULL,
               PRIMARY KEY (`id`),
               INDEX(gameName)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -143,15 +145,38 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public int createGame(String gameName) throws ResponseException {
-        String statement = "INSERT INTO game (gameName, json) VALUES (?, ?)";
+        String statement = "INSERT INTO game (gameName, gameJson) VALUES (?, ?)";
         ChessGame chessGame = new ChessGame();
 
         return executeUpdate(statement, gameName, chessGame.toJson());
     }
 
     @Override
-    public GameData getGameData(int gameID) throws ResponseException {
+    public GameData getGameData(int gameId) throws ResponseException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "SELECT id, whiteUsername, blackUsername, gameName, gameJson FROM game WHERE id = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readGame(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+        }
         return null;
+    }
+
+    private GameData readGame(ResultSet rs) throws SQLException {
+        int gameID = rs.getInt("id");
+        String whiteUsername = rs.getString("whiteUsername");
+        String blackUsername = rs.getString("blackUsername");
+        String gameName = rs.getString("gameName");
+        ChessGame game = new Gson().fromJson(rs.getString("gameJson"), ChessGame.class);
+
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 
     @Override

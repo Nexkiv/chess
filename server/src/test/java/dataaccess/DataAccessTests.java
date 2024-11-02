@@ -48,42 +48,41 @@ public class DataAccessTests {
 
     @Test
     @DisplayName("Add user to Database")
-    public void testAddUser() {
+    public void testAddUser() throws ResponseException {
         UserData userData = new UserData("name","pass","email");
-        Assertions.assertDoesNotThrow(() -> dataAccess.createUser(userData));
+        dataAccess.createUser(userData);
     }
 
     @Test
     @DisplayName("Retrieve user from Database")
-    public void testRetrieveUser() {
+    public void testRetrieveUser() throws ResponseException {
         UserData userData = new UserData("name","pass","email");
-        Assertions.assertDoesNotThrow(() -> dataAccess.createUser(userData));
-        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(userData, dataAccess.getUser(userData.username())));
+        dataAccess.createUser(userData);
+        Assertions.assertEquals(userData, dataAccess.getUser(userData.username()));
     }
 
     @Test
     @DisplayName("Add authData to Database")
-    public void testAddAuthData() {
+    public void testAddAuthData() throws ResponseException {
         AuthData authData = new AuthData("username","authToken");
-        Assertions.assertDoesNotThrow(() -> dataAccess.createAuthData(authData));
+        dataAccess.createAuthData(authData);
     }
 
     @Test
     @DisplayName("Retrieve authData from Database")
-    public void testRetrieveAuthData() {
+    public void testRetrieveAuthData() throws ResponseException {
         AuthData authData = new AuthData("username","authToken");
-        Assertions.assertDoesNotThrow(() -> dataAccess.createAuthData(authData));
-        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(authData, dataAccess.getAuthData(authData.authToken())));
+        dataAccess.createAuthData(authData);
+        Assertions.assertEquals(authData, dataAccess.getAuthData(authData.authToken()));
     }
 
     @Test
     @DisplayName("Remove authData from Database")
-    public void testRemoveAuthData() {
+    public void testRemoveAuthData() throws ResponseException {
         AuthData authData = new AuthData("username","authToken");
-        Assertions.assertDoesNotThrow(() -> dataAccess.createAuthData(authData));
-        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(authData, dataAccess.getAuthData(authData.authToken())));
-        Assertions.assertDoesNotThrow(() -> dataAccess.deleteAuth(authData.authToken()));
-        Assertions.assertDoesNotThrow(() -> Assertions.assertNull(dataAccess.getAuthData(authData.authToken())));
+        dataAccess.createAuthData(authData);
+        dataAccess.deleteAuth(authData.authToken());
+        Assertions.assertNull(dataAccess.getAuthData(authData.authToken()));
     }
 
     @Test
@@ -93,4 +92,12 @@ public class DataAccessTests {
         Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(1, dataAccess.createGame(gameName)));
     }
 
+    @Test
+    @DisplayName("Retrieve gameData from Database")
+    public void testRetrieveGame() throws ResponseException {
+        String gameName = "gameName";
+        int gameId;
+        gameId = dataAccess.createGame(gameName);
+        Assertions.assertEquals(gameName, dataAccess.getGameData(gameId).gameName());
+    }
 }
