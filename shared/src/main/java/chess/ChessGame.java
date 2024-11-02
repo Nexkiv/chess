@@ -17,6 +17,7 @@ public class ChessGame {
     private final short dimension = 8;
     private final Safety[][] dangerMap = new Safety[dimension][dimension];
     private ChessPosition enPassantPieceLocation = null;
+
     private enum CastleSide {
         QUEEN_SIDE,
         KING_SIDE
@@ -344,5 +345,27 @@ public class ChessGame {
 
     public String toJson() {
         return new Gson().toJson(this);
+    }
+
+    @Override
+    public String toString() {
+        return toJson();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(gameBoard, chessGame.gameBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gameBoard);
     }
 }

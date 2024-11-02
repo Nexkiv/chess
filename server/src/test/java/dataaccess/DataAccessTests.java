@@ -19,6 +19,7 @@ Database Unit Tests
 
 package dataaccess;
 
+import chess.ChessGame;
 import dataaccess.MySqlDataAccess;
 import exception.ResponseException;
 import model.AuthData;
@@ -99,5 +100,17 @@ public class DataAccessTests {
         int gameId;
         gameId = dataAccess.createGame(gameName);
         Assertions.assertEquals(gameName, dataAccess.getGameData(gameId).gameName());
+    }
+
+    @Test
+    @DisplayName("Update gameData in Database")
+    public void testUpdateGame() throws ResponseException {
+        String gameName = "gameName";
+        int gameId;
+        gameId = dataAccess.createGame(gameName);
+        GameData newGameData = new GameData(gameId, "user1", "user2", "newGameName", new ChessGame());
+        dataAccess.updateGameData(newGameData);
+        GameData updatedGameData = dataAccess.getGameData(gameId);
+        Assertions.assertEquals(newGameData, updatedGameData);
     }
 }

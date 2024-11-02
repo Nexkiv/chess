@@ -181,7 +181,9 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void updateGameData(GameData newGameData) throws ResponseException {
-
+        String statement = "UPDATE game SET whiteUsername = ?, blackUsername = ?, gameName = ?, gameJson = ? WHERE id = ?";
+        executeUpdate(statement, newGameData.whiteUsername(), newGameData.blackUsername(), newGameData.gameName(),
+                newGameData.game().toJson(), newGameData.gameID());
     }
 
     @Override
