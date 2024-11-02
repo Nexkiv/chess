@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataaccess.MemoryDataAccess;
+import dataaccess.MySqlDataAccess;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
@@ -13,11 +14,15 @@ import java.util.Collection;
 
 public class Server {
 
-    private final Service service;
+    private Service service;
     private final static Gson SERIALIZER = new Gson();
 
     public Server() {
-        service = new Service(new MemoryDataAccess());
+        try {
+            service = new Service(new MySqlDataAccess());
+        } catch (Exception e) {
+            service = new Service(new MemoryDataAccess());
+        }
     }
 
     public int run(int desiredPort) {
