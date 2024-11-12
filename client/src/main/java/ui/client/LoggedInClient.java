@@ -1,11 +1,15 @@
 package ui.client;
 
+import server.ServerFacade;
+
 public class LoggedInClient implements ChessClient {
     private String message = help();
-    private String username;
-    private String authToken;
+    private final String username;
+    private final String authToken;
+    private final ServerFacade server;
 
-    public LoggedInClient(String username, String authToken) {
+    public LoggedInClient(ServerFacade server, String username, String authToken) {
+        this.server = server;
         this.username = username;
         this.authToken = authToken;
     }

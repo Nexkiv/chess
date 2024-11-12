@@ -6,11 +6,9 @@ import java.util.Arrays;
 
 public class LoggedOutClient implements ChessClient {
     private final ServerFacade server;
-    private final String serverUrl;
 
     public LoggedOutClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
     }
 
     public ChessClient eval(String input) {
@@ -36,7 +34,7 @@ public class LoggedOutClient implements ChessClient {
 
         String authToken = null; //server.register(username, password);
 
-        return new LoggedInClient(username, authToken);
+        return new LoggedInClient(server, username, authToken);
     }
 
     private ChessClient registerPlayer(String[] params) {
@@ -50,7 +48,7 @@ public class LoggedOutClient implements ChessClient {
 
         String authToken = null; //server.register(username, password, email);
 
-        return new LoggedInClient(username, authToken);
+        return new LoggedInClient(server, username, authToken);
     }
 
     public String getMessage() {
