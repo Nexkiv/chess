@@ -13,5 +13,6 @@ public class Repl {
 
     public void run() {
         System.out.println(BLACK_KING + " Welcome to Chess! Sign-in to Start! " + BLACK_KING);
+        System.out.print(client.help());
     }
 }

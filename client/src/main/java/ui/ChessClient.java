@@ -15,4 +15,16 @@ public class ChessClient {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
     }
+
+    public String help() {
+        if (state == State.SIGNEDOUT) {
+            return ("""
+                        register <USERNAME> <PASSWORD> <EMAIL> - to create an account
+                        login <USERNAME> <PASSWORD> - to play chess
+                        quit - closes the chess UI
+                        help - display possible commands with explanations
+                    """);
+        }
+        return null;
+    }
 }
