@@ -2,6 +2,8 @@ package ui.client;
 
 import server.ServerFacade;
 
+import java.util.Arrays;
+
 public class LoggedInClient implements ChessClient {
     private String message = help();
     private final String username;
@@ -29,7 +31,20 @@ public class LoggedInClient implements ChessClient {
 
     @Override
     public ChessClient eval(String input) {
-        return null;
+        String[] tokens = input.toLowerCase().split(" ");
+        String command = (tokens.length > 0) ? tokens[0] : "help";
+        String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        message = help();
+
+        return switch (command) {
+            case "create", "c" -> null;
+            case "list" -> null;
+            case "join", "j" -> null;
+            case "observe", "o" -> null;
+            case "logout" -> null;
+            case "quit", "q" -> null;
+            default -> this;
+        };
     }
 
     @Override
