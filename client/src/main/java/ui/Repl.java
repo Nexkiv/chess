@@ -12,24 +12,27 @@ public class Repl {
     }
 
     public void run() {
-        System.out.println(BLACK_KING + " Welcome to Chess! Sign-in to Start! " + BLACK_KING);
+        System.out.println(BLACK_KING + " Welcome to Chess! Sign-in to Start! " + BLACK_KING + "\n");
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);
-        String result = "";
-        while (!result.equals("quit")) {
-            System.out.println(printPrompt());
+        while (!(client == null)) {
+            System.out.print(printPrompt());
             String line = scanner.nextLine();
+            System.out.println();
 
             try {
-                result = client.eval(line);
-                System.out.print(result);
+                client = client.eval(line);
+                if (client == null) {
+                    break;
+                }
+                System.out.print(client.getMessage());
             } catch (Throwable e) {
                 var msg = e.toString();
-                System.out.print(msg);
+                System.out.println(msg);
             }
         }
-        System.out.println();
+        System.out.println("Thanks for playing!");
     }
 
     private String printPrompt() {
