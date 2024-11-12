@@ -13,6 +13,10 @@ public class LoggedOutClient implements ChessClient {
         this.serverUrl = serverUrl;
     }
 
+    public String eval(String command) {
+        return command;
+    }
+
     public String help() {
         return ("""
                     register <USERNAME> <PASSWORD> <EMAIL> - to create an account
