@@ -1,4 +1,4 @@
-package ui;
+package ui.client;
 
 import server.ServerFacade;
 
