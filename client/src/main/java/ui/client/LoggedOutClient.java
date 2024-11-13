@@ -17,7 +17,7 @@ public class LoggedOutClient implements ChessClient {
         this.server = server;
     }
 
-    public ChessClient eval(String input) {
+    public ChessClient eval(String input) throws ResponseException {
         String[] tokens = input.toLowerCase().split(" ");
         String command = (tokens.length > 0) ? tokens[0] : "help";
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
