@@ -11,6 +11,10 @@ public class LoggedOutClient implements ChessClient {
         server = new ServerFacade(serverUrl);
     }
 
+    public LoggedOutClient(ServerFacade server) {
+        this.server = server;
+    }
+
     public ChessClient eval(String input) {
         String[] tokens = input.toLowerCase().split(" ");
         String command = (tokens.length > 0) ? tokens[0] : "help";

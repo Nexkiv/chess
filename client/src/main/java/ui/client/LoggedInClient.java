@@ -42,9 +42,9 @@ public class LoggedInClient implements ChessClient {
             case "create", "c" -> createGame(params);
             case "list" -> listGames();
             case "join", "j" -> joinGame(params);
-            case "observe", "o" -> null;
-            case "logout" -> null;
-            case "quit", "q" -> null;
+            case "observe", "o" -> observeGame(params);
+            case "logout" -> logout();
+            case "quit", "q" -> quit();
             default -> this;
         };
     }
@@ -75,7 +75,33 @@ public class LoggedInClient implements ChessClient {
         String gameID = params[0];
         String color = params[1];
 
-        return this; // new GameplayClient(server, username, authToken, gameID)
+        // server.joinGame(gameID, color, authToken);
+
+        return this; // new GameplayClient(server, username, authToken, gameID);
+    }
+
+    private ChessClient observeGame(String[] params) {
+        if (params.length != 1) {
+            throw new IllegalArgumentException("Invalid number of arguments");
+        }
+
+        String gameID = params[0];
+
+        // server.joinGame(gameID, color, authToken);
+
+        return this; // new GameplayClient(server,username, gameID, authToken);
+    }
+
+    private ChessClient logout() {
+        // server.logout(authToken);
+
+        return new LoggedOutClient(server);
+    }
+
+    private ChessClient quit() {
+        // server.logout(authToken);
+
+        return null;
     }
 
     @Override
