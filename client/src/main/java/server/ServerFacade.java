@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.AuthData;
 import model.GameData;
 import model.UserData;
 
@@ -77,12 +78,12 @@ public class ServerFacade {
 
     public String signin(UserData userData) throws ResponseException {
         String path = "/session";
-        return this.makeRequest("POST", path, userData, String.class, null);
+        return this.makeRequest("POST", path, userData, AuthData.class, null).authToken();
     }
 
     public String register(UserData userData) throws ResponseException {
         String path = "/user";
-        return this.makeRequest("POST", path, userData, String.class, null);
+        return this.makeRequest("POST", path, userData, AuthData.class, null).authToken();
     }
 
     public String createGame(String gameName, String authToken) throws ResponseException {
@@ -116,6 +117,15 @@ public class ServerFacade {
 
     public String getGameBoard(String authToken, int gameID) {
         throw new RuntimeException("Not implemented");
+    }
+
+    public void clearDataBase(String password) throws ResponseException {
+        String path = "/db";
+        if (password.equals("monkeypie")) {
+            this.makeRequest("DELETE", path, null, null, null);
+        } else {
+            throw new RuntimeException("Invalid clear password");
+        }
     }
 
     private static class NewGameName {
