@@ -85,9 +85,10 @@ public class ServerFacade {
         return this.makeRequest("POST", path, userData, String.class, null);
     }
 
-    public String createGame(GameData newGame, String authToken) throws ResponseException {
+    public String createGame(String gameName, String authToken) throws ResponseException {
         String path = "/game";
-        return this.makeRequest("POST", path, newGame, String.class, authToken);
+
+        return this.makeRequest("POST", path, new NewGameName(gameName), String.class, authToken);
     }
 
     public void joinGame(int selectedGameID, String color, String authToken) throws ResponseException {
@@ -115,5 +116,12 @@ public class ServerFacade {
 
     public String leaveGame(String authToken, int gameID) {
         throw new RuntimeException("Not implemented");
+    }
+
+    private static class NewGameName {
+        private final String name;
+        NewGameName(String gameName) {
+            this.name = gameName;
+        }
     }
 }

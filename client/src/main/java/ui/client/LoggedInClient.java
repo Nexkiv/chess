@@ -58,9 +58,7 @@ public class LoggedInClient implements ChessClient {
 
         String gameName = params[0];
 
-        GameData newGame = new GameData(null, null, null, gameName, null);
-
-        message = server.createGame(newGame, authToken);
+        message = server.createGame(gameName, authToken);
 
         return this;
     }
