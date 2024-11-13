@@ -1,6 +1,8 @@
 package ui.client;
 
 import chess.ChessGame;
+import exception.ResponseException;
+import model.GameData;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -32,7 +34,7 @@ public class LoggedInClient implements ChessClient {
     }
 
     @Override
-    public ChessClient eval(String input) {
+    public ChessClient eval(String input) throws ResponseException {
         String[] tokens = input.toLowerCase().split(" ");
         String command = (tokens.length > 0) ? tokens[0] : "help";
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -49,14 +51,16 @@ public class LoggedInClient implements ChessClient {
         };
     }
 
-    private ChessClient createGame(String[] params) {
+    private ChessClient createGame(String[] params) throws ResponseException {
         if (params.length != 1) {
             throw new IllegalArgumentException("Invalid number of arguments");
         }
 
-        String gameID = params[0];
+        String gameName = params[0];
 
-        message = server.createGame(gameID, authToken);
+        GameData newGame = new GameData(null, null, null, gameName, null);
+
+        message = server.createGame(newGame, authToken);
 
         return this;
     }

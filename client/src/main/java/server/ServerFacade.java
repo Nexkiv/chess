@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.GameData;
 import model.UserData;
 
 import java.io.IOException;
@@ -84,8 +85,9 @@ public class ServerFacade {
         return this.makeRequest("POST", path, userData, String.class, null);
     }
 
-    public String createGame(String gameID, String authToken) {
-        throw new RuntimeException("Not implemented");
+    public String createGame(GameData newGame, String authToken) throws ResponseException {
+        String path = "/game";
+        return this.makeRequest("POST", path, newGame, String.class, authToken);
     }
 
     public void joinGame(int gameID, String color, String authToken) {
