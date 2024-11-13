@@ -80,7 +80,8 @@ public class ServerFacade {
     }
 
     public String register(UserData userData) throws ResponseException {
-        throw new RuntimeException("Not implemented");
+        String path = "/user";
+        return this.makeRequest("POST", path, userData, String.class, null);
     }
 
     public String createGame(String gameID, String authToken) {
