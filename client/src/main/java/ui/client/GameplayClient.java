@@ -1,5 +1,6 @@
 package ui.client;
 
+import chess.ChessPiece;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -9,7 +10,7 @@ public class GameplayClient implements ChessClient {
     private final String username;
     private final String authToken;
     private final int gameId;
-    private String message;
+    private String message = null;
 
     public GameplayClient(ServerFacade server, String username, String authToken, int gameId) {
         this.server = server;
@@ -17,7 +18,7 @@ public class GameplayClient implements ChessClient {
         this.authToken = authToken;
         this.gameId = gameId;
 
-        message = null; //server.getGameBoard();
+        message = null; //server.getGameBoard(authToken, gameID);
     }
 
     @Override
@@ -40,13 +41,37 @@ public class GameplayClient implements ChessClient {
         message = help();
 
         return switch (command) {
-            case "redraw" -> null;
-            case "leave" -> null;
-            case "move" -> null;
-            case "resign" -> null;
-            case "highlight" -> null;
+            case "redraw" -> redrawBoard();
+            case "leave" -> leaveGame();
+            case "move" -> movePiece(params);
+            case "resign" -> resignGame();
+            case "highlight" -> highlightMoves(params);
             default -> this;
         };
+    }
+
+    private ChessClient redrawBoard() {
+        message = null; // server.getGameBoard(authToken, gameID);
+
+        return this;
+    }
+
+    private ChessClient leaveGame() {
+        message = null; // server.leaveGame(authToken, gameID);
+
+        return new LoggedInClient(server, username, authToken);
+    }
+
+    private ChessClient movePiece(String[] params) {
+        throw new RuntimeException("not implemented");
+    }
+
+    private ChessClient resignGame() {
+        throw new RuntimeException("not implemented");
+    }
+
+    private ChessClient highlightMoves(String[] params) {
+        throw new RuntimeException("not implemented");
     }
 
     @Override
