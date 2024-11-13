@@ -1,9 +1,11 @@
 package ui.client;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import exception.ResponseException;
 import model.GameData;
 import server.ServerFacade;
+import ui.DisplayBoard;
 
 import java.util.Arrays;
 
@@ -95,7 +97,10 @@ public class LoggedInClient implements ChessClient {
 
         server.joinGame(gameID, color, authToken);
 
-        return new GameplayClient(server, username, authToken, gameID);
+        // Temporary code as a precursor to the final product
+        message = new DisplayBoard(new ChessGame().getBoard()).getBothBoards();
+
+        return this; // new GameplayClient(server, username, authToken, gameID);
     }
 
     private ChessClient observeGame(String[] params) throws ResponseException {
@@ -112,7 +117,10 @@ public class LoggedInClient implements ChessClient {
 
         server.observeGame(gameID, authToken);
 
-        return new GameplayClient(server,username, authToken, gameID);
+        // Temporary code as a precursor to the final product
+        message = new DisplayBoard(new ChessGame().getBoard()).getBothBoards();
+
+        return this; // new GameplayClient(server,username, authToken, gameID);
     }
 
     private ChessClient logout() throws ResponseException {
