@@ -90,6 +90,11 @@ public class ServerFacade {
         return this.makeRequest("POST", path, new NewGameName(gameName), String.class, authToken);
     }
 
+    public GameData[] listGames(String authToken) throws ResponseException {
+        String path = "/game";
+        return this.makeRequest("GET", path, null, GameData[].class, authToken);
+    }
+
     public void joinGame(int selectedGameID, String color, String authToken) throws ResponseException {
         String path = "/game";
         class JoinGameInfo {

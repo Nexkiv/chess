@@ -9,6 +9,7 @@ import java.util.Arrays;
 
 public class LoggedInClient implements ChessClient {
     private String message;
+    private GameData[] listOfGames;
     private final String username;
     private final String authToken;
     private final ServerFacade server;
@@ -63,8 +64,17 @@ public class LoggedInClient implements ChessClient {
         return this;
     }
 
-    private ChessClient listGames() {
-        message = null; // server.listGames(authToken)
+    private ChessClient listGames() throws ResponseException {
+        listOfGames = server.listGames(authToken);
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < listOfGames.length; i++) {
+            sb.append(i + 1).append(": ").append(listOfGames[i].gameName()).append("\n");
+            sb.append("White: ").append(listOfGames[i].whiteUsername()).append(" Black: ").append(listOfGames[i].blackUsername());
+            sb.append("\n");
+        }
+
+        message = sb.toString();
 
         return this;
     }
