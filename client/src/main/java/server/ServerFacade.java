@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -87,17 +88,17 @@ public class ServerFacade {
         return this.makeRequest("POST", path, userData, AuthData.class, null).authToken();
     }
 
-    public String createGame(String gameName, String authToken) throws ResponseException {
+    public void createGame(String gameName, String authToken) throws ResponseException {
         String path = "/game";
-        return this.makeRequest("POST", path, new NewGameName(gameName), String.class, authToken);
+        this.makeRequest("POST", path, new NewGameName(gameName), null, authToken);
     }
 
     public GameData[] listGames(String authToken) throws ResponseException {
         String path = "/game";
-        Collection<GameData> listOfGames = this.makeRequest("GET", path, null, Collection.class, authToken);
-        GameData[] games = new GameData[listOfGames.size()];
-        listOfGames.toArray(games);
-        return games;
+        record listGames (GameData[] games) {
+        }
+        var response = this.makeRequest("GET", path, null, listGames.class, authToken);
+        return response.games;
     }
 
     public void joinGame(int selectedGameID, String color, String authToken) throws ResponseException {
