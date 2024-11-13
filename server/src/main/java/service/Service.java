@@ -95,26 +95,30 @@ public class Service {
             return 401;
         } else if (gameData != null) {
             GameData newGameData;
-            if (playerColor == null) {
-                // TODO: Add the user as a spectator
-                return 200;
-            } else if (playerColor.equals("WHITE")) {
-                if (gameData.whiteUsername() == null) {
-                    newGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(),
-                                                    gameData.gameName(), gameData.game());
-                    dataAccess.updateGameData(newGameData);
+            switch (playerColor) {
+                case "null" -> {
+                    // TODO: Add the user as a spectator
                     return 200;
-                } else {
-                    return 403;
                 }
-            } else if (playerColor.equals("BLACK")) {
-                if (gameData.blackUsername() == null) {
-                    newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(),
-                                                    gameData.gameName(), gameData.game());
-                    dataAccess.updateGameData(newGameData);
-                    return 200;
-                } else {
-                    return 403;
+                case "WHITE" -> {
+                    if (gameData.whiteUsername() == null) {
+                        newGameData = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(),
+                                gameData.gameName(), gameData.game());
+                        dataAccess.updateGameData(newGameData);
+                        return 200;
+                    } else {
+                        return 403;
+                    }
+                }
+                case "BLACK" -> {
+                    if (gameData.blackUsername() == null) {
+                        newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(),
+                                gameData.gameName(), gameData.game());
+                        dataAccess.updateGameData(newGameData);
+                        return 200;
+                    } else {
+                        return 403;
+                    }
                 }
             }
         }

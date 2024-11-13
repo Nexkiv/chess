@@ -82,7 +82,7 @@ public class LoggedInClient implements ChessClient {
         return new GameplayClient(server, username, authToken, gameID);
     }
 
-    private ChessClient observeGame(String[] params) {
+    private ChessClient observeGame(String[] params) throws ResponseException {
         if (params.length != 1) {
             throw new IllegalArgumentException("Invalid number of arguments");
         }
