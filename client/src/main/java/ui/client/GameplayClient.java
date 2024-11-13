@@ -57,9 +57,7 @@ public class GameplayClient implements ChessClient {
     }
 
     private ChessClient leaveGame() {
-        message = server.leaveGame(authToken, gameID);
-
-        return new LoggedInClient(server, username, authToken);
+        throw new RuntimeException("not implemented");
     }
 
     private ChessClient movePiece(String[] params) {

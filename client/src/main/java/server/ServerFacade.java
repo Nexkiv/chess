@@ -118,10 +118,6 @@ public class ServerFacade {
         throw new RuntimeException("Not implemented");
     }
 
-    public String leaveGame(String authToken, int gameID) {
-        throw new RuntimeException("Not implemented");
-    }
-
     private static class NewGameName {
         private final String name;
         NewGameName(String gameName) {
