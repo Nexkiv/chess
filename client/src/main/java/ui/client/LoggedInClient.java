@@ -79,6 +79,7 @@ public class LoggedInClient implements ChessClient {
         return this;
     }
 
+    // TODO: convert user selection to gameID
     private ChessClient joinGame(String[] params) throws ResponseException {
         if (params.length != 2) {
             throw new IllegalArgumentException("Invalid number of arguments");
