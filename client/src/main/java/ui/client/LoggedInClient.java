@@ -56,7 +56,7 @@ public class LoggedInClient implements ChessClient {
 
         String gameID = params[0];
 
-        message = null; // server.createGame(gameID, authToken)
+        message = server.createGame(gameID, authToken);
 
         return this;
     }
@@ -72,12 +72,12 @@ public class LoggedInClient implements ChessClient {
             throw new IllegalArgumentException("Invalid number of arguments");
         }
 
-        String gameID = params[0];
+        int gameID = Integer.parseInt(params[0]);
         String color = params[1];
 
-        // server.joinGame(gameID, color, authToken);
+        server.joinGame(gameID, color, authToken);
 
-        return this; // new GameplayClient(server, username, authToken, gameID);
+        return new GameplayClient(server, username, authToken, gameID);
     }
 
     private ChessClient observeGame(String[] params) {
@@ -85,21 +85,21 @@ public class LoggedInClient implements ChessClient {
             throw new IllegalArgumentException("Invalid number of arguments");
         }
 
-        String gameID = params[0];
+        int gameID = Integer.parseInt(params[0]);
 
-        // server.joinGame(gameID, color, authToken);
+        server.observeGame(gameID, authToken);
 
-        return this; // new GameplayClient(server,username, gameID, authToken);
+        return new GameplayClient(server,username, authToken, gameID);
     }
 
     private ChessClient logout() {
-        // server.logout(authToken);
+        server.logout(authToken);
 
         return new LoggedOutClient(server);
     }
 
     private ChessClient quit() {
-        // server.logout(authToken);
+        server.logout(authToken);
 
         return null;
     }

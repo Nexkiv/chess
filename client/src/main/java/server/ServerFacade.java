@@ -68,4 +68,36 @@ public class ServerFacade {
     private boolean isSuccessful(int status) {
         return status == 200;
     }
+
+    public String signin(String username, String password) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    public String register(String username, String password, String email) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    public String createGame(String gameID, String authToken) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    public void joinGame(int gameID, String color, String authToken) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    public void observeGame(int gameID, String authToken) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    public void logout(String authToken) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    public String getGameBoard(String authToken, int gameID) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    public String leaveGame(String authToken, int gameID) {
+        throw new RuntimeException("Not implemented");
+    }
 }

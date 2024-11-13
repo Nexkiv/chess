@@ -9,16 +9,16 @@ public class GameplayClient implements ChessClient {
     private final ServerFacade server;
     private final String username;
     private final String authToken;
-    private final int gameId;
+    private final int gameID;
     private String message = null;
 
-    public GameplayClient(ServerFacade server, String username, String authToken, int gameId) {
+    public GameplayClient(ServerFacade server, String username, String authToken, int gameID) {
         this.server = server;
         this.username = username;
         this.authToken = authToken;
-        this.gameId = gameId;
+        this.gameID = gameID;
 
-        message = null; //server.getGameBoard(authToken, gameID);
+        message = server.getGameBoard(authToken, gameID);
     }
 
     @Override
@@ -51,13 +51,13 @@ public class GameplayClient implements ChessClient {
     }
 
     private ChessClient redrawBoard() {
-        message = null; // server.getGameBoard(authToken, gameID);
+        message = server.getGameBoard(authToken, gameID);
 
         return this;
     }
 
     private ChessClient leaveGame() {
-        message = null; // server.leaveGame(authToken, gameID);
+        message = server.leaveGame(authToken, gameID);
 
         return new LoggedInClient(server, username, authToken);
     }

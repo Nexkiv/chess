@@ -36,7 +36,7 @@ public class LoggedOutClient implements ChessClient {
         String username = params[0];
         String password = params[1];
 
-        String authToken = null; //server.register(username, password);
+        String authToken = server.signin(username, password);
 
         return new LoggedInClient(server, username, authToken);
     }
@@ -50,7 +50,7 @@ public class LoggedOutClient implements ChessClient {
         String password = params[1];
         String email = params[2];
 
-        String authToken = null; //server.register(username, password, email);
+        String authToken = server.register(username, password, email);
 
         return new LoggedInClient(server, username, authToken);
     }
