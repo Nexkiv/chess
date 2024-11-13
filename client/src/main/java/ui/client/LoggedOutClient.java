@@ -17,6 +17,7 @@ public class LoggedOutClient implements ChessClient {
         this.server = server;
     }
 
+    @Override
     public ChessClient eval(String input) throws ResponseException {
         String[] tokens = input.toLowerCase().split(" ");
         String command = (tokens.length > 0) ? tokens[0] : "help";
@@ -61,10 +62,12 @@ public class LoggedOutClient implements ChessClient {
         return new LoggedInClient(server, username, authToken);
     }
 
+    @Override
     public String getMessage() {
         return help();
     }
 
+    @Override
     public String help() {
         return ("""
                 register <USERNAME> <PASSWORD> <EMAIL> - to create an account
