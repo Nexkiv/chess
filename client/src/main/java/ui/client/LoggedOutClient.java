@@ -41,7 +41,7 @@ public class LoggedOutClient implements ChessClient {
 
         UserData newPlayer = new UserData(username, password, null);
 
-        String authToken = server.signin(newPlayer);
+        String authToken = server.login(newPlayer).authToken();
 
         return new LoggedInClient(server, username, authToken);
     }
@@ -57,7 +57,7 @@ public class LoggedOutClient implements ChessClient {
 
         UserData newPlayer = new UserData(username, password, email);
 
-        String authToken = server.register(newPlayer);
+        String authToken = server.register(newPlayer).authToken();
 
         return new LoggedInClient(server, username, authToken);
     }
