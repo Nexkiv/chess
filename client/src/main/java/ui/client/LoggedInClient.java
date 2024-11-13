@@ -1,11 +1,12 @@
 package ui.client;
 
+import chess.ChessGame;
 import server.ServerFacade;
 
 import java.util.Arrays;
 
 public class LoggedInClient implements ChessClient {
-    private String message = help();
+    private String message;
     private final String username;
     private final String authToken;
     private final ServerFacade server;
@@ -14,6 +15,7 @@ public class LoggedInClient implements ChessClient {
         this.server = server;
         this.username = username;
         this.authToken = authToken;
+        message = "Logged in as " + username;
     }
 
     @Override
@@ -37,14 +39,43 @@ public class LoggedInClient implements ChessClient {
         message = help();
 
         return switch (command) {
-            case "create", "c" -> null;
-            case "list" -> null;
-            case "join", "j" -> null;
+            case "create", "c" -> createGame(params);
+            case "list" -> listGames();
+            case "join", "j" -> joinGame(params);
             case "observe", "o" -> null;
             case "logout" -> null;
             case "quit", "q" -> null;
             default -> this;
         };
+    }
+
+    private ChessClient createGame(String[] params) {
+        if (params.length != 1) {
+            throw new IllegalArgumentException("Invalid number of arguments");
+        }
+
+        String gameID = params[0];
+
+        message = null; // server.createGame(gameID, authToken)
+
+        return this;
+    }
+
+    private ChessClient listGames() {
+        message = null; // server.listGames(authToken)
+
+        return this;
+    }
+
+    private ChessClient joinGame(String[] params) {
+        if (params.length != 2) {
+            throw new IllegalArgumentException("Invalid number of arguments");
+        }
+
+        String gameID = params[0];
+        String color = params[1];
+
+        return this; // new GameplayClient(server, username, authToken, gameID)
     }
 
     @Override
