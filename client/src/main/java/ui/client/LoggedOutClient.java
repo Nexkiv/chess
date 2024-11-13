@@ -1,5 +1,7 @@
 package ui.client;
 
+import exception.ResponseException;
+import model.UserData;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -28,7 +30,7 @@ public class LoggedOutClient implements ChessClient {
         };
     }
 
-    private ChessClient loginPlayer(String[] params) {
+    private ChessClient loginPlayer(String[] params) throws ResponseException {
         if (params.length != 2) {
             throw new IllegalArgumentException("Wrong number of arguments");
         }
@@ -36,7 +38,9 @@ public class LoggedOutClient implements ChessClient {
         String username = params[0];
         String password = params[1];
 
-        String authToken = server.signin(username, password);
+        UserData newPlayer = new UserData(username, password, null);
+
+        String authToken = server.signin(newPlayer);
 
         return new LoggedInClient(server, username, authToken);
     }

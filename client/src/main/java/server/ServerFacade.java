@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.UserData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,12 +19,16 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (authToken != null) {
+                http.setRequestProperty("Authorization", authToken);
+            }
 
             writeBody(request, http);
             http.connect();
@@ -69,8 +74,9 @@ public class ServerFacade {
         return status == 200;
     }
 
-    public String signin(String username, String password) {
-        throw new RuntimeException("Not implemented");
+    public String signin(UserData userData) throws ResponseException {
+        String path = "/session";
+        return this.makeRequest("POST", path, userData, String.class, null);
     }
 
     public String register(String username, String password, String email) {
