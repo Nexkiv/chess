@@ -74,6 +74,6 @@ public class GameplayClient implements ChessClient {
 
     @Override
     public String getMessage() {
-        return "";
+        return message;
     }
 }
