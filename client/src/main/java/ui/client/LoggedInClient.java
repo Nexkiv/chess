@@ -94,7 +94,7 @@ public class LoggedInClient implements ChessClient {
 
         int gameID = listOfGames[playerSelection].gameID();
 
-        String color = params[1];
+        String color = params[1].toUpperCase();
 
         server.joinGame(gameID, color, authToken);
 
