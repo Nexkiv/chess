@@ -94,13 +94,13 @@ public class LoggedInClient implements ChessClient {
         return new GameplayClient(server,username, authToken, gameID);
     }
 
-    private ChessClient logout() {
+    private ChessClient logout() throws ResponseException {
         server.logout(authToken);
 
         return new LoggedOutClient(server);
     }
 
-    private ChessClient quit() {
+    private ChessClient quit() throws ResponseException {
         server.logout(authToken);
 
         return null;

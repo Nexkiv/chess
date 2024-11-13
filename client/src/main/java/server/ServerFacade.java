@@ -104,8 +104,9 @@ public class ServerFacade {
         joinGame(gameID, "null", authToken);
     }
 
-    public void logout(String authToken) {
-        throw new RuntimeException("Not implemented");
+    public void logout(String authToken) throws ResponseException {
+        String path = "/session";
+        this.makeRequest("DELETE", path, null, null, authToken);
     }
 
     public String getGameBoard(String authToken, int gameID) {
