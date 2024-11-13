@@ -79,13 +79,18 @@ public class LoggedInClient implements ChessClient {
         return this;
     }
 
-    // TODO: convert user selection to gameID
     private ChessClient joinGame(String[] params) throws ResponseException {
         if (params.length != 2) {
             throw new IllegalArgumentException("Invalid number of arguments");
         }
 
-        int gameID = Integer.parseInt(params[0]);
+        int playerSelection = Integer.parseInt(params[0]) - 1;
+        if (playerSelection < 0 || playerSelection > listOfGames.length) {
+            throw new IllegalArgumentException("Invalid game selection");
+        }
+
+        int gameID = listOfGames[playerSelection].gameID();
+
         String color = params[1];
 
         server.joinGame(gameID, color, authToken);
@@ -98,7 +103,12 @@ public class LoggedInClient implements ChessClient {
             throw new IllegalArgumentException("Invalid number of arguments");
         }
 
-        int gameID = Integer.parseInt(params[0]);
+        int playerSelection = Integer.parseInt(params[0]) - 1;
+        if (playerSelection < 0 || playerSelection > listOfGames.length) {
+            throw new IllegalArgumentException("Invalid game selection");
+        }
+
+        int gameID = listOfGames[playerSelection].gameID();
 
         server.observeGame(gameID, authToken);
 
