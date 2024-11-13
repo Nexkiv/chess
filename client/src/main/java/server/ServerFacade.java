@@ -114,7 +114,6 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, null, null, authToken);
     }
 
-    // TODO: choose to either return the board as the object and then display it or a sting containing the board
     public String getGameBoard(String authToken, int gameID) {
         throw new RuntimeException("Not implemented");
     }
