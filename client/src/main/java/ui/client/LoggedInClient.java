@@ -71,7 +71,7 @@ public class LoggedInClient implements ChessClient {
         return this;
     }
 
-    private ChessClient joinGame(String[] params) {
+    private ChessClient joinGame(String[] params) throws ResponseException {
         if (params.length != 2) {
             throw new IllegalArgumentException("Invalid number of arguments");
         }

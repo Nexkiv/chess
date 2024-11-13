@@ -90,8 +90,15 @@ public class ServerFacade {
         return this.makeRequest("POST", path, newGame, String.class, authToken);
     }
 
-    public void joinGame(int gameID, String color, String authToken) {
-        throw new RuntimeException("Not implemented");
+    public void joinGame(int selectedGameID, String color, String authToken) throws ResponseException {
+        String path = "/game";
+        class JoinGameInfo {
+            private String playerColor = color;
+            private int gameID = selectedGameID;
+            JoinGameInfo() {}
+        }
+
+        this.makeRequest("PUT", path, new JoinGameInfo(), null, authToken);
     }
 
     public void observeGame(int gameID, String authToken) {
