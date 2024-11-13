@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -93,7 +94,10 @@ public class ServerFacade {
 
     public GameData[] listGames(String authToken) throws ResponseException {
         String path = "/game";
-        return this.makeRequest("GET", path, null, GameData[].class, authToken);
+        Collection<GameData> listOfGames = this.makeRequest("GET", path, null, Collection.class, authToken);
+        GameData[] games = new GameData[listOfGames.size()];
+        listOfGames.toArray(games);
+        return games;
     }
 
     public void joinGame(int selectedGameID, String color, String authToken) throws ResponseException {
@@ -128,10 +132,6 @@ public class ServerFacade {
         }
     }
 
-    private static class NewGameName {
-        private final String name;
-        NewGameName(String gameName) {
-            this.name = gameName;
-        }
+    private record NewGameName(String gameName) {
     }
 }
