@@ -2,6 +2,8 @@ package ui.client;
 
 import server.ServerFacade;
 
+import java.util.Arrays;
+
 public class GameplayClient implements ChessClient {
     private final ServerFacade server;
     private final String username;
@@ -23,7 +25,7 @@ public class GameplayClient implements ChessClient {
         return """
                redraw - to redraw the chess board
                leave - to remove yourself from the game
-               move <START_END> - to move a piece from start to end
+               move <START> <END> - to move a piece from start to end
                resign - to forfeit and end the game
                highlight <SPACE> - to highlight the legal moves of the piece
                help - to see possible commands
@@ -32,7 +34,19 @@ public class GameplayClient implements ChessClient {
 
     @Override
     public ChessClient eval(String input) {
-        return null;
+        String[] tokens = input.toLowerCase().split(" ");
+        String command = (tokens.length > 0) ? tokens[0] : "help";
+        String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        message = help();
+
+        return switch (command) {
+            case "redraw" -> null;
+            case "leave" -> null;
+            case "move" -> null;
+            case "resign" -> null;
+            case "highlight" -> null;
+            default -> this;
+        };
     }
 
     @Override
