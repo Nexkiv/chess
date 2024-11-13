@@ -1,7 +1,22 @@
 package ui.client;
 
-public class GameplayClient implements ChessClient {
+import server.ServerFacade;
 
+public class GameplayClient implements ChessClient {
+    private final ServerFacade server;
+    private final String username;
+    private final String authToken;
+    private final int gameId;
+    private String message;
+
+    public GameplayClient(ServerFacade server, String username, String authToken, int gameId) {
+        this.server = server;
+        this.username = username;
+        this.authToken = authToken;
+        this.gameId = gameId;
+
+        message = null; //server.getGameBoard();
+    }
 
     @Override
     public String help() {
