@@ -79,7 +79,7 @@ public class ServerFacade {
         return this.makeRequest("POST", path, userData, String.class, null);
     }
 
-    public String register(String username, String password, String email) {
+    public String register(UserData userData) throws ResponseException {
         throw new RuntimeException("Not implemented");
     }
 

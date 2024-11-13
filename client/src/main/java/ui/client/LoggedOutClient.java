@@ -45,7 +45,7 @@ public class LoggedOutClient implements ChessClient {
         return new LoggedInClient(server, username, authToken);
     }
 
-    private ChessClient registerPlayer(String[] params) {
+    private ChessClient registerPlayer(String[] params) throws ResponseException {
         if (params.length != 3) {
             throw new IllegalArgumentException("Wrong number of arguments");
         }
@@ -54,7 +54,9 @@ public class LoggedOutClient implements ChessClient {
         String password = params[1];
         String email = params[2];
 
-        String authToken = server.register(username, password, email);
+        UserData newPlayer = new UserData(username, password, email);
+
+        String authToken = server.register(newPlayer);
 
         return new LoggedInClient(server, username, authToken);
     }
