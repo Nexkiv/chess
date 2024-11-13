@@ -78,19 +78,21 @@ public class ServerFacade {
         return status == 200;
     }
 
-    public String signin(UserData userData) throws ResponseException {
+    public AuthData login(UserData userData) throws ResponseException {
         String path = "/session";
-        return this.makeRequest("POST", path, userData, AuthData.class, null).authToken();
+        return this.makeRequest("POST", path, userData, AuthData.class, null);
     }
 
-    public String register(UserData userData) throws ResponseException {
+    public AuthData register(UserData userData) throws ResponseException {
         String path = "/user";
-        return this.makeRequest("POST", path, userData, AuthData.class, null).authToken();
+        return this.makeRequest("POST", path, userData, AuthData.class, null);
     }
 
-    public void createGame(String gameName, String authToken) throws ResponseException {
+    public int createGame(String gameName, String authToken) throws ResponseException {
         String path = "/game";
-        this.makeRequest("POST", path, new NewGameName(gameName), null, authToken);
+        record GameID (int gameID) {}
+        GameID response = this.makeRequest("POST", path, new NewGameName(gameName), GameID.class, authToken);
+        return response.gameID;
     }
 
     public GameData[] listGames(String authToken) throws ResponseException {
@@ -103,12 +105,8 @@ public class ServerFacade {
 
     public void joinGame(int selectedGameID, String color, String authToken) throws ResponseException {
         String path = "/game";
-        class JoinGameInfo {
-            private String playerColor = color;
-            private int gameID = selectedGameID;
-            JoinGameInfo() {}
-        }
-        this.makeRequest("PUT", path, new JoinGameInfo(), null, authToken);
+        record JoinGameInfo (String playerColor, int gameID ) {}
+        this.makeRequest("PUT", path, new JoinGameInfo(color, selectedGameID), null, authToken);
     }
 
     public void observeGame(int gameID, String authToken) throws ResponseException {
