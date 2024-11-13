@@ -179,7 +179,7 @@ public class ServiceTests {
         int successCode2 = service.join(authData.authToken(), "BLACK", newGameID);
         Assertions.assertEquals(200, successCode2);
 
-        int successCode3 = service.join(authData.authToken(), null, newGameID);
+        int successCode3 = service.join(authData.authToken(), "null", newGameID);
         Assertions.assertEquals(200, successCode3);
     }
 
