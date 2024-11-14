@@ -11,6 +11,9 @@ import server.Server;
 import server.ServerFacade;
 
 import java.net.HttpURLConnection;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,10 +69,10 @@ public class ServerFacadeTests {
     public void successLogin() throws ResponseException {
         loginResult = serverFacade.login(existingUser);
 
-        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
-        Assertions.assertEquals(existingUser.username(), loginResult.username(),
+        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertEquals(existingUser.username(), loginResult.username(),
                 "Response did not give the same username as user");
-        Assertions.assertNotNull(loginResult.authToken(), "Response did not return authentication String");
+        assertNotNull(loginResult.authToken(), "Response did not return authentication String");
     }
 
     @Test
@@ -96,10 +99,10 @@ public class ServerFacadeTests {
         //submit register request
         registerResult = serverFacade.register(newUser);
 
-        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
-        Assertions.assertEquals(newUser.username(), registerResult.username(),
+        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertEquals(newUser.username(), registerResult.username(),
                 "Response did not have the same username as was registered");
-        Assertions.assertNotNull(registerResult.authToken(), "Response did not contain an authentication string");
+        assertNotNull(registerResult.authToken(), "Response did not contain an authentication string");
     }
 
     @Test
@@ -147,7 +150,7 @@ public class ServerFacadeTests {
 
         assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
 
-        Assertions.assertTrue(gameID > 0, "Result returned invalid game ID");
+        assertTrue(gameID > 0, "Result returned invalid game ID");
     }
 
     @Test
@@ -173,9 +176,9 @@ public class ServerFacadeTests {
 
         GameData[] listResult = serverFacade.listGames(existingAuth);
 
-        Assertions.assertEquals(1, listResult.length);
-        Assertions.assertEquals(existingUser.username(), listResult[0].whiteUsername(), "Player wasn't added to the game");
-        Assertions.assertNull(listResult[0].blackUsername(), "Invalid player assigned to black position");
+        assertEquals(1, listResult.length);
+        assertEquals(existingUser.username(), listResult[0].whiteUsername(), "Player wasn't added to the game");
+        assertNull(listResult[0].blackUsername(), "Invalid player assigned to black position");
     }
 
     @Test
@@ -234,6 +237,70 @@ public class ServerFacadeTests {
 
         //check
         assertEquals(HttpURLConnection.HTTP_BAD_REQUEST, serverFacade.getStatusCode(), "Incorrect HTTP code");
+    }
+
+    @Test
+    @DisplayName("List No Games")
+    public void noGamesList() throws ResponseException {
+        GameData[] result = serverFacade.listGames(existingAuth);
+
+        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertEquals(0, result.length, "Found games when none should be there");
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("List Multiple Games")
+    public void gamesList() throws ResponseException {
+        //register a few users to create games
+        UserData userA = new UserData("a", "A", "a.A");
+        UserData userB = new UserData("b", "B", "b.B");
+        UserData userC = new UserData("c", "C", "c.C");
+
+        AuthData authA = serverFacade.register(userA);
+        AuthData authB = serverFacade.register(userB);
+        AuthData authC = serverFacade.register(userC);
+
+        //create games
+        Collection<GameData> expectedList = new HashSet<>();
+
+        //1 as black from A
+        String game1Name = "I'm numbah one!";
+        int game1ID = serverFacade.createGame(gameName, authA.authToken());
+        serverFacade.joinGame(game1ID, "BLACK", authA.authToken());
+        expectedList.add(new GameData(game1ID, null, authA.username(), game1Name, new ChessGame()));
+
+
+        //1 as white from B
+        String game2Name = "Lonely";
+        int game2ID = serverFacade.createGame(gameName, authB.authToken());
+        serverFacade.joinGame(game2ID, "WHITE", authB.authToken());
+        expectedList.add(new GameData(game2ID, authB.username(), null, game2Name, new ChessGame()));
+
+
+        //1 of each from C
+        String game3Name = "GG";
+        int game3ID = serverFacade.createGame(gameName, authC.authToken());
+        serverFacade.joinGame(game3ID, "WHITE", authC.authToken());
+        serverFacade.joinGame(game3ID, "BLACK", authA.authToken());
+        expectedList.add(new GameData(game3ID, authC.username(), authA.username(), game3Name, new ChessGame()));
+
+
+        //C play self
+        String game4Name = "All by myself";
+        int game4ID = serverFacade.createGame(gameName, authC.authToken());
+        serverFacade.joinGame(game4ID, "WHITE", authC.authToken());
+        serverFacade.joinGame(game4ID, "BLACK", authC.authToken());
+        expectedList.add(new GameData(game4ID, authC.username(), authC.username(), game4Name, new ChessGame()));
+
+
+        //list games
+        GameData[] listResult = serverFacade.listGames(existingAuth);
+        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        Collection<GameData> returnedList = new HashSet<>(Arrays.asList(listResult));
+
+        //check
+        assertEquals(expectedList, returnedList, "Returned Games list was incorrect");
     }
 
 
