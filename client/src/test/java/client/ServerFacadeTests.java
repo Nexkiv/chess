@@ -204,6 +204,38 @@ public class ServerFacadeTests {
         assertEquals(HttpURLConnection.HTTP_BAD_REQUEST, serverFacade.getStatusCode(), "Incorrect HTTP code");
     }
 
+    @Test
+    @DisplayName("Join Steal Team Color")
+    public void stealColorJoin() throws ResponseException {
+        //create game
+        gameID = serverFacade.createGame(gameName, existingAuth);
+
+        //add existing user as black
+        serverFacade.joinGame(gameID, "BLACK", existingAuth);
+
+        //register second user
+        AuthData newAuth = serverFacade.register(newUser);
+
+        //join request trying to also join  as black
+        assertThrows(ResponseException.class, () -> serverFacade.joinGame(gameID, "BLACK", newAuth.authToken()), "Action was successful");
+
+        //check failed
+        assertEquals(HttpURLConnection.HTTP_ACCEPTED, serverFacade.getStatusCode(), "Incorrect HTTP code");
+    }
+
+    @Test
+    @DisplayName("Join Bad Game ID")
+    public void badGameIDJoin() throws ResponseException {
+        //create game
+        gameID = serverFacade.createGame(gameName, existingAuth);
+
+        //try join as white
+        assertThrows(ResponseException.class, () -> serverFacade.joinGame(0, "WHITE", existingAuth), "Action was successful");
+
+        //check
+        assertEquals(HttpURLConnection.HTTP_BAD_REQUEST, serverFacade.getStatusCode(), "Incorrect HTTP code");
+    }
+
 
     @Test
     void register() throws Exception {
