@@ -266,21 +266,21 @@ public class ServerFacadeTests {
 
         //1 as black from A
         String game1Name = "I'm numbah one!";
-        int game1ID = serverFacade.createGame(gameName, authA.authToken());
+        int game1ID = serverFacade.createGame(game1Name, authA.authToken());
         serverFacade.joinGame(game1ID, "BLACK", authA.authToken());
         expectedList.add(new GameData(game1ID, null, authA.username(), game1Name, new ChessGame()));
 
 
         //1 as white from B
         String game2Name = "Lonely";
-        int game2ID = serverFacade.createGame(gameName, authB.authToken());
+        int game2ID = serverFacade.createGame(game2Name, authB.authToken());
         serverFacade.joinGame(game2ID, "WHITE", authB.authToken());
         expectedList.add(new GameData(game2ID, authB.username(), null, game2Name, new ChessGame()));
 
 
         //1 of each from C
         String game3Name = "GG";
-        int game3ID = serverFacade.createGame(gameName, authC.authToken());
+        int game3ID = serverFacade.createGame(game3Name, authC.authToken());
         serverFacade.joinGame(game3ID, "WHITE", authC.authToken());
         serverFacade.joinGame(game3ID, "BLACK", authA.authToken());
         expectedList.add(new GameData(game3ID, authC.username(), authA.username(), game3Name, new ChessGame()));
@@ -288,7 +288,7 @@ public class ServerFacadeTests {
 
         //C play self
         String game4Name = "All by myself";
-        int game4ID = serverFacade.createGame(gameName, authC.authToken());
+        int game4ID = serverFacade.createGame(game4Name, authC.authToken());
         serverFacade.joinGame(game4ID, "WHITE", authC.authToken());
         serverFacade.joinGame(game4ID, "BLACK", authC.authToken());
         expectedList.add(new GameData(game4ID, authC.username(), authC.username(), game4Name, new ChessGame()));
