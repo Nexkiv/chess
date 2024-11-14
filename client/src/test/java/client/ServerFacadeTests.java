@@ -303,6 +303,47 @@ public class ServerFacadeTests {
         assertEquals(expectedList, returnedList, "Returned Games list was incorrect");
     }
 
+    @Test
+    @Order(13)
+    @DisplayName("Unique Authtoken Each Login")
+    public void uniqueAuthorizationTokens() throws ResponseException {
+        AuthData loginOne = serverFacade.login(existingUser);
+        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
+                "Server response code was not 200 OK");
+        Assertions.assertNotNull(loginOne.authToken(), "Login result did not contain an authToken");
+
+        AuthData loginTwo = serverFacade.login(existingUser);
+        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
+                "Server response code was not 200 OK");
+        Assertions.assertNotNull(loginTwo.authToken(), "Login result did not contain an authToken");
+
+        Assertions.assertNotEquals(existingAuth, loginOne.authToken(),
+                "Authtoken returned by login matched authtoken from prior register");
+        Assertions.assertNotEquals(existingAuth, loginTwo.authToken(),
+                "Authtoken returned by login matched authtoken from prior register");
+        Assertions.assertNotEquals(loginOne.authToken(), loginTwo.authToken(),
+                "Authtoken returned by login matched authtoken from prior login");
+
+
+        gameID = serverFacade.createGame(gameName, existingAuth);
+        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
+                "Server response code was not 200 OK");
+
+
+        serverFacade.logout(existingAuth);
+        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
+                "Server response code was not 200 OK");
+
+        serverFacade.joinGame(gameID, "WHITE", loginOne.authToken());
+        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
+                "Server response code was not 200 OK");
+
+        GameData[] listResult = serverFacade.listGames(loginTwo.authToken());
+        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
+                    "Server response code was not 200 OK");
+        Assertions.assertEquals(1, listResult.length);
+        Assertions.assertEquals(existingUser.username(), listResult[0].whiteUsername());
+    }
 
     @Test
     void register() throws Exception {
