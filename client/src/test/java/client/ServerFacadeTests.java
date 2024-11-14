@@ -53,7 +53,8 @@ public class ServerFacadeTests {
     }
 
     @AfterAll
-    static void stopServer() {
+    static void stopServer() throws ResponseException {
+        serverFacade.clearDataBase("monkeypie");
         server.stop();
     }
 
