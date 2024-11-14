@@ -71,7 +71,7 @@ public class LoggedInClient implements ChessClient {
     }
 
     private ChessClient listGames() throws ResponseException {
-        listOfGames = server.listGames(authToken);
+        listOfGames = server.ListGames(authToken);
         StringBuilder sb = new StringBuilder();
 
 
@@ -97,6 +97,8 @@ public class LoggedInClient implements ChessClient {
         if (params.length != 2) {
             throw new IllegalArgumentException("Wrong number of arguments");
         }
+
+        listOfGames = server.ListGames(authToken);
 
         int playerSelection = Integer.parseInt(params[0]) - 1;
         if (playerSelection < 0 || playerSelection > listOfGames.length) {

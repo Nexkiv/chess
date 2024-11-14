@@ -97,7 +97,7 @@ public class ServerFacade {
         return response.gameID;
     }
 
-    public GameData[] listGames(String authToken) throws ResponseException {
+    public GameData[] ListGames(String authToken) throws ResponseException {
         String path = "/game";
         record listGames (GameData[] games) {
         }

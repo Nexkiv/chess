@@ -8,7 +8,7 @@ import chess.ChessPosition;
 import static ui.EscapeSequences.*;
 
 public class DisplayBoard {
-    private ChessBoard board;
+    private final ChessBoard board;
     private static final String SET_BG_COLOR_SILVER = "\033[48;2;220;220;220m";
     private static final String SET_BG_COLOR_TAN = "\033[48;2;193;154;107m";
     private static final String SET_BG_COLOR_BROWN = "\033[48;2;84;42;24m";
@@ -17,10 +17,10 @@ public class DisplayBoard {
         this.board = board;
     }
 
-    public String getWhiteBoard() {
+    public String getBoard(ChessGame.TeamColor teamColor) {
         StringBuilder boardDisplay = new StringBuilder();
 
-        boardDisplay.append(headerAndFooter(ChessGame.TeamColor.WHITE));
+        boardDisplay.append(headerAndFooter(teamColor));
         boardDisplay.append(RESET_BG_COLOR).append("\n");
         for (int i = 8; i > 0; i--) {
             boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(i));
@@ -30,36 +30,16 @@ public class DisplayBoard {
                 } else {
                     boardDisplay.append(SET_BG_COLOR_BROWN);
                 }
-                boardDisplay.append(chessPiece(board.getPiece(new ChessPosition(i ,j ))));
-            }
-            boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(i));
-            boardDisplay.append(RESET_BG_COLOR).append("\n");
-        }
-        boardDisplay.append(headerAndFooter(ChessGame.TeamColor.WHITE));
-        boardDisplay.append(RESET_BG_COLOR);
-
-        return boardDisplay.toString();
-    }
-    
-    public String getBlackBoard() {
-        StringBuilder boardDisplay = new StringBuilder();
-
-        boardDisplay.append(headerAndFooter(ChessGame.TeamColor.BLACK));
-        boardDisplay.append(RESET_BG_COLOR).append("\n");
-        for (int i = 1; i < 9; i++) {
-            boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(i));
-            for (int j = 8; j > 0; j--) {
-                if ((i + j) % 2 != 0) {
-                    boardDisplay.append(SET_BG_COLOR_TAN);
+                if (teamColor == ChessGame.TeamColor.WHITE) {
+                    boardDisplay.append(chessPiece(board.getPiece(new ChessPosition(i,j))));
                 } else {
-                    boardDisplay.append(SET_BG_COLOR_BROWN);
+                    boardDisplay.append(chessPiece(board.getPiece(new ChessPosition(9 - i,9 - j))));
                 }
-                boardDisplay.append(chessPiece(board.getPiece(new ChessPosition(i, j))));
             }
             boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(i));
             boardDisplay.append(RESET_BG_COLOR).append("\n");
         }
-        boardDisplay.append(headerAndFooter(ChessGame.TeamColor.BLACK));
+        boardDisplay.append(headerAndFooter(teamColor));
         boardDisplay.append(RESET_BG_COLOR);
 
         return boardDisplay.toString();
@@ -110,6 +90,6 @@ public class DisplayBoard {
     }
 
     public String getBothBoards() {
-        return getWhiteBoard() + "\n\n" +  getBlackBoard() + "\n";
+        return getBoard(ChessGame.TeamColor.WHITE) + "\n\n" +  getBoard(ChessGame.TeamColor.BLACK) + "\n";
     }
 }

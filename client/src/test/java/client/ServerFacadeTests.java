@@ -173,7 +173,7 @@ public class ServerFacadeTests {
         //check
         assertHTTPSuccess();
 
-        GameData[] listResult = serverFacade.listGames(existingAuth);
+        GameData[] listResult = serverFacade.ListGames(existingAuth);
 
         assertEquals(1, listResult.length);
         assertEquals(existingUser.username(), listResult[0].whiteUsername(), "Player wasn't added to the game");
@@ -241,7 +241,7 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("List No Games")
     public void noGamesList() throws ResponseException {
-        GameData[] result = serverFacade.listGames(existingAuth);
+        GameData[] result = serverFacade.ListGames(existingAuth);
 
         assertHTTPSuccess();
         assertEquals(0, result.length, "Found games when none should be there");
@@ -294,7 +294,7 @@ public class ServerFacadeTests {
 
 
         //list games
-        GameData[] listResult = serverFacade.listGames(existingAuth);
+        GameData[] listResult = serverFacade.ListGames(existingAuth);
         assertHTTPSuccess();
         Collection<GameData> returnedList = new HashSet<>(Arrays.asList(listResult));
 
@@ -332,7 +332,7 @@ public class ServerFacadeTests {
         serverFacade.joinGame(gameID, "WHITE", loginOne.authToken());
         assertHTTPSuccess();
 
-        GameData[] listResult = serverFacade.listGames(loginTwo.authToken());
+        GameData[] listResult = serverFacade.ListGames(loginTwo.authToken());
         assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
                     "Server response code was not 200 OK");
         Assertions.assertEquals(1, listResult.length);
@@ -371,13 +371,13 @@ public class ServerFacadeTests {
         assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, serverFacade.getStatusCode(), "User authorization not removed");
 
         //try to use old auth token to list games
-        assertThrows(ResponseException.class, () -> serverFacade.listGames(existingAuth));
+        assertThrows(ResponseException.class, () -> serverFacade.ListGames(existingAuth));
         assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, serverFacade.getStatusCode(), "User authorization not removed");
 
         //log in new user and check that list is empty
         authData = serverFacade.register(user);
         assertHTTPSuccess();
-        GameData[] listResult = serverFacade.listGames(authData.authToken());
+        GameData[] listResult = serverFacade.ListGames(authData.authToken());
         assertHTTPSuccess();
 
         //check listResult
