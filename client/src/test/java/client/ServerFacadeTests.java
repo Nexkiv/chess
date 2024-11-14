@@ -24,6 +24,7 @@ public class ServerFacadeTests {
     private String existingAuth;
     private AuthData loginResult;
     private AuthData registerResult;
+    private int gameID;
 
     @BeforeAll
     public static void init() {
@@ -136,6 +137,27 @@ public class ServerFacadeTests {
         serverFacade.logout(existingAuth);
         assertThrows(ResponseException.class, () -> serverFacade.logout(existingAuth), "Action was successful");
     }
+
+    @Test
+    @DisplayName("Valid Creation")
+    public void goodCreate() throws ResponseException {
+        gameID = serverFacade.createGame(gameName, existingAuth);
+
+        assertEquals(HttpURLConnection.HTTP_CREATED, serverFacade.getStatusCode(), "Action was unsuccessful");
+
+        Assertions.assertTrue(gameID > 0, "Result returned invalid game ID");
+    }
+
+    @Test
+    @DisplayName("Create with Bad Authentication")
+    public void badAuthCreate() throws ResponseException {
+        //log out user so auth is invalid
+        serverFacade.logout(existingAuth);
+
+        assertThrows(ResponseException.class, () -> serverFacade.createGame(gameName, existingAuth), "Action was successful");
+    }
+
+
 
     @Test
     void register() throws Exception {
