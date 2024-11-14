@@ -2,7 +2,6 @@ package client;
 
 import chess.ChessGame;
 import exception.ResponseException;
-import jdk.jfr.Category;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -14,7 +13,6 @@ import java.net.HttpURLConnection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,7 +67,7 @@ public class ServerFacadeTests {
     public void successLogin() throws ResponseException {
         loginResult = serverFacade.login(existingUser);
 
-        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertSuccess();
         assertEquals(existingUser.username(), loginResult.username(),
                 "Response did not give the same username as user");
         assertNotNull(loginResult.authToken(), "Response did not return authentication String");
@@ -99,7 +97,7 @@ public class ServerFacadeTests {
         //submit register request
         registerResult = serverFacade.register(newUser);
 
-        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertSuccess();
         assertEquals(newUser.username(), registerResult.username(),
                 "Response did not have the same username as was registered");
         assertNotNull(registerResult.authToken(), "Response did not contain an authentication string");
@@ -131,7 +129,7 @@ public class ServerFacadeTests {
         //log out existing user
         serverFacade.logout(existingAuth);
 
-        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertSuccess();
     }
 
     @Test
@@ -148,7 +146,7 @@ public class ServerFacadeTests {
     public void goodCreate() throws ResponseException {
         gameID = serverFacade.createGame(gameName, existingAuth);
 
-        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertSuccess();
 
         assertTrue(gameID > 0, "Result returned invalid game ID");
     }
@@ -172,7 +170,7 @@ public class ServerFacadeTests {
         serverFacade.joinGame(gameID, "WHITE", existingAuth);
 
         //check
-        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertSuccess();
 
         GameData[] listResult = serverFacade.listGames(existingAuth);
 
@@ -244,7 +242,7 @@ public class ServerFacadeTests {
     public void noGamesList() throws ResponseException {
         GameData[] result = serverFacade.listGames(existingAuth);
 
-        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertSuccess();
         assertEquals(0, result.length, "Found games when none should be there");
     }
 
@@ -296,7 +294,7 @@ public class ServerFacadeTests {
 
         //list games
         GameData[] listResult = serverFacade.listGames(existingAuth);
-        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertSuccess();
         Collection<GameData> returnedList = new HashSet<>(Arrays.asList(listResult));
 
         //check
@@ -308,13 +306,11 @@ public class ServerFacadeTests {
     @DisplayName("Unique Authtoken Each Login")
     public void uniqueAuthorizationTokens() throws ResponseException {
         AuthData loginOne = serverFacade.login(existingUser);
-        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
-                "Server response code was not 200 OK");
+        assertSuccess();
         Assertions.assertNotNull(loginOne.authToken(), "Login result did not contain an authToken");
 
         AuthData loginTwo = serverFacade.login(existingUser);
-        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
-                "Server response code was not 200 OK");
+        assertSuccess();
         Assertions.assertNotNull(loginTwo.authToken(), "Login result did not contain an authToken");
 
         Assertions.assertNotEquals(existingAuth, loginOne.authToken(),
@@ -326,17 +322,14 @@ public class ServerFacadeTests {
 
 
         gameID = serverFacade.createGame(gameName, existingAuth);
-        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
-                "Server response code was not 200 OK");
+        assertSuccess();
 
 
         serverFacade.logout(existingAuth);
-        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
-                "Server response code was not 200 OK");
+        assertSuccess();
 
         serverFacade.joinGame(gameID, "WHITE", loginOne.authToken());
-        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
-                "Server response code was not 200 OK");
+        assertSuccess();
 
         GameData[] listResult = serverFacade.listGames(loginTwo.authToken());
         assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
@@ -346,9 +339,52 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void register() throws Exception {
-        UserData userData = new UserData("player1", "password", "p1@email.com");
-        String authToken = serverFacade.register(userData).authToken();
-        assertTrue(authToken.length() > 10);
+    @DisplayName("Clear Test")
+    public void clearData() throws ResponseException {
+        //create filler games
+        serverFacade.createGame("Mediocre game", existingAuth);
+        serverFacade.createGame("Awesome game", existingAuth);
+
+        //log in new user
+        UserData user = new UserData("ClearMe", "cleared", "clear@mail.com");
+        AuthData authData = serverFacade.register(user);
+
+        //create and join game for new user
+        gameID = serverFacade.createGame("Clear game", authData.authToken());
+
+        serverFacade.joinGame(gameID, "WHITE", authData.authToken());
+
+        //do clear
+        serverFacade.clearDataBase("monkeypie");
+
+        //test clear successful
+        assertSuccess();
+
+        //make sure neither user can log in
+        //first user
+        assertThrows(ResponseException.class, () -> serverFacade.login(existingUser));
+        assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, serverFacade.getStatusCode(), "User authorization not removed");
+
+        //second user
+        assertThrows(ResponseException.class, () -> serverFacade.login(user));
+        assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, serverFacade.getStatusCode(), "User authorization not removed");
+
+        //try to use old auth token to list games
+        assertThrows(ResponseException.class, () -> serverFacade.listGames(existingAuth));
+        assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, serverFacade.getStatusCode(), "User authorization not removed");
+
+        //log in new user and check that list is empty
+        authData = serverFacade.register(user);
+        assertSuccess();
+        GameData[] listResult = serverFacade.listGames(authData.authToken());
+        assertSuccess();
+
+        //check listResult
+        Assertions.assertEquals(0, listResult.length, "list result did not return 0 games after clear");
+    }
+
+    private void assertSuccess() {
+        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
+                "Server response code was not 200 OK");
     }
 }
