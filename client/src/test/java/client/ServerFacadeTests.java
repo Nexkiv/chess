@@ -103,7 +103,7 @@ public class ServerFacadeTests {
     @DisplayName("Re-Register User")
     public void registerTwice() {
         //submit register request trying to register existing user
-        assertThrows(ResponseException.class, () -> registerResult = serverFacade.register(newUser), "Action was successful");
+        assertThrows(ResponseException.class, () -> registerResult = serverFacade.register(existingUser), "Action was successful");
 
         assertNull(registerResult, "AuthData returned");
     }
@@ -117,6 +117,24 @@ public class ServerFacadeTests {
         assertThrows(ResponseException.class, () -> registerResult = serverFacade.register(registerRequest), "Action was successful");
 
         assertNull(registerResult, "AuthData returned");
+    }
+
+    @Test
+    @DisplayName("Normal Logout")
+    public void successLogout() throws ResponseException {
+        //log out existing user
+        serverFacade.logout(existingAuth);
+
+        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+    }
+
+    @Test
+    @DisplayName("Invalid Auth Logout")
+    public void failLogout() throws ResponseException {
+        //log out user twice
+        //second logout should fail
+        serverFacade.logout(existingAuth);
+        assertThrows(ResponseException.class, () -> serverFacade.logout(existingAuth), "Action was successful");
     }
 
     @Test
