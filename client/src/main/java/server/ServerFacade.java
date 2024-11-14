@@ -13,8 +13,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.Collection;
-import java.util.List;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -97,7 +95,7 @@ public class ServerFacade {
         return response.gameID;
     }
 
-    public GameData[] ListGames(String authToken) throws ResponseException {
+    public GameData[] listGames(String authToken) throws ResponseException {
         String path = "/game";
         record ListGamesRecord (GameData[] games) {
         }

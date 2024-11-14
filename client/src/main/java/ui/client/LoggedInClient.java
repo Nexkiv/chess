@@ -1,6 +1,5 @@
 package ui.client;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import exception.ResponseException;
 import model.GameData;
@@ -71,7 +70,7 @@ public class LoggedInClient implements ChessClient {
     }
 
     private ChessClient listGames() throws ResponseException {
-        listOfGames = server.ListGames(authToken);
+        listOfGames = server.listGames(authToken);
         StringBuilder sb = new StringBuilder();
 
 
@@ -98,7 +97,7 @@ public class LoggedInClient implements ChessClient {
             throw new IllegalArgumentException("Wrong number of arguments");
         }
 
-        listOfGames = server.ListGames(authToken);
+        listOfGames = server.listGames(authToken);
 
         int playerSelection = Integer.parseInt(params[0]) - 1;
         if (playerSelection < 0 || playerSelection > listOfGames.length) {
