@@ -145,7 +145,7 @@ public class ServerFacadeTests {
     public void goodCreate() throws ResponseException {
         gameID = serverFacade.createGame(gameName, existingAuth);
 
-        assertEquals(HttpURLConnection.HTTP_CREATED, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
 
         Assertions.assertTrue(gameID > 0, "Result returned invalid game ID");
     }
@@ -169,7 +169,7 @@ public class ServerFacadeTests {
         serverFacade.joinGame(gameID, "WHITE", existingAuth);
 
         //check
-        assertEquals(HttpURLConnection.HTTP_CREATED, serverFacade.getStatusCode(), "Action was unsuccessful");
+        assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
 
         GameData[] listResult = serverFacade.listGames(existingAuth);
 
@@ -220,7 +220,7 @@ public class ServerFacadeTests {
         assertThrows(ResponseException.class, () -> serverFacade.joinGame(gameID, "BLACK", newAuth.authToken()), "Action was successful");
 
         //check failed
-        assertEquals(HttpURLConnection.HTTP_ACCEPTED, serverFacade.getStatusCode(), "Incorrect HTTP code");
+        assertEquals(HttpURLConnection.HTTP_FORBIDDEN, serverFacade.getStatusCode(), "Incorrect HTTP code");
     }
 
     @Test
