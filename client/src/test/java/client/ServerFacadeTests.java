@@ -23,6 +23,7 @@ public class ServerFacadeTests {
     private static String gameName;
     private String existingAuth;
     private AuthData loginResult;
+    private AuthData registerResult;
 
     @BeforeAll
     public static void init() {
@@ -71,7 +72,7 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Login Invalid User")
     public void loginInvalidUser() {
-        assertThrows(ResponseException.class, () -> loginResult = serverFacade.login(newUser), "Action was successfully blocked");
+        assertThrows(ResponseException.class, () -> loginResult = serverFacade.login(newUser), "Action was successful");
 
         assertNull(loginResult, "Response did return authentication String");
     }
@@ -81,12 +82,42 @@ public class ServerFacadeTests {
     public void loginWrongPassword() {
         UserData loginRequest = new UserData(existingUser.username(), newUser.password(), null);
 
-        assertThrows(ResponseException.class, () -> loginResult = serverFacade.login(loginRequest), "Action was successfully blocked");
+        assertThrows(ResponseException.class, () -> loginResult = serverFacade.login(loginRequest), "Action was successful");
 
-        assertNull(loginResult);
+        assertNull(loginResult, "AuthData returned");
     }
 
+    @Test
+    @DisplayName("Normal User Registration")
+    public void successRegister() throws ResponseException {
+        //submit register request
+        registerResult = serverFacade.register(newUser);
 
+        Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(), "Action was unsuccessful");
+        Assertions.assertEquals(newUser.username(), registerResult.username(),
+                "Response did not have the same username as was registered");
+        Assertions.assertNotNull(registerResult.authToken(), "Response did not contain an authentication string");
+    }
+
+    @Test
+    @DisplayName("Re-Register User")
+    public void registerTwice() {
+        //submit register request trying to register existing user
+        assertThrows(ResponseException.class, () -> registerResult = serverFacade.register(newUser), "Action was successful");
+
+        assertNull(registerResult, "AuthData returned");
+    }
+
+    @Test
+    @DisplayName("Register Bad Request")
+    public void failRegister() {
+        //attempt to register a user without a password
+        UserData registerRequest = new UserData(newUser.username(), null, newUser.email());
+
+        assertThrows(ResponseException.class, () -> registerResult = serverFacade.register(registerRequest), "Action was successful");
+
+        assertNull(registerResult, "AuthData returned");
+    }
 
     @Test
     void register() throws Exception {
