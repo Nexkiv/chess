@@ -67,7 +67,7 @@ public class ServerFacadeTests {
     public void successLogin() throws ResponseException {
         loginResult = serverFacade.login(existingUser);
 
-        assertSuccess();
+        assertHTTPSuccess();
         assertEquals(existingUser.username(), loginResult.username(),
                 "Response did not give the same username as user");
         assertNotNull(loginResult.authToken(), "Response did not return authentication String");
@@ -97,7 +97,7 @@ public class ServerFacadeTests {
         //submit register request
         registerResult = serverFacade.register(newUser);
 
-        assertSuccess();
+        assertHTTPSuccess();
         assertEquals(newUser.username(), registerResult.username(),
                 "Response did not have the same username as was registered");
         assertNotNull(registerResult.authToken(), "Response did not contain an authentication string");
@@ -129,7 +129,7 @@ public class ServerFacadeTests {
         //log out existing user
         serverFacade.logout(existingAuth);
 
-        assertSuccess();
+        assertHTTPSuccess();
     }
 
     @Test
@@ -146,7 +146,7 @@ public class ServerFacadeTests {
     public void goodCreate() throws ResponseException {
         gameID = serverFacade.createGame(gameName, existingAuth);
 
-        assertSuccess();
+        assertHTTPSuccess();
 
         assertTrue(gameID > 0, "Result returned invalid game ID");
     }
@@ -170,7 +170,7 @@ public class ServerFacadeTests {
         serverFacade.joinGame(gameID, "WHITE", existingAuth);
 
         //check
-        assertSuccess();
+        assertHTTPSuccess();
 
         GameData[] listResult = serverFacade.listGames(existingAuth);
 
@@ -242,7 +242,7 @@ public class ServerFacadeTests {
     public void noGamesList() throws ResponseException {
         GameData[] result = serverFacade.listGames(existingAuth);
 
-        assertSuccess();
+        assertHTTPSuccess();
         assertEquals(0, result.length, "Found games when none should be there");
     }
 
@@ -294,7 +294,7 @@ public class ServerFacadeTests {
 
         //list games
         GameData[] listResult = serverFacade.listGames(existingAuth);
-        assertSuccess();
+        assertHTTPSuccess();
         Collection<GameData> returnedList = new HashSet<>(Arrays.asList(listResult));
 
         //check
@@ -306,11 +306,11 @@ public class ServerFacadeTests {
     @DisplayName("Unique Authtoken Each Login")
     public void uniqueAuthorizationTokens() throws ResponseException {
         AuthData loginOne = serverFacade.login(existingUser);
-        assertSuccess();
+        assertHTTPSuccess();
         Assertions.assertNotNull(loginOne.authToken(), "Login result did not contain an authToken");
 
         AuthData loginTwo = serverFacade.login(existingUser);
-        assertSuccess();
+        assertHTTPSuccess();
         Assertions.assertNotNull(loginTwo.authToken(), "Login result did not contain an authToken");
 
         Assertions.assertNotEquals(existingAuth, loginOne.authToken(),
@@ -322,14 +322,14 @@ public class ServerFacadeTests {
 
 
         gameID = serverFacade.createGame(gameName, existingAuth);
-        assertSuccess();
+        assertHTTPSuccess();
 
 
         serverFacade.logout(existingAuth);
-        assertSuccess();
+        assertHTTPSuccess();
 
         serverFacade.joinGame(gameID, "WHITE", loginOne.authToken());
-        assertSuccess();
+        assertHTTPSuccess();
 
         GameData[] listResult = serverFacade.listGames(loginTwo.authToken());
         assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
@@ -358,7 +358,7 @@ public class ServerFacadeTests {
         serverFacade.clearDataBase("monkeypie");
 
         //test clear successful
-        assertSuccess();
+        assertHTTPSuccess();
 
         //make sure neither user can log in
         //first user
@@ -375,15 +375,28 @@ public class ServerFacadeTests {
 
         //log in new user and check that list is empty
         authData = serverFacade.register(user);
-        assertSuccess();
+        assertHTTPSuccess();
         GameData[] listResult = serverFacade.listGames(authData.authToken());
-        assertSuccess();
+        assertHTTPSuccess();
 
         //check listResult
         Assertions.assertEquals(0, listResult.length, "list result did not return 0 games after clear");
     }
 
-    private void assertSuccess() {
+    @Test
+    @DisplayName("Multiple Clears")
+    public void multipleClear() throws ResponseException {
+
+        //clear multiple times
+        serverFacade.clearDataBase("monkeypie");
+        serverFacade.clearDataBase("monkeypie");
+        serverFacade.clearDataBase("monkeypie");
+
+        //make sure returned good
+        assertHTTPSuccess();
+    }
+
+    private void assertHTTPSuccess() {
         assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
                 "Server response code was not 200 OK");
     }
