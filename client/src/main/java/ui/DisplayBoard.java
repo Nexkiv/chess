@@ -19,11 +19,19 @@ public class DisplayBoard {
 
     public String getBoard(ChessGame.TeamColor teamColor) {
         StringBuilder boardDisplay = new StringBuilder();
+        int row;
+        int col;
 
         boardDisplay.append(headerAndFooter(teamColor));
         boardDisplay.append(RESET_BG_COLOR).append("\n");
         for (int i = 8; i > 0; i--) {
-            boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(i));
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                row = i;
+
+            } else {
+                row = 9 - i;
+            }
+            boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(row));
             for (int j = 1; j < 9; j++) {
                 if ((i + j) % 2 != 0) {
                     boardDisplay.append(SET_BG_COLOR_TAN);
@@ -31,12 +39,13 @@ public class DisplayBoard {
                     boardDisplay.append(SET_BG_COLOR_BROWN);
                 }
                 if (teamColor == ChessGame.TeamColor.WHITE) {
-                    boardDisplay.append(chessPiece(board.getPiece(new ChessPosition(i,j))));
+                    col = j;
                 } else {
-                    boardDisplay.append(chessPiece(board.getPiece(new ChessPosition(9 - i,9 - j))));
+                    col = 9 - j;
                 }
+                boardDisplay.append(chessPiece(board.getPiece(new ChessPosition(row,col))));
             }
-            boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(i));
+            boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(row));
             boardDisplay.append(RESET_BG_COLOR).append("\n");
         }
         boardDisplay.append(headerAndFooter(teamColor));
