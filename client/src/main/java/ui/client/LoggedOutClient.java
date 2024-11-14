@@ -6,6 +6,8 @@ import server.ServerFacade;
 
 import java.util.Arrays;
 
+import static ui.EscapeSequences.*;
+
 public class LoggedOutClient implements ChessClient {
     private final ServerFacade server;
 
@@ -69,11 +71,11 @@ public class LoggedOutClient implements ChessClient {
 
     @Override
     public String help() {
-        return ("""
+        return (SET_TEXT_COLOR_BLUE + """
                 register <USERNAME> <PASSWORD> <EMAIL> - to create an account
                 login <USERNAME> <PASSWORD> - to play chess
                 quit - closes the chess UI
                 help - display possible commands with explanations
-                """);
+                """ + RESET_TEXT_COLOR);
     }
 }

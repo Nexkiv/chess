@@ -9,6 +9,9 @@ import ui.DisplayBoard;
 
 import java.util.Arrays;
 
+import static ui.EscapeSequences.RESET_TEXT_COLOR;
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
+
 public class LoggedInClient implements ChessClient {
     private String message;
     private GameData[] listOfGames;
@@ -20,12 +23,12 @@ public class LoggedInClient implements ChessClient {
         this.server = server;
         this.username = username;
         this.authToken = authToken;
-        message = "Logged in as " + username;
+        message = "Logged in as " + username + "\n\n" + help();
     }
 
     @Override
     public String help() {
-        return ("""
+        return (SET_TEXT_COLOR_BLUE + """
                 create <NAME> - to create a game with the given name
                 list - to list all the games
                 join <ID> [WHITE|BLACK] - to join the game with game ID as chosen color
@@ -33,7 +36,7 @@ public class LoggedInClient implements ChessClient {
                 logout - to sign out of the application
                 quit - to sign out and close the application
                 help - to see possible commands
-                """);
+                """ + RESET_TEXT_COLOR);
     }
 
     @Override
@@ -56,13 +59,13 @@ public class LoggedInClient implements ChessClient {
 
     private ChessClient createGame(String[] params) throws ResponseException {
         if (params.length != 1) {
-            throw new IllegalArgumentException("Invalid number of arguments");
+            throw new IllegalArgumentException("Wrong number of arguments");
         }
 
         String gameName = params[0];
 
         server.createGame(gameName, authToken);
-        message = gameName + " was successfully created";
+        message = "The game \"" + gameName + "\" was successfully created!\n";
 
         return this;
     }
@@ -71,10 +74,18 @@ public class LoggedInClient implements ChessClient {
         listOfGames = server.listGames(authToken);
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < listOfGames.length; i++) {
-            sb.append(i + 1).append(": ").append(listOfGames[i].gameName()).append("\n");
-            sb.append("White: ").append(listOfGames[i].whiteUsername()).append(" Black: ").append(listOfGames[i].blackUsername());
-            sb.append("\n");
+
+        if (listOfGames.length == 0) {
+            sb.append("There are no games on this server at the moment.\n");
+            sb.append("You can create a game by using the 'create' command.\n");
+        } else {
+            sb.append("List of games: \n");
+
+            for (int i = 0; i < listOfGames.length; i++) {
+                sb.append(i + 1).append(": ").append(listOfGames[i].gameName()).append("\n");
+                sb.append("White: ").append(listOfGames[i].whiteUsername()).append(" Black: ").append(listOfGames[i].blackUsername());
+                sb.append("\n");
+            }
         }
 
         message = sb.toString();
@@ -84,7 +95,7 @@ public class LoggedInClient implements ChessClient {
 
     private ChessClient joinGame(String[] params) throws ResponseException {
         if (params.length != 2) {
-            throw new IllegalArgumentException("Invalid number of arguments");
+            throw new IllegalArgumentException("Wrong number of arguments");
         }
 
         int playerSelection = Integer.parseInt(params[0]) - 1;
@@ -106,7 +117,7 @@ public class LoggedInClient implements ChessClient {
 
     private ChessClient observeGame(String[] params) throws ResponseException {
         if (params.length != 1) {
-            throw new IllegalArgumentException("Invalid number of arguments");
+            throw new IllegalArgumentException("Wrong number of arguments");
         }
 
         int playerSelection = Integer.parseInt(params[0]) - 1;

@@ -5,6 +5,9 @@ import server.ServerFacade;
 
 import java.util.Arrays;
 
+import static ui.EscapeSequences.RESET_TEXT_COLOR;
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
+
 public class GameplayClient implements ChessClient {
     private final ServerFacade server;
     private final String username;
@@ -23,14 +26,14 @@ public class GameplayClient implements ChessClient {
 
     @Override
     public String help() {
-        return """
+        return (SET_TEXT_COLOR_BLUE + """
                redraw - to redraw the chess board
                leave - to remove yourself from the game
                move <START> <END> - to move a piece from start to end
                resign - to forfeit and end the game
                highlight <SPACE> - to highlight the legal moves of the piece
                help - to see possible commands
-               """;
+               """ + RESET_TEXT_COLOR);
     }
 
     @Override

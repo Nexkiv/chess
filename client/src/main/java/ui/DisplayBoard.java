@@ -110,6 +110,6 @@ public class DisplayBoard {
     }
 
     public String getBothBoards() {
-        return getWhiteBoard() + "\n\n" +  getBlackBoard();
+        return getWhiteBoard() + "\n\n" +  getBlackBoard() + "\n";
     }
 }
