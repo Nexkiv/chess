@@ -1,8 +1,10 @@
 package client;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import jdk.jfr.Category;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -157,6 +159,50 @@ public class ServerFacadeTests {
         assertThrows(ResponseException.class, () -> serverFacade.createGame(gameName, existingAuth), "Action was successful");
     }
 
+    @Test
+    @DisplayName("Join Created Game")
+    public void goodJoin() throws ResponseException {
+        //create game
+        gameID = serverFacade.createGame(gameName, existingAuth);
+
+        //join as white
+        serverFacade.joinGame(gameID, "WHITE", existingAuth);
+
+        //check
+        assertEquals(HttpURLConnection.HTTP_CREATED, serverFacade.getStatusCode(), "Action was unsuccessful");
+
+        GameData[] listResult = serverFacade.listGames(existingAuth);
+
+        Assertions.assertEquals(1, listResult.length);
+        Assertions.assertEquals(existingUser.username(), listResult[0].whiteUsername(), "Player wasn't added to the game");
+        Assertions.assertNull(listResult[0].blackUsername(), "Invalid player assigned to black position");
+    }
+
+    @Test
+    @DisplayName("Join Bad Authentication")
+    public void badAuthJoin() throws ResponseException {
+        //create game
+        gameID = serverFacade.createGame(gameName, existingAuth);
+
+        //try join as white
+        assertThrows(ResponseException.class, () -> serverFacade.joinGame(gameID, "WHITE", existingAuth + "bad stuff"), "Action was successful");
+
+        //check
+        assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, serverFacade.getStatusCode(), "Incorrect HTTP code");
+    }
+
+    @Test
+    @DisplayName("Join Bad Team Color")
+    public void badColorJoin() throws ResponseException {
+        //create game
+        gameID = serverFacade.createGame(gameName, existingAuth);
+
+        //try join as white
+        assertThrows(ResponseException.class, () -> serverFacade.joinGame(gameID, null, existingAuth), "Action was successful");
+
+        //check
+        assertEquals(HttpURLConnection.HTTP_BAD_REQUEST, serverFacade.getStatusCode(), "Incorrect HTTP code");
+    }
 
 
     @Test
