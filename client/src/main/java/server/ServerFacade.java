@@ -18,6 +18,8 @@ import java.util.List;
 
 public class ServerFacade {
     private final String serverUrl;
+    private static int statusCode;
+    private final static Gson SERIALIZER = new Gson();
 
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -39,14 +41,14 @@ public class ServerFacade {
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception ex) {
-            throw new ResponseException(500, ex.getMessage());
+            throw new ResponseException(statusCode, ex.getMessage());
         }
     }
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
-            String reqData = new Gson().toJson(request);
+            String reqData = SERIALIZER.toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
             }
@@ -54,9 +56,9 @@ public class ServerFacade {
     }
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
-        var status = http.getResponseCode();
-        if (!isSuccessful(status)) {
-            throw new ResponseException(status, "failure: " + status);
+        statusCode = http.getResponseCode();
+        if (!isSuccessful(statusCode)) {
+            throw new ResponseException(statusCode, "failure: " + statusCode);
         }
     }
 
@@ -66,7 +68,7 @@ public class ServerFacade {
             try (InputStream respBody = http.getInputStream()) {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
+                    response = SERIALIZER.fromJson(reader, responseClass);
                 }
             }
         }
@@ -132,5 +134,9 @@ public class ServerFacade {
     }
 
     private record NewGameName(String gameName) {
+    }
+
+    public int getStatusCode() {
+        return statusCode;
     }
 }
