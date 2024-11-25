@@ -1,9 +1,9 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
@@ -11,14 +11,29 @@ public class DisplayBoard {
     private final ChessBoard board;
     private static final String SET_BG_COLOR_SILVER = "\033[48;2;220;220;220m";
     private static final String SET_BG_COLOR_TAN = "\033[48;2;193;154;107m";
+    private static final String SET_BG_COLOR_RED_TAN = "\033[48;2;205;105;93m";
     private static final String SET_BG_COLOR_BROWN = "\033[48;2;84;42;24m";
+    private static final String SET_BG_COLOR_RED_BROWN = "\033[48;2;184;42;24m";
 
     public DisplayBoard(ChessBoard board) {
         this.board = board;
     }
 
     public String getBoard(ChessGame.TeamColor teamColor) {
+        Collection<ChessMove> emptyMoves = new ArrayList<>();
+        return this.getHighlightedBoard(teamColor, emptyMoves);
+    }
+
+    public String getHighlightedBoard(ChessGame.TeamColor teamColor, Collection<ChessMove> validMoves) {
         StringBuilder boardDisplay = new StringBuilder();
+        boolean[][] highlightMap = new boolean[8][8];
+        boolean[][] pieceLocation = new boolean[8][8];
+
+        for (ChessMove move : validMoves) {
+            pieceLocation[move.getStartPosition().getRank() - 1][move.getStartPosition().getFile() - 1] = true;
+            highlightMap[move.getEndPosition().getRank() - 1][move.getEndPosition().getFile() - 1] = true;
+        }
+
         int row;
         int col;
 
@@ -27,14 +42,19 @@ public class DisplayBoard {
         for (int i = 8; i > 0; i--) {
             if (teamColor == ChessGame.TeamColor.WHITE) {
                 row = i;
-
             } else {
                 row = 9 - i;
             }
             boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(row));
             for (int j = 1; j < 9; j++) {
-                if ((i + j) % 2 != 0) {
+                if (pieceLocation[i - 1][j - 1]) {
+                    boardDisplay.append(SET_BG_COLOR_SILVER);
+                } else if ((i + j) % 2 != 0 && highlightMap[i - 1][j - 1]) {
+                    boardDisplay.append(SET_BG_COLOR_RED_TAN);
+                } else if ((i + j) % 2 != 0) {
                     boardDisplay.append(SET_BG_COLOR_TAN);
+                } else if (highlightMap[i - 1][j - 1]) {
+                    boardDisplay.append(SET_BG_COLOR_RED_BROWN);
                 } else {
                     boardDisplay.append(SET_BG_COLOR_BROWN);
                 }
