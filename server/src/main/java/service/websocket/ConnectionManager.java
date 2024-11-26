@@ -15,8 +15,17 @@ public class ConnectionManager {
         connections.put(visitorName, connection);
     }
 
+    public void add(Connection connection) {
+        Connection newConnection = new Connection(connection.session, connection.username);
+        connections.put(connection.username, newConnection);
+    }
+
     public void remove(String visitorName) {
         connections.remove(visitorName);
+    }
+
+    public void remove(Connection connection) {
+        connections.remove(connection.username);
     }
 
     public void broadcast(String excludeVisitorName, ServerMessage serverMessage) throws IOException {

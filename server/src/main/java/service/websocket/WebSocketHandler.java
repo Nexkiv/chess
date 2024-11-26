@@ -7,7 +7,7 @@ import model.AuthData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import websocket.commands.ConnectCommand;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
@@ -33,10 +33,10 @@ public class WebSocketHandler {
             switch (command.getCommandType()) {
 //                case JOIN_PLAYER -> join(conn, msg);
 //                case JOIN_OBSERVER -> observe(conn, msg);
-                case CONNECT -> connect(conn, message);
+                case CONNECT -> connect(conn);
                 case MAKE_MOVE -> makeMove(conn, message);
-                case LEAVE -> leaveGame(conn, message);
-                case RESIGN -> resign(conn, message);
+                case LEAVE -> leaveGame(conn);
+                case RESIGN -> resign(conn);
             }
         } else {
             Connection.sendError(session.getRemote(), "unknown user");
@@ -55,19 +55,19 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(Connection connection, String message) {
-        ConnectCommand command = new Gson().fromJson(message, ConnectCommand.class);
+    private void connect(Connection connection) {
+        connections.add(connection);
     }
 
     private void makeMove(Connection connection, String message) {
         MakeMoveCommand command = new Gson().fromJson(message, MakeMoveCommand.class);
     }
 
-    private void leaveGame(Connection connection, String message) {
-        LeaveGameCommand command = new Gson().fromJson(message, LeaveGameCommand.class);
+    private void leaveGame(Connection connection) {
+        connections.remove(connection);
     }
 
-    private void resign(Connection connection, String message) {
-        ResignCommand command = new Gson().fromJson(message, ResignCommand.class);
+    private void resign(Connection connection) {
+        connections.remove(connection);
     }
 }
