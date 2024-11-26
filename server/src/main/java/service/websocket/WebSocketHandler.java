@@ -7,6 +7,7 @@ import model.AuthData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
@@ -26,10 +27,10 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws IOException, ResponseException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
-        Connection conn = getConnection(command.authToken(), session);
+        Connection conn = getConnection(command.getAuthToken(), session);
 
         if (conn != null) {
-            switch (command.commandType()) {
+            switch (command.getCommandType()) {
 //                case JOIN_PLAYER -> join(conn, msg);
 //                case JOIN_OBSERVER -> observe(conn, msg);
                 case CONNECT -> connect(conn, message);
