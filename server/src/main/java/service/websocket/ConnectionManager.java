@@ -1,4 +1,4 @@
-package server.websocket;
+package service.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
@@ -23,7 +23,7 @@ public class ConnectionManager {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.visitorName.equals(excludeVisitorName)) {
+                if (!c.username.equals(excludeVisitorName)) {
                     c.send(serverMessage.toString());
                 }
             } else {
@@ -33,7 +33,7 @@ public class ConnectionManager {
 
         // Clean up any connections that were left open.
         for (var c : removeList) {
-            connections.remove(c.visitorName);
+            connections.remove(c.username);
         }
     }
 }

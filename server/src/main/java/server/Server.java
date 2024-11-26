@@ -2,11 +2,13 @@ package server;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import dataaccess.MySqlDataAccess;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
+import service.websocket.WebSocketHandler;
 import spark.*;
 import service.Service;
 
@@ -14,14 +16,19 @@ import java.util.Collection;
 
 public class Server {
 
-    private Service service;
+    private final Service service;
+    private final WebSocketHandler webSocketHandler;
+    private DataAccess dataAccessObject;
     private final static Gson SERIALIZER = new Gson();
 
     public Server() {
         try {
-            service = new Service(new MySqlDataAccess());
+            dataAccessObject = new MemoryDataAccess();
         } catch (Exception e) {
-            service = new Service(new MemoryDataAccess());
+            dataAccessObject = new MemoryDataAccess();
+        } finally {
+            service = new Service(dataAccessObject);
+            webSocketHandler = new WebSocketHandler(dataAccessObject);
         }
     }
 
@@ -29,6 +36,8 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clearData);
