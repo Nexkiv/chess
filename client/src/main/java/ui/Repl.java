@@ -78,7 +78,5 @@ public class Repl implements NotificationHandler {
             case NotificationMessage message -> System.out.println(message.getMessage());
             default -> throw new IllegalArgumentException("ServerMessage not recognized");
         }
-
-        printPrompt();
     }
 }
