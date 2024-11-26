@@ -1,5 +1,6 @@
 package service.websocket;
 
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
 
@@ -16,5 +17,9 @@ public class Connection {
 
     public void send(String msg) throws IOException {
         session.getRemote().sendString(msg);
+    }
+
+    public static void sendError(RemoteEndpoint remote, String msg) throws IOException {
+        remote.sendString(msg);
     }
 }
