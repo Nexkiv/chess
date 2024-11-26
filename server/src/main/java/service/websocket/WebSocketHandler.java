@@ -26,10 +26,10 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws IOException, ResponseException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
-        Connection conn = getConnection(command.getAuthToken(), session);
+        Connection conn = getConnection(command.authToken(), session);
 
         if (conn != null) {
-            switch (command.getCommandType()) {
+            switch (command.commandType()) {
 //                case JOIN_PLAYER -> join(conn, msg);
 //                case JOIN_OBSERVER -> observe(conn, msg);
                 case CONNECT -> connect(conn, message);

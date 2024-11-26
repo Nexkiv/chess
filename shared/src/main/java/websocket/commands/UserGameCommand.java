@@ -4,41 +4,18 @@ import java.util.Objects;
 
 /**
  * Represents a command a user can send the server over a websocket
- *
+ * <p>
  * Note: You can add to this class, but you should not alter the existing
  * methods.
  */
-public class UserGameCommand {
-
-    private final CommandType commandType;
-
-    private final String authToken;
-
-    private final Integer gameID;
-
-    public UserGameCommand(CommandType commandType, String authToken, Integer gameID) {
-        this.commandType = commandType;
-        this.authToken = authToken;
-        this.gameID = gameID;
-    }
+public record UserGameCommand(websocket.commands.UserGameCommand.CommandType commandType, String authToken,
+                              Integer gameID) {
 
     public enum CommandType {
         CONNECT,
         MAKE_MOVE,
         LEAVE,
         RESIGN
-    }
-
-    public CommandType getCommandType() {
-        return commandType;
-    }
-
-    public String getAuthToken() {
-        return authToken;
-    }
-
-    public Integer getGameID() {
-        return gameID;
     }
 
     @Override
@@ -50,13 +27,13 @@ public class UserGameCommand {
             return false;
         }
         UserGameCommand that = (UserGameCommand) o;
-        return getCommandType() == that.getCommandType() &&
-                Objects.equals(getAuthToken(), that.getAuthToken()) &&
-                Objects.equals(getGameID(), that.getGameID());
+        return commandType() == that.commandType() &&
+                Objects.equals(authToken(), that.authToken()) &&
+                Objects.equals(gameID(), that.gameID());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCommandType(), getAuthToken(), getGameID());
+        return Objects.hash(commandType(), authToken(), gameID());
     }
 }
