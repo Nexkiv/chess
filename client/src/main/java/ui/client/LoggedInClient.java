@@ -47,7 +47,7 @@ public class LoggedInClient implements ChessClient {
 
         return switch (command) {
             case "create", "c" -> createGame(params);
-            case "list" -> listGames();
+            case "list", "ls" -> listGames();
             case "join", "j" -> joinGame(params);
             case "observe", "o" -> observeGame(params);
             case "logout" -> logout();
@@ -110,10 +110,7 @@ public class LoggedInClient implements ChessClient {
 
         server.joinGame(gameID, color, authToken);
 
-        // Temporary code as a precursor to the final product
-        message = new DisplayBoard(new ChessGame().getBoard()).getBothBoards();
-
-        return this; // new GameplayClient(server, username, authToken, gameID);
+        return new GameplayClient(server, username, authToken, gameID);
     }
 
     private ChessClient observeGame(String[] params) throws ResponseException {

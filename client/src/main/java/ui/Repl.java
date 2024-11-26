@@ -2,12 +2,14 @@ package ui;
 
 import ui.client.ChessClient;
 import ui.client.LoggedOutClient;
+import websocket.NotificationHandler;
+import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-public class Repl {
+public class Repl implements NotificationHandler {
     private ChessClient client;
 
     public Repl(String serverUrl) {
@@ -64,5 +66,11 @@ public class Repl {
 
     private String printPrompt() {
         return ("\n" + ">>> ");
+    }
+
+    @Override
+    public void notify(ServerMessage serverMessage) {
+        System.out.println(SET_TEXT_COLOR_RED + serverMessage.message());
+        printPrompt();
     }
 }
