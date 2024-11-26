@@ -3,6 +3,8 @@ package ui;
 import ui.client.ChessClient;
 import ui.client.LoggedOutClient;
 import websocket.NotificationHandler;
+import websocket.messages.ErrorMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
@@ -70,7 +72,13 @@ public class Repl implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage serverMessage) {
-        System.out.println(SET_TEXT_COLOR_RED + serverMessage.message());
+        switch (serverMessage) {
+            case null -> throw new IllegalArgumentException("ServerMessage cannot be null");
+            case ErrorMessage errorMessage -> System.out.println(SET_TEXT_COLOR_RED + errorMessage.getMessage());
+            case NotificationMessage message -> System.out.println(message.getMessage());
+            default -> throw new IllegalArgumentException("ServerMessage not recognized");
+        }
+
         printPrompt();
     }
 }
