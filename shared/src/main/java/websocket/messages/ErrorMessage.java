@@ -11,12 +11,11 @@ public class ErrorMessage extends ServerMessage {
         this.errorMessage = "Error: " + errorMessage;
     }
 
-    public String getErrorMessage() {
+    public String getMessage() {
         return errorMessage;
     }
 
-    @Override
-    public String toString() {
+    public String toJSON() {
         return new Gson().toJson(this);
     }
 }
