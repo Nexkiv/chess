@@ -15,7 +15,7 @@ public class Repl implements NotificationHandler {
     private ChessClient client;
 
     public Repl(String serverUrl) {
-        client = new LoggedOutClient(serverUrl);
+        client = new LoggedOutClient(serverUrl, this);
     }
 
     public void run() {
@@ -24,7 +24,7 @@ public class Repl implements NotificationHandler {
 
         Scanner scanner = new Scanner(System.in);
         while (!(client == null)) {
-            System.out.print(printPrompt());
+            printPrompt();
             String line = scanner.nextLine();
             System.out.println();
 
@@ -66,8 +66,8 @@ public class Repl implements NotificationHandler {
         System.out.println("Thanks for playing!");
     }
 
-    private String printPrompt() {
-        return ("\n" + ">>> ");
+    private void printPrompt() {
+        System.out.println ("\n" + ">>> ");
     }
 
     @Override
@@ -78,5 +78,6 @@ public class Repl implements NotificationHandler {
             case NotificationMessage message -> System.out.println(message.getMessage());
             default -> throw new IllegalArgumentException("ServerMessage not recognized");
         }
+        printPrompt();
     }
 }

@@ -5,6 +5,7 @@ import exception.ResponseException;
 import model.GameData;
 import server.ServerFacade;
 import ui.DisplayBoard;
+import websocket.NotificationHandler;
 
 import java.util.Arrays;
 
@@ -17,11 +18,13 @@ public class LoggedInClient implements ChessClient {
     private final String username;
     private final String authToken;
     private final ServerFacade server;
+    private final NotificationHandler notificationHandler;
 
-    public LoggedInClient(ServerFacade server, String username, String authToken) {
+    public LoggedInClient(ServerFacade server, String username, String authToken, NotificationHandler notificationHandler) {
         this.server = server;
         this.username = username;
         this.authToken = authToken;
+        this.notificationHandler = notificationHandler;
         message = "Logged in as " + username + "\n\n" + help();
     }
 
@@ -110,7 +113,7 @@ public class LoggedInClient implements ChessClient {
 
         server.joinGame(gameID, color, authToken);
 
-        return new GameplayClient(server, username, authToken, gameID);
+        return new GameplayClient(server, username, authToken, gameID, notificationHandler);
     }
 
     private ChessClient observeGame(String[] params) throws ResponseException {
@@ -136,7 +139,7 @@ public class LoggedInClient implements ChessClient {
     private ChessClient logout() throws ResponseException {
         server.logout(authToken);
 
-        return new LoggedOutClient(server);
+        return new LoggedOutClient(server, notificationHandler);
     }
 
     private ChessClient quit() throws ResponseException {

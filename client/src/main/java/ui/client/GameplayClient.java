@@ -1,7 +1,10 @@
 package ui.client;
 
 import chess.ChessPiece;
+import exception.ResponseException;
 import server.ServerFacade;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 
@@ -9,19 +12,24 @@ import static ui.EscapeSequences.RESET_TEXT_COLOR;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
 public class GameplayClient implements ChessClient {
-    private final ServerFacade server;
     private final String username;
     private final String authToken;
     private final int gameID;
     private String message = null;
+    private WebSocketFacade webSocket;
+    private final NotificationHandler notificationHandler;
 
-    public GameplayClient(ServerFacade server, String username, String authToken, int gameID) {
-        this.server = server;
+    public GameplayClient(ServerFacade server, String username, String authToken, int gameID,
+                          NotificationHandler notificationHandler) throws ResponseException {
         this.username = username;
         this.authToken = authToken;
         this.gameID = gameID;
+        this.notificationHandler = notificationHandler;
 
-        message = server.getGameBoard(authToken, gameID);
+        String url = server.getServerUrl().replace("http", "ws");
+        webSocket = new WebSocketFacade(url, null);
+
+        message = webSocket.getGameBoard(this.authToken, gameID);
     }
 
     @Override
@@ -54,7 +62,7 @@ public class GameplayClient implements ChessClient {
     }
 
     private ChessClient redrawBoard() {
-        message = server.getGameBoard(authToken, gameID);
+        message = webSocket.getGameBoard(authToken, gameID);
 
         return this;
     }

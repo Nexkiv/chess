@@ -1,6 +1,7 @@
 package ui.client;
 
 import exception.ResponseException;
+import websocket.NotificationHandler;
 
 public interface ChessClient {
     String help();

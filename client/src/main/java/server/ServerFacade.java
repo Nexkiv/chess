@@ -118,10 +118,6 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, null, null, authToken);
     }
 
-    public String getGameBoard(String authToken, int gameID) {
-        throw new RuntimeException("Not implemented");
-    }
-
     public void clearDataBase(String password) throws ResponseException {
         String path = "/db";
         if (password.equals("monkeypie")) {
@@ -129,6 +125,10 @@ public class ServerFacade {
         } else {
             throw new RuntimeException("Invalid clear password");
         }
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
     }
 
     private record NewGameName(String gameName) {

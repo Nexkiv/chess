@@ -3,6 +3,7 @@ package ui.client;
 import exception.ResponseException;
 import model.UserData;
 import server.ServerFacade;
+import websocket.NotificationHandler;
 
 import java.util.Arrays;
 
@@ -10,13 +11,16 @@ import static ui.EscapeSequences.*;
 
 public class LoggedOutClient implements ChessClient {
     private final ServerFacade server;
+    private final NotificationHandler notificationHandler;
 
-    public LoggedOutClient(String serverUrl) {
+    public LoggedOutClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);
+        this.notificationHandler = notificationHandler;
     }
 
-    public LoggedOutClient(ServerFacade server) {
+    public LoggedOutClient(ServerFacade server, NotificationHandler notificationHandler) {
         this.server = server;
+        this.notificationHandler = notificationHandler;
     }
 
     @Override
@@ -45,7 +49,7 @@ public class LoggedOutClient implements ChessClient {
 
         String authToken = server.login(newPlayer).authToken();
 
-        return new LoggedInClient(server, username, authToken);
+        return new LoggedInClient(server, username, authToken, notificationHandler);
     }
 
     private ChessClient registerPlayer(String[] params) throws ResponseException {
@@ -61,7 +65,7 @@ public class LoggedOutClient implements ChessClient {
 
         String authToken = server.register(newPlayer).authToken();
 
-        return new LoggedInClient(server, username, authToken);
+        return new LoggedInClient(server, username, authToken, notificationHandler);
     }
 
     @Override
