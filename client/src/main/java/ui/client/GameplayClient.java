@@ -27,9 +27,9 @@ public class GameplayClient implements ChessClient {
         this.notificationHandler = notificationHandler;
 
         String url = server.getServerUrl().replace("http", "ws");
-        webSocket = new WebSocketFacade(url, null);
+        webSocket = new WebSocketFacade(url, notificationHandler);
 
-        message = webSocket.getGameBoard(this.authToken, gameID);
+        // message = webSocket.getGameBoard(this.authToken, gameID);
     }
 
     @Override
@@ -62,9 +62,7 @@ public class GameplayClient implements ChessClient {
     }
 
     private ChessClient redrawBoard() {
-        message = webSocket.getGameBoard(authToken, gameID);
-
-        return this;
+        throw new RuntimeException("not implemented");
     }
 
     private ChessClient leaveGame() {
