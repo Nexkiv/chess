@@ -1,5 +1,6 @@
 package service.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import exception.ResponseException;
@@ -11,6 +12,8 @@ import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @WebSocket
@@ -27,16 +30,17 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws IOException, ResponseException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
-        Connection conn = getConnection(command.getAuthToken(), session);
+        Connection connection = getConnection(command.getAuthToken(), command.getGameID(), session);
 
-        if (conn != null) {
+        if (connection != null) {
+            connections.add(connection);
             switch (command.getCommandType()) {
 //                case JOIN_PLAYER -> join(conn, msg);
 //                case JOIN_OBSERVER -> observe(conn, msg);
-                case CONNECT -> connect(conn);
-                case MAKE_MOVE -> makeMove(conn, message);
-                case LEAVE -> leaveGame(conn);
-                case RESIGN -> resign(conn);
+                case CONNECT -> connect(connection, message);
+                case MAKE_MOVE -> makeMove(connection, message);
+                case LEAVE -> leaveGame(connection);
+                case RESIGN -> resign(connection);
             }
         } else {
             Connection.sendError(session.getRemote(), "unknown user");
@@ -44,19 +48,29 @@ public class WebSocketHandler {
 
     }
 
-    Connection getConnection(String authToken, Session session) throws ResponseException {
+    Connection getConnection(String authToken, int gameID, Session session) throws ResponseException {
         AuthData authData = dataAccess.getAuthData(authToken);
 
         if (authData != null) {
-            String username = authData.username();
-            return new Connection(session, username);
+            String whiteUsername = dataAccess.getGameData(gameID).whiteUsername();
+            String blackUsername = dataAccess.getGameData(gameID).blackUsername();
+            ChessGame.TeamColor userColor;
+            if (authData.username().equals(whiteUsername)) {
+                userColor = ChessGame.TeamColor.WHITE;
+            } else if (authData.username().equals(blackUsername)) {
+                userColor = ChessGame.TeamColor.BLACK;
+            } else {
+                userColor = null;
+            }
+            PlayerInformation playerInfo = new PlayerInformation(gameID, authData.username(), userColor);
+            return new Connection(playerInfo, session);
         } else {
             return null;
         }
     }
 
-    private void connect(Connection connection) {
-        connections.add(connection);
+    private void connect(Connection connection, String message) {
+
     }
 
     private void makeMove(Connection connection, String message) {
@@ -64,10 +78,8 @@ public class WebSocketHandler {
     }
 
     private void leaveGame(Connection connection) {
-        connections.remove(connection);
     }
 
     private void resign(Connection connection) {
-        connections.remove(connection);
     }
 }

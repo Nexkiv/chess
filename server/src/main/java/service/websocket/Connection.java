@@ -1,5 +1,7 @@
 package service.websocket;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
@@ -7,12 +9,13 @@ import websocket.commands.UserGameCommand;
 import java.io.IOException;
 
 public class Connection {
-    public Session session;
-    public String username;
 
-    public Connection(Session session, String username) {
+    public PlayerInformation playerInfo;
+    public Session session;
+
+    public Connection(PlayerInformation playerInfo, Session session) {
+        this.playerInfo = playerInfo;
         this.session = session;
-        this.username = username;
     }
 
     public void send(String msg) throws IOException {

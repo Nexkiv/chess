@@ -8,31 +8,31 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<PlayerInformation, Connection> connections = new ConcurrentHashMap<>();
 
-    public void add(Session session, String visitorName) {
-        var connection = new Connection(session, visitorName);
-        connections.put(visitorName, connection);
+    public void add(PlayerInformation playerInfo, Session session) {
+        var connection = new Connection(playerInfo, session);
+        connections.put(playerInfo, connection);
     }
 
     public void add(Connection connection) {
-        Connection newConnection = new Connection(connection.session, connection.username);
-        connections.put(connection.username, newConnection);
+        Connection newConnection = new Connection(connection.playerInfo, connection.session);
+        connections.put(connection.playerInfo, newConnection);
     }
 
-    public void remove(String visitorName) {
-        connections.remove(visitorName);
+    public void remove(PlayerInformation playerInfo) {
+        connections.remove(playerInfo);
     }
 
     public void remove(Connection connection) {
-        connections.remove(connection.username);
+        connections.remove(connection.playerInfo);
     }
 
-    public void broadcast(String excludeVisitorName, ServerMessage serverMessage) throws IOException {
+    public void broadcast(PlayerInformation excludedPlayerInfo, ServerMessage serverMessage) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.username.equals(excludeVisitorName)) {
+                if (!c.playerInfo.equals(excludedPlayerInfo) && c.playerInfo.gameID() == excludedPlayerInfo.gameID()) {
                     c.send(serverMessage.toString());
                 }
             } else {
@@ -42,7 +42,7 @@ public class ConnectionManager {
 
         // Clean up any connections that were left open.
         for (var c : removeList) {
-            connections.remove(c.username);
+            connections.remove(c.playerInfo);
         }
     }
 }
