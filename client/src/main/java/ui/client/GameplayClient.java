@@ -5,6 +5,7 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import exception.ResponseException;
 import server.ServerFacade;
+import ui.WebsocketError;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 
@@ -108,7 +109,7 @@ public class GameplayClient implements ChessClient {
                 case "rook", "r" -> promotionPiece = ChessPiece.PieceType.ROOK;
                 case "bishop", "b" -> promotionPiece = ChessPiece.PieceType.BISHOP;
                 case "knight", "k", "n" -> promotionPiece = ChessPiece.PieceType.KNIGHT;
-                default -> throw new IllegalArgumentException("Illegal promotion piece");
+                default -> throw new WebsocketError("Illegal promotion piece");
             }
         }
 
@@ -132,7 +133,7 @@ public class GameplayClient implements ChessClient {
 
 
         if (rank > 8 || rank <= 0 || file > 8 || file <= 0) {
-            throw new IllegalArgumentException("Invalid piece position");
+            throw new WebsocketError("Invalid piece position");
         } else {
             ChessPosition position = new ChessPosition(rank, file);
             message = webSocket.highlightPiece(position);
