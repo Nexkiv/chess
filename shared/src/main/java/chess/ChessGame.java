@@ -60,9 +60,9 @@ public class ChessGame {
         @Override
         public String toString() {
             if (this == WHITE) {
-                return "white";
+                return "White";
             } else {
-                return "black";
+                return "Black";
             }
         }
     }
@@ -372,6 +372,15 @@ public class ChessGame {
             return winner;
         } else {
             throw new RuntimeException("The game has not ended yet.");
+        }
+    }
+
+    public void resign(TeamColor teamColor) {
+        gameOver = true;
+        if (teamColor == TeamColor.WHITE) {
+            winner = TeamColor.BLACK;
+        } else {
+            winner = TeamColor.WHITE;
         }
     }
 

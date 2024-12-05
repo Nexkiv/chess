@@ -170,6 +170,12 @@ public class WebSocketHandler {
     private void leaveGame(Connection connection) {
     }
 
-    private void resign(Connection connection) {
+    private void resign(Connection connection) throws ResponseException, IOException {
+        PlayerInformation playerInfo = connection.playerInfo;
+        GameData game = dataAccess.getGameData(playerInfo.gameID());
+        game.game().resign(playerInfo.teamColor());
+        String resignationMessage = playerInfo.username() + " has resigned. The game is now over.";
+        NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignationMessage);
+        connections.sendAll(playerInfo, notification);
     }
 }
