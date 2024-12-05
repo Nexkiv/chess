@@ -33,7 +33,25 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.playerInfo.equals(excludedPlayerInfo) && c.playerInfo.gameID() == excludedPlayerInfo.gameID()) {
-                    c.send(serverMessage.toString());
+                    c.send(serverMessage.toJSON());
+                }
+            } else {
+                removeList.add(c);
+            }
+        }
+
+        // Clean up any connections that were left open.
+        for (var c : removeList) {
+            connections.remove(c.playerInfo);
+        }
+    }
+
+    public void respond(PlayerInformation excludedPlayerInfo, ServerMessage serverMessage) throws IOException {
+        var removeList = new ArrayList<Connection>();
+        for (var c : connections.values()) {
+            if (c.session.isOpen()) {
+                if (c.playerInfo.equals(excludedPlayerInfo) && c.playerInfo.gameID() == excludedPlayerInfo.gameID()) {
+                    c.send(serverMessage.toJSON());
                 }
             } else {
                 removeList.add(c);

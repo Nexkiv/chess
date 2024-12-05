@@ -14,8 +14,4 @@ public class ErrorMessage extends ServerMessage {
     public String getMessage() {
         return errorMessage;
     }
-
-    public String toJSON() {
-        return new Gson().toJson(this);
-    }
 }

@@ -58,9 +58,9 @@ public class ChessGame {
         @Override
         public String toString() {
             if (this == WHITE) {
-                return "White";
+                return "white";
             } else {
-                return "Black";
+                return "black";
             }
         }
     }

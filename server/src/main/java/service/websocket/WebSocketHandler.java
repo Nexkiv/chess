@@ -10,6 +10,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
@@ -71,7 +72,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(Connection connection, String message) throws IOException {
+    private void connect(Connection connection, String message) throws IOException, ResponseException {
         connections.add(connection);
         PlayerInformation playerInfo = connection.playerInfo;
         String connectionMessage;
@@ -82,6 +83,10 @@ public class WebSocketHandler {
         }
         NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, connectionMessage);
         connections.broadcast(connection.playerInfo, notification);
+
+        ChessGame currentGame = dataAccess.getGameData(playerInfo.gameID()).game();
+        LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, currentGame);
+        connections.respond(connection.playerInfo, loadGameMessage);
     }
 
     private void makeMove(Connection connection, String message) {
