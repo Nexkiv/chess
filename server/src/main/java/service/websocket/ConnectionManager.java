@@ -46,11 +46,11 @@ public class ConnectionManager {
         }
     }
 
-    public void respond(PlayerInformation excludedPlayerInfo, ServerMessage serverMessage) throws IOException {
+    public void respond(PlayerInformation playerInfo, ServerMessage serverMessage) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (c.playerInfo.equals(excludedPlayerInfo) && c.playerInfo.gameID() == excludedPlayerInfo.gameID()) {
+                if (c.playerInfo.equals(playerInfo) && c.playerInfo.gameID() == playerInfo.gameID()) {
                     c.send(serverMessage.toJSON());
                 }
             } else {
@@ -62,5 +62,10 @@ public class ConnectionManager {
         for (var c : removeList) {
             connections.remove(c.playerInfo);
         }
+    }
+
+    public void sendAll(PlayerInformation playerInfo, ServerMessage serverMessage) throws IOException {
+        broadcast(playerInfo, serverMessage);
+        respond(playerInfo, serverMessage);
     }
 }
