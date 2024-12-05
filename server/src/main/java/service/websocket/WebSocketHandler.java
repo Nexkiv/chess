@@ -205,7 +205,6 @@ public class WebSocketHandler {
             String resignationMessage = playerInfo.username() + " has resigned. The game is now over.";
             NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignationMessage);
             connections.sendAll(playerInfo, notification);
-            connections.remove(connection);
         } else {
             String errorMessage = "An observer cannot resign.";
             ErrorMessage error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, errorMessage);
