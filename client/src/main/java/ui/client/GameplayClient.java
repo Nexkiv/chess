@@ -80,8 +80,9 @@ public class GameplayClient implements ChessClient {
         throw new RuntimeException("not implemented");
     }
 
-    private ChessClient resignGame() {
-        throw new RuntimeException("not implemented");
+    private ChessClient resignGame() throws ResponseException {
+        webSocket.resign(authToken, gameID);
+        return new LoggedInClient(server, username, authToken, notificationHandler);
     }
 
     private ChessClient highlightMoves(String[] params) {
