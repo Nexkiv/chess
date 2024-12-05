@@ -108,7 +108,7 @@ public class WebSocketHandler {
         connections.broadcast(connection.playerInfo, notification);
 
         ChessGame currentGame = dataAccess.getGameData(playerInfo.gameID()).game();
-        LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, currentGame);
+        LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, currentGame, playerInfo.teamColor());
         connections.respond(connection.playerInfo, loadGameMessage);
     }
 
@@ -126,7 +126,7 @@ public class WebSocketHandler {
             PlayerInformation playerInfo = connection.playerInfo;
 
             dataAccess.updateGameData(gameData);
-            LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+            LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game(), playerInfo.teamColor());
             connections.sendAll(playerInfo, loadGameMessage);
 
             ChessGame.TeamColor opponentColor = playerInfo.teamColor() == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;

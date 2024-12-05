@@ -133,7 +133,7 @@ public class LoggedInClient implements ChessClient {
         // Temporary code as a precursor to the final product
         message = new DisplayBoard(new ChessGame().getBoard()).getBothBoards();
 
-        return this; // new GameplayClient(server,username, authToken, gameID);
+        return new GameplayClient(server,username, authToken, gameID, notificationHandler);
     }
 
     private ChessClient logout() throws ResponseException {

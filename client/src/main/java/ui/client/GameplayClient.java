@@ -29,7 +29,9 @@ public class GameplayClient implements ChessClient {
         String url = server.getServerUrl().replace("http", "ws");
         webSocket = new WebSocketFacade(url, notificationHandler);
 
-        // message = webSocket.getGameBoard(this.authToken, gameID);
+        webSocket.connect(authToken, gameID);
+
+        message = help();
     }
 
     @Override
