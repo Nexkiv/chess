@@ -142,7 +142,7 @@ public class GameplayClient implements ChessClient {
 
     private ChessClient resignGame() throws ResponseException {
         webSocket.resign(authToken, gameID);
-        return new LoggedInClient(server, username, authToken, notificationHandler);
+        return this;
     }
 
     private ChessClient highlightMoves(String[] params) {
