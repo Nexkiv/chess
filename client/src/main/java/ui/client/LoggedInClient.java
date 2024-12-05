@@ -101,14 +101,7 @@ public class LoggedInClient implements ChessClient {
             throw new IllegalArgumentException("Wrong number of arguments");
         }
 
-        listOfGames = server.listGames(authToken);
-
-        int playerSelection = Integer.parseInt(params[0]) - 1;
-        if (playerSelection < 0 || playerSelection > listOfGames.length) {
-            throw new IllegalArgumentException("Invalid game selection");
-        }
-
-        int gameID = listOfGames[playerSelection].gameID();
+        int gameID = getGameID(params);
 
         String color = params[1].toUpperCase();
 
@@ -122,12 +115,7 @@ public class LoggedInClient implements ChessClient {
             throw new IllegalArgumentException("Wrong number of arguments");
         }
 
-        int playerSelection = Integer.parseInt(params[0]) - 1;
-        if (playerSelection < 0 || playerSelection > listOfGames.length) {
-            throw new IllegalArgumentException("Invalid game selection");
-        }
-
-        int gameID = listOfGames[playerSelection].gameID();
+        int gameID = getGameID(params);
 
         server.observeGame(gameID, authToken);
 
@@ -135,6 +123,17 @@ public class LoggedInClient implements ChessClient {
         message = new DisplayBoard(new ChessGame().getBoard()).getBothBoards();
 
         return new GameplayClient(server,username, authToken, gameID, notificationHandler);
+    }
+
+    private int getGameID(String[] params) throws ResponseException {
+        listOfGames = server.listGames(authToken);
+
+        int playerSelection = Integer.parseInt(params[0]) - 1;
+        if (playerSelection < 0 || playerSelection > listOfGames.length) {
+            throw new IllegalArgumentException("Invalid game selection");
+        }
+
+        return listOfGames[playerSelection].gameID();
     }
 
     private ChessClient logout() throws ResponseException {
