@@ -2,6 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import org.glassfish.tyrus.core.WebSocketException;
 import ui.client.ChessClient;
 import ui.client.LoggedOutClient;
 import websocket.NotificationHandler;
@@ -37,6 +38,11 @@ public class Repl implements NotificationHandler {
                     break;
                 }
                 System.out.print(client.getMessage());
+            } catch (WebSocketException e) {
+                String message = e.getMessage();
+                String errorMsg = SET_TEXT_COLOR_RED + "ERROR: " + message +
+                        "\n" + RESET_TEXT_COLOR + "Type help for commands";
+                System.out.println(errorMsg);
             } catch (Throwable e) {
                 var msg = e.getMessage();
                 StringBuilder errorMsg = new StringBuilder(SET_TEXT_COLOR_RED + "ERROR: ");

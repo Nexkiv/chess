@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static ui.EscapeSequences.RESET_TEXT_COLOR;
 import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 
 //need to extend Endpoint for websocket to work properly
@@ -56,7 +57,7 @@ public class WebSocketFacade extends Endpoint {
                         }
                         case ERROR -> {
                             ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
-                            notificationHandler.notify(SET_TEXT_COLOR_RED + errorMessage.getMessage());
+                            notificationHandler.notify(SET_TEXT_COLOR_RED + errorMessage.getMessage() + "\n" + RESET_TEXT_COLOR);
                         }
                     }
                 }
