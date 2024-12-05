@@ -46,22 +46,13 @@ public class WebSocketFacade extends Endpoint {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
                     switch (serverMessage.getServerMessageType()) {
                         case LOAD_GAME -> {
-                            LoadGameMessage loadMessage = new Gson().fromJson(message, LoadGameMessage.class);
-                            chessGame = loadMessage.getGame();
-                            if (teamColor == null && !observer) {
-                                teamColor = loadMessage.getTeamColor();
-                                observer = teamColor == null;
-                            }
-                            DisplayBoard board = new DisplayBoard(chessGame.getBoard());
-                            notificationHandler.notify(board.getBoard(teamColor));
+                            loadGame(message, notificationHandler);
                         }
                         case NOTIFICATION -> {
-                            NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
-                            notificationHandler.notify(notificationMessage.getMessage());
+                            notification(message, notificationHandler);
                         }
                         case ERROR -> {
-                            ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
-                            notificationHandler.notify(SET_TEXT_COLOR_RED + errorMessage.getMessage() + "\n" + RESET_TEXT_COLOR);
+                            errorMessage(message, notificationHandler);
                         }
                     }
                 }
@@ -69,6 +60,27 @@ public class WebSocketFacade extends Endpoint {
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
+    }
+
+    private static void errorMessage(String message, NotificationHandler notificationHandler) {
+        ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+        notificationHandler.notify(SET_TEXT_COLOR_RED + errorMessage.getMessage() + "\n" + RESET_TEXT_COLOR);
+    }
+
+    private static void notification(String message, NotificationHandler notificationHandler) {
+        NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
+        notificationHandler.notify(notificationMessage.getMessage());
+    }
+
+    private void loadGame(String message, NotificationHandler notificationHandler) {
+        LoadGameMessage loadMessage = new Gson().fromJson(message, LoadGameMessage.class);
+        chessGame = loadMessage.getGame();
+        if (teamColor == null && !observer) {
+            teamColor = loadMessage.getTeamColor();
+            observer = teamColor == null;
+        }
+        DisplayBoard board = new DisplayBoard(chessGame.getBoard());
+        notificationHandler.notify(board.getBoard(teamColor));
     }
 
     //Endpoint requires this method, but you don't have to do anything
