@@ -86,7 +86,7 @@ public class WebSocketFacade extends Endpoint {
     public String highlightPiece(ChessPosition position) {
         DisplayBoard board = new DisplayBoard(chessGame.getBoard());
         if (chessGame.getBoard().getPiece(position) != null) {
-            return board.getHighlightedBoard(teamColor, chessGame.validMoves(position));
+            return board.getHighlightedBoard(teamColor, position, chessGame.validMoves(position));
         } else {
             throw new RuntimeException("There does not exist a piece in that position");
         }

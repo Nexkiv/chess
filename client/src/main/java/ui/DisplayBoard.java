@@ -4,6 +4,7 @@ import chess.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
@@ -21,21 +22,21 @@ public class DisplayBoard {
 
     public String getBoard(ChessGame.TeamColor teamColor) {
         Collection<ChessMove> emptyMoves = new ArrayList<>();
-        return this.getHighlightedBoard(teamColor, emptyMoves);
+        return this.getHighlightedBoard(teamColor, null, null);
     }
 
-    public String getHighlightedBoard(ChessGame.TeamColor teamColor, Collection<ChessMove> validMoves) {
+    public String getHighlightedBoard(ChessGame.TeamColor teamColor, ChessPosition position, Collection<ChessMove> validMoves) {
         StringBuilder boardDisplay = new StringBuilder();
         boolean[][] highlightMap = new boolean[8][8];
-        boolean[][] pieceLocation = new boolean[8][8];
 
         if (teamColor == null) {
             teamColor = ChessGame.TeamColor.WHITE;
         }
 
-        for (ChessMove move : validMoves) {
-            pieceLocation[move.getStartPosition().getRank() - 1][move.getStartPosition().getFile() - 1] = true;
-            highlightMap[move.getEndPosition().getRank() - 1][move.getEndPosition().getFile() - 1] = true;
+        if (position != null) {
+            for (ChessMove move : validMoves) {
+                highlightMap[move.getEndPosition().getRank() - 1][move.getEndPosition().getFile() - 1] = true;
+            }
         }
 
         int row;
@@ -51,7 +52,7 @@ public class DisplayBoard {
             }
             boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(row));
             for (int j = 1; j < 9; j++) {
-                if (pieceLocation[i - 1][j - 1]) {
+                if (Objects.equals(position, new ChessPosition(i, j))) {
                     boardDisplay.append(SET_BG_COLOR_SILVER);
                 } else if ((i + j) % 2 != 0 && highlightMap[i - 1][j - 1]) {
                     boardDisplay.append(SET_BG_COLOR_RED_TAN);

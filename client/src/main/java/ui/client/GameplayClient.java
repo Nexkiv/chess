@@ -55,11 +55,11 @@ public class GameplayClient implements ChessClient {
         message = help();
 
         return switch (command) {
-            case "redraw" -> redrawBoard();
-            case "leave" -> leaveGame();
-            case "move" -> movePiece(params);
-            case "resign" -> resignGame();
-            case "highlight" -> highlightMoves(params);
+            case "redraw", "r" -> redrawBoard();
+            case "leave", "l" -> leaveGame();
+            case "move", "m" -> movePiece(params);
+            case "resign", "x" -> resignGame();
+            case "highlight", "h" -> highlightMoves(params);
             default -> this;
         };
     }
@@ -87,14 +87,15 @@ public class GameplayClient implements ChessClient {
         }
 
         String positionName = params[0];
-        int rank = positionName.toLowerCase().charAt(0) - 96;
-        int file = positionName.charAt(1) - 30;
+        int rank = positionName.charAt(1) - 48;
+        int file = positionName.toLowerCase().charAt(0) - 96;
+
 
         if (rank > 8 || rank <= 0 || file > 8 || file <= 0) {
             throw new IllegalArgumentException("Invalid piece position");
         } else {
             ChessPosition position = new ChessPosition(rank, file);
-            webSocket.highlightPiece(position);
+            message = webSocket.highlightPiece(position);
             return this;
         }
     }
