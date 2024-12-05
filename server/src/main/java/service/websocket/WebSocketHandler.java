@@ -10,6 +10,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -69,8 +71,17 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(Connection connection, String message) {
-
+    private void connect(Connection connection, String message) throws IOException {
+        connections.add(connection);
+        PlayerInformation playerInfo = connection.playerInfo;
+        String connectionMessage;
+        if (playerInfo.teamColor() != null) {
+            connectionMessage = connection.playerInfo.username() + " has joined as " + connection.playerInfo.teamColor().toString();
+        } else {
+            connectionMessage = connection.playerInfo.username() + " has joined as an observer.";
+        }
+        NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, connectionMessage);
+        connections.broadcast(connection.playerInfo, notification);
     }
 
     private void makeMove(Connection connection, String message) {

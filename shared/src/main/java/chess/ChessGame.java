@@ -53,7 +53,16 @@ public class ChessGame {
      */
     public enum TeamColor {
         WHITE,
-        BLACK
+        BLACK;
+
+        @Override
+        public String toString() {
+            if (this == WHITE) {
+                return "White";
+            } else {
+                return "Black";
+            }
+        }
     }
 
     /**
