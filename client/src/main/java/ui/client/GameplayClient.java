@@ -1,5 +1,6 @@
 package ui.client;
 
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import exception.ResponseException;
@@ -42,7 +43,7 @@ public class GameplayClient implements ChessClient {
         return (SET_TEXT_COLOR_BLUE + """
                redraw - to redraw the chess board
                leave - to remove yourself from the game
-               move <START> <END> - to move a piece from start to end
+               move <START> <END> <PROMOTION> - to move a piece from start to end
                resign - to forfeit and end the game
                highlight <SPACE> - to highlight the legal moves of the piece
                help - to see possible commands
@@ -76,8 +77,43 @@ public class GameplayClient implements ChessClient {
         return new LoggedInClient(server, username, authToken, notificationHandler);
     }
 
-    private ChessClient movePiece(String[] params) {
-        throw new RuntimeException("not implemented");
+    private ChessClient movePiece(String[] params) throws ResponseException {
+        if (params.length < 2 || params.length > 3) {
+            throw new IllegalArgumentException("Wrong number of arguments");
+        }
+
+        ChessMove move = getChessMove(params);
+
+        webSocket.move(authToken, gameID, move);
+
+        return this;
+    }
+
+    private static ChessMove getChessMove(String[] params) {
+        String startPositionName = params[0];
+        int rank = startPositionName.charAt(1) - 48;
+        int file = startPositionName.toLowerCase().charAt(0) - 96;
+        ChessPosition startPosition = new ChessPosition(rank, file);
+
+        String endPositionName = params[1];
+        rank = endPositionName.charAt(1) - 48;
+        file = endPositionName.toLowerCase().charAt(0) - 96;
+        ChessPosition endPosition = new ChessPosition(rank, file);
+
+        ChessPiece.PieceType promotionPiece = null;
+        if (params.length == 3) {
+            String promotion = params[2];
+            switch (promotion) {
+                case "queen", "q" -> promotionPiece = ChessPiece.PieceType.QUEEN;
+                case "rook", "r" -> promotionPiece = ChessPiece.PieceType.ROOK;
+                case "bishop", "b" -> promotionPiece = ChessPiece.PieceType.BISHOP;
+                case "knight", "k", "n" -> promotionPiece = ChessPiece.PieceType.KNIGHT;
+                default -> throw new IllegalArgumentException("Illegal promotion piece");
+            }
+        }
+
+        ChessMove move = new ChessMove(startPosition, endPosition, promotionPiece);
+        return move;
     }
 
     private ChessClient resignGame() throws ResponseException {
