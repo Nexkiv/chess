@@ -376,11 +376,15 @@ public class ChessGame {
     }
 
     public void resign(TeamColor teamColor) {
-        gameOver = true;
-        if (teamColor == TeamColor.WHITE) {
-            winner = TeamColor.BLACK;
+        if (!gameOver) {
+            gameOver = true;
+            if (teamColor == TeamColor.WHITE) {
+                winner = TeamColor.BLACK;
+            } else {
+                winner = TeamColor.WHITE;
+            }
         } else {
-            winner = TeamColor.WHITE;
+            throw new RuntimeException("The game has already ended you cannot resign.");
         }
     }
 

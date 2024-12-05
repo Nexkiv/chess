@@ -48,7 +48,7 @@ public class WebSocketHandler {
                     case LEAVE -> leaveGame(connection);
                     case RESIGN -> resign(connection);
                 }
-            } catch (ResponseException | InvalidMoveException e) {
+            } catch (ResponseException | InvalidMoveException | RuntimeException e) {
                 Connection.sendError(session.getRemote(), e.getMessage());
             }
         }
@@ -183,6 +183,5 @@ public class WebSocketHandler {
             ErrorMessage error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, errorMessage);
             connections.respond(playerInfo, error);
         }
-
     }
 }
