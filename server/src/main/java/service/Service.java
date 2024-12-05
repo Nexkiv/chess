@@ -97,7 +97,6 @@ public class Service {
             GameData newGameData;
             switch (playerColor) {
                 case "null" -> {
-                    // TODO: Add the user as a spectator
                     return 200;
                 }
                 case "WHITE" -> {

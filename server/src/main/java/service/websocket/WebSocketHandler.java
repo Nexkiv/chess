@@ -129,7 +129,8 @@ public class WebSocketHandler {
             LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game(), playerInfo.teamColor());
             connections.sendAll(playerInfo, loadGameMessage);
 
-            ChessGame.TeamColor opponentColor = playerInfo.teamColor() == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+            ChessGame.TeamColor opponentColor = playerInfo.teamColor() ==
+                    ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
 
             String movementMessage = playerInfo.username() + " has moved " + moveName;
 
@@ -143,7 +144,8 @@ public class WebSocketHandler {
                 } else {
                     checkmateDeclaration = gameData.blackUsername() + " is in checkmate";
                 }
-                NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateDeclaration);
+                NotificationMessage gameplayNotification =
+                        new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateDeclaration);
                 connections.sendAll(playerInfo, gameplayNotification);
             } else if (game.isInCheck(opponentColor)) {
                 String checkDeclaration;
@@ -161,7 +163,8 @@ public class WebSocketHandler {
                 } else {
                     stalemateDeclaration = gameData.blackUsername() + " is in stalemate";
                 }
-                NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateDeclaration);
+                NotificationMessage gameplayNotification =
+                        new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateDeclaration);
                 connections.sendAll(playerInfo, gameplayNotification);
             }
         } else if (connection.playerInfo.teamColor() == null) {

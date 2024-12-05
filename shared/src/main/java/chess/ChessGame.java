@@ -371,14 +371,6 @@ public class ChessGame {
         return validMoves;
     }
 
-    public TeamColor getWinningTeamColor() {
-        if (gameOver) {
-            return winner;
-        } else {
-            throw new RuntimeException("The game has not ended yet.");
-        }
-    }
-
     public void resign(TeamColor teamColor) {
         if (!gameOver) {
             gameOver = true;

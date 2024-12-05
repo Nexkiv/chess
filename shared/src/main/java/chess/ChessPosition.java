@@ -47,7 +47,6 @@ public class ChessPosition {
             case 6 -> 'f';
             case 7 -> 'g';
             case 8 -> 'h';
-            // TODO: Add default switch case
             default -> ' ';
         };
 
