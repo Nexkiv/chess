@@ -132,16 +132,7 @@ public class WebSocketHandler {
             NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, movementMessage);
             connections.broadcast(connection.playerInfo, notification);
 
-            if (game.isInCheck(opponentColor)) {
-                String checkDeclaration;
-                if (opponentColor == ChessGame.TeamColor.WHITE) {
-                    checkDeclaration = gameData.whiteUsername() + " is in check";
-                } else {
-                    checkDeclaration = gameData.blackUsername() + " is in check";
-                }
-                NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkDeclaration);
-                connections.sendAll(playerInfo, gameplayNotification);
-            } else if (game.isInCheckmate(opponentColor)) {
+            if (game.isInCheckmate(opponentColor)) {
                 String checkmateDeclaration;
                 if (opponentColor == ChessGame.TeamColor.WHITE) {
                     checkmateDeclaration = gameData.whiteUsername() + " is in checkmate";
@@ -149,6 +140,15 @@ public class WebSocketHandler {
                     checkmateDeclaration = gameData.blackUsername() + " is in checkmate";
                 }
                 NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateDeclaration);
+                connections.sendAll(playerInfo, gameplayNotification);
+            } else if (game.isInCheck(opponentColor)) {
+                String checkDeclaration;
+                if (opponentColor == ChessGame.TeamColor.WHITE) {
+                    checkDeclaration = gameData.whiteUsername() + " is in check";
+                } else {
+                    checkDeclaration = gameData.blackUsername() + " is in check";
+                }
+                NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkDeclaration);
                 connections.sendAll(playerInfo, gameplayNotification);
             } else if (game.isInStalemate(opponentColor)) {
                 String stalemateDeclaration;

@@ -17,6 +17,8 @@ public class ChessGame {
     private final short dimension = 8;
     private final Safety[][] dangerMap = new Safety[dimension][dimension];
     private ChessPosition enPassantPieceLocation = null;
+    private boolean gameOver = false;
+    private TeamColor winner = null;
 
     private enum CastleSide {
         QUEEN_SIDE,
@@ -188,7 +190,9 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece activePiece = gameBoard.getPiece(move.getStartPosition());
 
-        if (activePiece == null) {
+        if (gameOver) {
+            throw new InvalidMoveException("The game has ended no further moves allowed.");
+        } else if (activePiece == null) {
             throw new InvalidMoveException("No piece in the starting position.");
         } else if (activePiece.getTeamColor() != currentTurn) {
             throw new InvalidMoveException("It is not your turn.");
@@ -223,6 +227,17 @@ public class ChessGame {
         }
 
         completedMoves.push(move);
+
+        if (isInCheckmate(currentTurn)) {
+            gameOver = true;
+            if (currentTurn == TeamColor.WHITE) {
+                winner = TeamColor.BLACK;
+            } else {
+                winner = TeamColor.WHITE;
+            }
+        } else if (isInStalemate(currentTurn)) {
+            gameOver = true;
+        }
     }
 
     /**
@@ -350,6 +365,14 @@ public class ChessGame {
         }
 
         return validMoves;
+    }
+
+    public TeamColor getWinningTeamColor() {
+        if (gameOver) {
+            return winner;
+        } else {
+            throw new RuntimeException("The game has not ended yet.");
+        }
     }
 
     public String toJson() {
