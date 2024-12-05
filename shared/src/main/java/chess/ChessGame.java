@@ -42,12 +42,15 @@ public class ChessGame {
     }
 
     /**
-     * Set's which teams turn it is
+     * Set's which teams turn it is.
+     * This is used for testing only so it breaks the normal functionality of the class
      *
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
         currentTurn = team;
+        gameOver = false;
+        winner = null;
     }
 
     /**
@@ -158,7 +161,8 @@ public class ChessGame {
         ChessMove queenSideCastle = new ChessMove(startPosition, castleEnd, null);
         if (possibleMoves.contains(new ChessMove(startPosition, castleAdj, null)) &&
                 gameBoard.getPiece(castleAdj) == null &&
-                gameBoard.getPiece(castleEnd) == null) {
+                gameBoard.getPiece(castleEnd) == null &&
+                gameBoard.getPiece(rookPosition) != null) {
             if (gameBoard.getPiece(rookPosition).getPieceType() == ChessPiece.PieceType.ROOK) {
                 possibleMoves.add(queenSideCastle);
             }
