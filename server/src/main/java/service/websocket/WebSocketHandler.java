@@ -172,10 +172,17 @@ public class WebSocketHandler {
 
     private void resign(Connection connection) throws ResponseException, IOException {
         PlayerInformation playerInfo = connection.playerInfo;
-        GameData game = dataAccess.getGameData(playerInfo.gameID());
-        game.game().resign(playerInfo.teamColor());
-        String resignationMessage = playerInfo.username() + " has resigned. The game is now over.";
-        NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignationMessage);
-        connections.sendAll(playerInfo, notification);
+        if (playerInfo.teamColor() != null) {
+            GameData game = dataAccess.getGameData(playerInfo.gameID());
+            game.game().resign(playerInfo.teamColor());
+            String resignationMessage = playerInfo.username() + " has resigned. The game is now over.";
+            NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignationMessage);
+            connections.sendAll(playerInfo, notification);
+        } else {
+            String errorMessage = "An observer cannot resign.";
+            ErrorMessage error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, errorMessage);
+            connections.respond(playerInfo, error);
+        }
+
     }
 }
