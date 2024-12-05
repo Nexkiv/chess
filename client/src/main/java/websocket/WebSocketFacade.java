@@ -28,6 +28,7 @@ public class WebSocketFacade extends Endpoint {
     private final Session session;
     private ChessGame chessGame;
     private ChessGame.TeamColor teamColor;
+    private boolean observer;
 
 
     public WebSocketFacade(String url, NotificationHandler notificationHandler) throws ResponseException {
@@ -47,7 +48,10 @@ public class WebSocketFacade extends Endpoint {
                         case LOAD_GAME -> {
                             LoadGameMessage loadMessage = new Gson().fromJson(message, LoadGameMessage.class);
                             chessGame = loadMessage.getGame();
-                            teamColor = loadMessage.getTeamColor();
+                            if (teamColor == null && !observer) {
+                                teamColor = loadMessage.getTeamColor();
+                                observer = teamColor == null;
+                            }
                             DisplayBoard board = new DisplayBoard(chessGame.getBoard());
                             notificationHandler.notify(board.getBoard(teamColor));
                         }
