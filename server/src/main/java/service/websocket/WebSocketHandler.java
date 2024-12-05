@@ -167,7 +167,26 @@ public class WebSocketHandler {
         }
     }
 
-    private void leaveGame(Connection connection) {
+    private void leaveGame(Connection connection) throws IOException, ResponseException {
+        PlayerInformation playerInfo = connection.playerInfo;
+        if (playerInfo.teamColor() != null) {
+            GameData gameData = dataAccess.getGameData(playerInfo.gameID());
+            GameData newGameData;
+            if (playerInfo.teamColor() == ChessGame.TeamColor.WHITE) {
+                newGameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
+            } else {
+                newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
+            }
+            dataAccess.updateGameData(newGameData);
+            String message = playerInfo.username() + ", has left the game.";
+            NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(playerInfo, notification);
+        } else {
+            String message = "The observer, " + playerInfo.username() + ", has left the game.";
+            NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(playerInfo, notification);
+        }
+        connections.remove(connection);
     }
 
     private void resign(Connection connection) throws ResponseException, IOException {
@@ -178,6 +197,7 @@ public class WebSocketHandler {
             String resignationMessage = playerInfo.username() + " has resigned. The game is now over.";
             NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignationMessage);
             connections.sendAll(playerInfo, notification);
+            connections.remove(connection);
         } else {
             String errorMessage = "An observer cannot resign.";
             ErrorMessage error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, errorMessage);
