@@ -52,21 +52,21 @@ public class DisplayBoard {
             }
             boardDisplay.append(SET_BG_COLOR_SILVER).append(SET_TEXT_COLOR_BLACK).append(wrapText(row));
             for (int j = 1; j < 9; j++) {
-                if (Objects.equals(position, new ChessPosition(i, j))) {
-                    boardDisplay.append(SET_BG_COLOR_SILVER);
-                } else if ((i + j) % 2 != 0 && highlightMap[i - 1][j - 1]) {
-                    boardDisplay.append(SET_BG_COLOR_RED_TAN);
-                } else if ((i + j) % 2 != 0) {
-                    boardDisplay.append(SET_BG_COLOR_TAN);
-                } else if (highlightMap[i - 1][j - 1]) {
-                    boardDisplay.append(SET_BG_COLOR_RED_BROWN);
-                } else {
-                    boardDisplay.append(SET_BG_COLOR_BROWN);
-                }
                 if (teamColor == ChessGame.TeamColor.WHITE) {
                     col = j;
                 } else {
                     col = 9 - j;
+                }
+                if (Objects.equals(position, new ChessPosition(row, col))) {
+                    boardDisplay.append(SET_BG_COLOR_SILVER);
+                } else if ((row + col) % 2 != 0 && highlightMap[row - 1][col - 1]) {
+                    boardDisplay.append(SET_BG_COLOR_RED_TAN);
+                } else if ((row + col) % 2 != 0) {
+                    boardDisplay.append(SET_BG_COLOR_TAN);
+                } else if (highlightMap[row - 1][col - 1]) {
+                    boardDisplay.append(SET_BG_COLOR_RED_BROWN);
+                } else {
+                    boardDisplay.append(SET_BG_COLOR_BROWN);
                 }
                 boardDisplay.append(chessPiece(board.getPiece(new ChessPosition(row,col))));
             }
