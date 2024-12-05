@@ -6,6 +6,7 @@ import model.GameData;
 import server.ServerFacade;
 import ui.DisplayBoard;
 import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 

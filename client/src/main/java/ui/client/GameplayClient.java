@@ -17,7 +17,8 @@ public class GameplayClient implements ChessClient {
     private final String authToken;
     private final int gameID;
     private String message = null;
-    private WebSocketFacade webSocket;
+    private final WebSocketFacade webSocket;
+    private final ServerFacade server;
     private final NotificationHandler notificationHandler;
 
     public GameplayClient(ServerFacade server, String username, String authToken, int gameID,
@@ -26,6 +27,7 @@ public class GameplayClient implements ChessClient {
         this.authToken = authToken;
         this.gameID = gameID;
         this.notificationHandler = notificationHandler;
+        this.server = server;
 
         String url = server.getServerUrl().replace("http", "ws");
         webSocket = new WebSocketFacade(url, notificationHandler);
@@ -48,7 +50,7 @@ public class GameplayClient implements ChessClient {
     }
 
     @Override
-    public ChessClient eval(String input) {
+    public ChessClient eval(String input) throws ResponseException {
         String[] tokens = input.toLowerCase().split(" ");
         String command = (tokens.length > 0) ? tokens[0] : "help";
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -69,8 +71,9 @@ public class GameplayClient implements ChessClient {
         return this;
     }
 
-    private ChessClient leaveGame() {
-        throw new RuntimeException("not implemented");
+    private ChessClient leaveGame() throws ResponseException {
+        webSocket.leave(authToken, gameID);
+        return new LoggedInClient(server, username, authToken, notificationHandler);
     }
 
     private ChessClient movePiece(String[] params) {

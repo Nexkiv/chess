@@ -78,6 +78,15 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
+    public void leave(String authToken, int gameId) throws ResponseException {
+        try {
+            UserGameCommand connectCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameId);
+            session.getBasicRemote().sendText(new Gson().toJson(connectCommand));
+        } catch (IOException e) {
+            throw new ResponseException(500, e.getMessage());
+        }
+    }
+
     public String getBoard() {
         DisplayBoard board = new DisplayBoard(chessGame.getBoard());
         return board.getBoard(teamColor);
