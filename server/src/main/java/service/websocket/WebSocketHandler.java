@@ -160,6 +160,8 @@ public class WebSocketHandler {
                 NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateDeclaration);
                 connections.sendAll(playerInfo, gameplayNotification);
             }
+        } else if (connection.playerInfo.teamColor() == null) {
+            throw new InvalidMoveException("Observers cannot move pieces");
         } else {
             throw new InvalidMoveException("It is not your turn");
         }
