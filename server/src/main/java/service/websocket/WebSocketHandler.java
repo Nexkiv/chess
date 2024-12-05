@@ -8,6 +8,7 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.MakeMoveCommand;
@@ -41,8 +42,6 @@ public class WebSocketHandler {
         if (connection != null) {
             try {
                 switch (command.getCommandType()) {
-//                case JOIN_PLAYER -> join(conn, msg);
-//                case JOIN_OBSERVER -> observe(conn, msg);
                     case CONNECT -> connect(connection, message);
                     case MAKE_MOVE -> makeMove(connection, message);
                     case LEAVE -> leaveGame(connection);
@@ -52,6 +51,11 @@ public class WebSocketHandler {
                 Connection.sendError(session.getRemote(), e.getMessage());
             }
         }
+    }
+
+    @OnWebSocketClose
+    public void onClose(Session session, int statusCode, String reason) {
+        connections.cleanUp();
     }
 
     Connection getConnection(String authToken, int gameID, Session session) throws ResponseException, IOException {
@@ -194,6 +198,7 @@ public class WebSocketHandler {
         if (playerInfo.teamColor() != null) {
             GameData game = dataAccess.getGameData(playerInfo.gameID());
             game.game().resign(playerInfo.teamColor());
+            dataAccess.updateGameData(game);
             String resignationMessage = playerInfo.username() + " has resigned. The game is now over.";
             NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignationMessage);
             connections.sendAll(playerInfo, notification);

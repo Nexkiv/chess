@@ -28,6 +28,20 @@ public class ConnectionManager {
         connections.remove(connection.playerInfo);
     }
 
+    public void cleanUp() {
+        var removeList = new ArrayList<Connection>();
+        for (var c : connections.values()) {
+            if (!c.session.isOpen()) {
+                removeList.add(c);
+            }
+        }
+
+        // Clean up any connections that were left open.
+        for (var c : removeList) {
+            connections.remove(c.playerInfo);
+        }
+    }
+
     public void broadcast(PlayerInformation excludedPlayerInfo, ServerMessage serverMessage) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
