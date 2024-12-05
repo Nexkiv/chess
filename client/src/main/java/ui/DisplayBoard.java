@@ -29,6 +29,10 @@ public class DisplayBoard {
         boolean[][] highlightMap = new boolean[8][8];
         boolean[][] pieceLocation = new boolean[8][8];
 
+        if (teamColor == null) {
+            teamColor = ChessGame.TeamColor.WHITE;
+        }
+
         for (ChessMove move : validMoves) {
             pieceLocation[move.getStartPosition().getRank() - 1][move.getStartPosition().getFile() - 1] = true;
             highlightMap[move.getEndPosition().getRank() - 1][move.getEndPosition().getFile() - 1] = true;
