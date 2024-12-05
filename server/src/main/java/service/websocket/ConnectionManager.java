@@ -68,4 +68,13 @@ public class ConnectionManager {
         broadcast(playerInfo, serverMessage);
         respond(playerInfo, serverMessage);
     }
+
+    public boolean validateConnection(PlayerInformation playerInfo, Session session) {
+        if (connections.containsKey(playerInfo)) {
+            return connections.get(playerInfo).session == session;
+        } else {
+            return true;
+        }
+
+    }
 }

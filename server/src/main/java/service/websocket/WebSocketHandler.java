@@ -39,7 +39,6 @@ public class WebSocketHandler {
         Connection connection = getConnection(command.getAuthToken(), command.getGameID(), session);
 
         if (connection != null) {
-            connections.add(connection);
             try {
                 switch (command.getCommandType()) {
 //                case JOIN_PLAYER -> join(conn, msg);
@@ -62,7 +61,12 @@ public class WebSocketHandler {
             GameData game = dataAccess.getGameData(gameID);
             if (game != null) {
                 PlayerInformation playerInfo = getPlayerInformation(gameID, game, authData);
-                return new Connection(playerInfo, session);
+                if (connections.validateConnection(playerInfo, session)) {
+                    return new Connection(playerInfo, session);
+                } else {
+                    Connection.sendError(session.getRemote(), "Error: You cannot control the other player");
+                    return null;
+                }
             } else {
                 Connection.sendError(session.getRemote(), "Error: Invalid Game ID");
                 return null;
@@ -110,49 +114,54 @@ public class WebSocketHandler {
 
         GameData gameData = dataAccess.getGameData(gameID);
         ChessGame game = gameData.game();
-        String moveName = command.getMove().getMoveName(game.getBoard());
-        game.makeMove(command.getMove());
 
-        PlayerInformation playerInfo = connection.playerInfo;
+        if (connection.playerInfo.teamColor() == game.getTeamTurn()) {
+            String moveName = command.getMove().getMoveName(game.getBoard());
+            game.makeMove(command.getMove());
 
-        dataAccess.updateGameData(gameData);
-        LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
-        connections.sendAll(playerInfo, loadGameMessage);
+            PlayerInformation playerInfo = connection.playerInfo;
 
-        ChessGame.TeamColor opponentColor = playerInfo.teamColor() == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+            dataAccess.updateGameData(gameData);
+            LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+            connections.sendAll(playerInfo, loadGameMessage);
 
-        String movementMessage = playerInfo.username() + " has moved " + moveName;
+            ChessGame.TeamColor opponentColor = playerInfo.teamColor() == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
 
-        NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, movementMessage);
-        connections.broadcast(connection.playerInfo, notification);
+            String movementMessage = playerInfo.username() + " has moved " + moveName;
 
-        if (game.isInCheck(opponentColor)) {
-            String checkDeclaration;
-            if (opponentColor == ChessGame.TeamColor.WHITE) {
-                checkDeclaration = gameData.whiteUsername() + " is in check";
-            } else {
-                checkDeclaration = gameData.blackUsername() + " is in check";
+            NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, movementMessage);
+            connections.broadcast(connection.playerInfo, notification);
+
+            if (game.isInCheck(opponentColor)) {
+                String checkDeclaration;
+                if (opponentColor == ChessGame.TeamColor.WHITE) {
+                    checkDeclaration = gameData.whiteUsername() + " is in check";
+                } else {
+                    checkDeclaration = gameData.blackUsername() + " is in check";
+                }
+                NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkDeclaration);
+                connections.sendAll(playerInfo, gameplayNotification);
+            } else if (game.isInCheckmate(opponentColor)) {
+                String checkmateDeclaration;
+                if (opponentColor == ChessGame.TeamColor.WHITE) {
+                    checkmateDeclaration = gameData.whiteUsername() + " is in checkmate";
+                } else {
+                    checkmateDeclaration = gameData.blackUsername() + " is in checkmate";
+                }
+                NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateDeclaration);
+                connections.sendAll(playerInfo, gameplayNotification);
+            } else if (game.isInStalemate(opponentColor)) {
+                String stalemateDeclaration;
+                if (opponentColor == ChessGame.TeamColor.WHITE) {
+                    stalemateDeclaration = gameData.whiteUsername() + " is in stalemate";
+                } else {
+                    stalemateDeclaration = gameData.blackUsername() + " is in stalemate";
+                }
+                NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateDeclaration);
+                connections.sendAll(playerInfo, gameplayNotification);
             }
-            NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkDeclaration);
-            connections.sendAll(playerInfo, gameplayNotification);
-        } else if (game.isInCheckmate(opponentColor)) {
-            String checkmateDeclaration;
-            if (opponentColor == ChessGame.TeamColor.WHITE) {
-                checkmateDeclaration = gameData.whiteUsername() + " is in checkmate";
-            } else {
-                checkmateDeclaration = gameData.blackUsername() + " is in checkmate";
-            }
-            NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateDeclaration);
-            connections.sendAll(playerInfo, gameplayNotification);
-        } else if (game.isInStalemate(opponentColor)) {
-            String stalemateDeclaration;
-            if (opponentColor == ChessGame.TeamColor.WHITE) {
-                stalemateDeclaration = gameData.whiteUsername() + " is in stalemate";
-            } else {
-                stalemateDeclaration = gameData.blackUsername() + " is in stalemate";
-            }
-            NotificationMessage gameplayNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateDeclaration);
-            connections.sendAll(playerInfo, gameplayNotification);
+        } else {
+            throw new InvalidMoveException("It is not your turn");
         }
     }
 
