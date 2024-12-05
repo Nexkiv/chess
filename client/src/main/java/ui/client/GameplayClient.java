@@ -18,10 +18,11 @@ public class GameplayClient implements ChessClient {
     private final String username;
     private final String authToken;
     private final int gameID;
-    private String message = null;
+    private String message;
     private final WebSocketFacade webSocket;
     private final ServerFacade server;
     private final NotificationHandler notificationHandler;
+    private boolean resignStarted = false;
 
     public GameplayClient(ServerFacade server, String username, String authToken, int gameID,
                           NotificationHandler notificationHandler) throws ResponseException {
@@ -58,14 +59,26 @@ public class GameplayClient implements ChessClient {
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         message = help();
 
-        return switch (command) {
-            case "redraw", "r" -> redrawBoard();
-            case "leave", "l" -> leaveGame();
-            case "move", "m" -> movePiece(params);
-            case "resign", "x" -> resignGame();
-            case "highlight", "h" -> highlightMoves(params);
-            default -> this;
-        };
+        if (resignStarted) {
+            if (command.equals("yes") || command.equals("y")) {
+                return resignGame();
+            } else if (command.equals("no") || command.equals("n")) {
+                resignStarted = false;
+                message = "Okay enjoy the game.";
+                return this;
+            }
+        } else {
+            return switch (command) {
+                case "redraw", "r" -> redrawBoard();
+                case "leave", "l" -> leaveGame();
+                case "move", "m" -> movePiece(params);
+                case "resign", "x" -> resignStart();
+                case "highlight", "h" -> highlightMoves(params);
+                default -> this;
+            };
+        }
+
+        return this;
     }
 
     private ChessClient redrawBoard() {
@@ -101,6 +114,12 @@ public class GameplayClient implements ChessClient {
         file = endPositionName.toLowerCase().charAt(0) - 96;
         ChessPosition endPosition = new ChessPosition(rank, file);
 
+        ChessPiece.PieceType promotionPiece = getPromotionPiece(params);
+
+        return new ChessMove(startPosition, endPosition, promotionPiece);
+    }
+
+    private static ChessPiece.PieceType getPromotionPiece(String[] params) {
         ChessPiece.PieceType promotionPiece = null;
         if (params.length == 3) {
             String promotion = params[2];
@@ -112,9 +131,13 @@ public class GameplayClient implements ChessClient {
                 default -> throw new WebsocketError("Illegal promotion piece");
             }
         }
+        return promotionPiece;
+    }
 
-        ChessMove move = new ChessMove(startPosition, endPosition, promotionPiece);
-        return move;
+    private ChessClient resignStart() {
+        resignStarted = true;
+        message = "Are you sure you want to resign the game? [y/n]";
+        return this;
     }
 
     private ChessClient resignGame() throws ResponseException {
