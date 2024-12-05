@@ -1,6 +1,8 @@
 package websocket;
 
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import ui.DisplayBoard;
@@ -73,6 +75,20 @@ public class WebSocketFacade extends Endpoint {
             session.getBasicRemote().sendText(new Gson().toJson(connectCommand));
         } catch (IOException e) {
             throw new ResponseException(500, e.getMessage());
+        }
+    }
+
+    public String getBoard() {
+        DisplayBoard board = new DisplayBoard(chessGame.getBoard());
+        return board.getBoard(teamColor);
+    }
+
+    public String highlightPiece(ChessPosition position) {
+        DisplayBoard board = new DisplayBoard(chessGame.getBoard());
+        if (chessGame.getBoard().getPiece(position) != null) {
+            return board.getHighlightedBoard(teamColor, chessGame.validMoves(position));
+        } else {
+            throw new RuntimeException("There does not exist a piece in that position");
         }
     }
 }

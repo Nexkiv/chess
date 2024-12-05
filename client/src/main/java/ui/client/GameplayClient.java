@@ -1,6 +1,7 @@
 package ui.client;
 
 import chess.ChessPiece;
+import chess.ChessPosition;
 import exception.ResponseException;
 import server.ServerFacade;
 import websocket.NotificationHandler;
@@ -64,7 +65,8 @@ public class GameplayClient implements ChessClient {
     }
 
     private ChessClient redrawBoard() {
-        throw new RuntimeException("not implemented");
+        message = webSocket.getBoard();
+        return this;
     }
 
     private ChessClient leaveGame() {
@@ -80,7 +82,21 @@ public class GameplayClient implements ChessClient {
     }
 
     private ChessClient highlightMoves(String[] params) {
-        throw new RuntimeException("not implemented");
+        if (params.length != 1) {
+            throw new IllegalArgumentException("Wrong number of arguments");
+        }
+
+        String positionName = params[0];
+        int rank = positionName.toLowerCase().charAt(0) - 96;
+        int file = positionName.charAt(1) - 30;
+
+        if (rank > 8 || rank <= 0 || file > 8 || file <= 0) {
+            throw new IllegalArgumentException("Invalid piece position");
+        } else {
+            ChessPosition position = new ChessPosition(rank, file);
+            webSocket.highlightPiece(position);
+            return this;
+        }
     }
 
     @Override
