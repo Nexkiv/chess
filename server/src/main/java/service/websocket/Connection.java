@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 
@@ -23,6 +25,7 @@ public class Connection {
     }
 
     public static void sendError(RemoteEndpoint remote, String msg) throws IOException {
-        remote.sendString(msg);
+        ErrorMessage error = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, msg);
+        remote.sendString(error.toJSON());
     }
 }
